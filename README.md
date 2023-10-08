@@ -16,5 +16,6 @@ Members:
 * [Backend Link](team-margville.cse.lehigh.edu)
 
 # Description of Functionality
-
+* User Sories and Tests: https://docs.google.com/document/d/1L2m1_GBuI5Bac6Wi-hzB6fgLx3JTylX9qoWlod70r2g/edit?usp=sharing
 # Instructions on Running Locally
+
