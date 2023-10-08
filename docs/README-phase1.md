@@ -12,3 +12,7 @@
 ![General Mobile Interface](diagrams/mockmobile-1.jpg)
 
 ![Mobile Create Post Interface](diagrams/mockmobile-2.jpg)
+
+# User Stories/Tests
+
+[Google Docs Link to User Stories/Tests](https://docs.google.com/document/d/1L2m1_GBuI5Bac6Wi-hzB6fgLx3JTylX9qoWlod70r2g/edit?usp=sharing)
