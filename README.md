@@ -13,8 +13,10 @@ Members:
 
 * [Git Repo](https://bitbucket.org/cse216-fa23-kag624/cse216-2023fa-team-6/src/master/)
 * [Trello Board](https://trello.com/b/TdzCpzDz/phase-1)
-* [Backend Link](team-margville.cse.lehigh.edu)
+* [Backend Link](team-margaritavillians.dokku.cse.lehigh.edu)
 
 # Description of Functionality
+
+The app will allow an admin to post new messages to the forum. Anonymous users will then be able to like these messages. Along with this, a mobile app will allow for the same functionalities, but on the emulator used in the tutorials.
 
 # Instructions on Running Locally
