@@ -1,7 +1,7 @@
 
-# UML Diagram
+# State Diagram
 
-![Margarita Villians UML Diagram](diagrams/UML_Diagram.JPG)
+![Margarita Villians UML Diagram](diagrams/State_Diagram.JPG)
 
 # Mock Web User Interface
 
