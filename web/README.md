@@ -39,8 +39,15 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-## Learn More
+## Running the Web Branch Using REACT
+* To create a new typescript app in bitbucket, use “npx create-react-app web --template typescript” (The tutorial is kinda dookie)
+    * To run the current version, use “npm start” in the root directory
+    * Don’t mess with anything without running “npm start” to determine if it will cause an error
+* Make sure to remove “"eslintConfig"” from package.json to avoid it giving you a problem
+* Create a new build file with ”npm run build”
+* To run the build version, use “serve -s build”
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Doing Web Stuff with REACT
+* Switches has long since been replaced with Routes
+* When importing Components, make sure to capitalize it
 
-To learn React, check out the [React documentation](https://reactjs.org/).
