@@ -20,3 +20,7 @@
 # System Drawing with Major Components
 
 ![System Drawing](diagrams/systemDrawing.jpg)
+
+# Entity Diagram
+
+![System Drawing](diagrams/Entity_Diagram.JPG)
