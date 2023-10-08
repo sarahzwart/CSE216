@@ -1,26 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import * as React from "react";
+import { HashRouter as Router, Route, Link, Switch } from 'react-router-dom';
+import { Hello } from "./Hello";
+import {Url} from "./Url";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export class App extends React.Component {
+    render() {
+        return (
+            <Router>
+                <div>
+                    <nav>
+                        <Link to="/">Hello (1)</Link>
+                        &nbsp;|&nbsp;
+                        <Link to="/hello">Hello (2)</Link>
+                        &nbsp;|&nbsp;
+                        <Link to="/url/1">Url (1)</Link>
+                        &nbsp;|&nbsp;
+                        <Link to="/url/2">Url (2)</Link>
+                    </nav>
+                    <Switch>
+                        <Route exact path="/" component={Hello} />
+                        <Route exact path="/hello" component={Hello} />
+                        <Route exact path="/hello" render={() => <Hello message={"There"} />} />
+                        <Route path="/url/:num" component={Url} />
+                    </Switch>
+                    <div>
+                        &copy; 2021
+                    </div>
+                </div>
+            </Router>
+        );
+    }
 }
-
-export default App;
