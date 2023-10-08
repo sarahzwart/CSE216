@@ -4,4 +4,4 @@ import * as ReactDOM from "react-dom";
 import { App } from "./App"
 import "./style.css"
 
-ReactDOM.render(<App />, document.getElementById('app'));
+ReactDOM.render(<App num={21} />, document.getElementById('app'));
