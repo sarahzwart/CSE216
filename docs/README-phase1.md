@@ -26,6 +26,7 @@
 ![System Drawing](diagrams/Entity_Diagram.JPG)
 
 # Backend Route Listings
+<<<<<<< HEAD
 * GET routes
 1) .get("/messages/:id", (request, response)) - will return a specific message with its title, body, and likes
 2) .get("/messages", (request, response)) - will return all messages with title and likes
@@ -39,3 +40,4 @@
 # Testing
 
 [Descriptions of the Tests for each Component](https://docs.google.com/document/d/12otxU6lLwTojMmRcqqpRKlj5uO6V8lMntIydhbBi8WM/edit?usp=sharing)
+
