@@ -35,3 +35,7 @@
 1) .put("/messages/:id", (request, response)) - edit the amount of likes on a message
 * Delete routes
 1) .delete("/messages/:id", (request, response)) - delete a specific messages from the database
+
+# Testing
+
+[Descriptions of the Tests for each Component](https://docs.google.com/document/d/12otxU6lLwTojMmRcqqpRKlj5uO6V8lMntIydhbBi8WM/edit?usp=sharing)
