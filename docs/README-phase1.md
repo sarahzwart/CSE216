@@ -24,7 +24,3 @@
 # Entity Diagram
 
 ![System Drawing](diagrams/Entity_Diagram.JPG)
-
-# Testing
-
-[Description of Tests for each Component](https://docs.google.com/document/d/12otxU6lLwTojMmRcqqpRKlj5uO6V8lMntIydhbBi8WM/edit?usp=sharing)
