@@ -26,12 +26,12 @@
 ![System Drawing](diagrams/Entity_Diagram.JPG)
 
 # Backend Route Listings
-* GET routes
-1) .get("/messages/:id", (request, response)) - will return a specific message with its title, body, and likes
-2) .get("/messages", (request, response)) - will return all messages with title and likes
-* Post routes
-1) .post("/messages", (request, response)) - will post new message with title, body, and null likes
-* Put routes
-1) .put("/messages/:id", (request, response)) - edit the amount of likes on a message
-* Delete routes
-1) .delete("/messages/:id", (request, response)) - delete a specific messages from the database
+* GET routes  
+1) .get("/messages/:id", (request, response)) - will return a specific message with its title, body, and likes  
+2) .get("/messages", (request, response)) - will return all messages with title and likes  
+* Post routes  
+1) .post("/messages", (request, response)) - will post new message with title, body, and null likes  
+* Put routes  
+1) .put("/messages/:id", (request, response)) - edit the amount of likes on a message  
+* Delete routes  
+1) .delete("/messages/:id", (request, response)) - delete a specific messages from the database  
