@@ -126,4 +126,24 @@ public class DataStore {
         mRows.set(id, null);
         return true;
     }
+
+    /**
+     * Delete a like from a post in the data store
+     * 
+     * @param id The Id of the row to delete a like from
+     * @return true if the like was deleted, false otherwise
+     */
+    public synchronized boolean deleteLike(int id) {
+        // Deletion fails for an invalid Id or an Id that has already been 
+        // deleted
+        if (id >= mRows.size())
+            return false;
+        if (mRows.get(id) == null)
+            return false;
+        // Delete by setting to null, so that any Ids used by other clients
+        // still refer to the same positions in the ArrayList.
+        DataRow row = mRows.get(id);
+        row.mLikes -= 1;
+        return true;
+    }
 }

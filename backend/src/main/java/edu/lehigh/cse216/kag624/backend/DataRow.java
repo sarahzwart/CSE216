@@ -29,6 +29,11 @@ public class DataRow {
     public String mContent;
 
     /**
+     * Number of likes
+     */
+    public int mLikes;
+
+    /**
      * The creation date for this row of data.  Once it is set, it cannot be 
      * changed
      */
@@ -50,6 +55,7 @@ public class DataRow {
         mId = id;
         mTitle = title;
         mContent = content;
+        mLikes = 0;
         mCreated = new Date();
     }
 
@@ -61,6 +67,7 @@ public class DataRow {
         // NB: Strings and Dates are immutable, so copy-by-reference is safe
         mTitle = data.mTitle;
         mContent = data.mContent;
+        mLikes = data.mLikes;
         mCreated = data.mCreated;
     }
 }

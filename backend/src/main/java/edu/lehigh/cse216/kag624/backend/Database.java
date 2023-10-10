@@ -33,6 +33,11 @@ public class Database {
     private PreparedStatement mDeleteOne;
 
     /**
+     * A prepared statement for deleting a like from a post
+     */
+    private PreparedStatement mDeleteLike;
+
+    /**
      * A prepared statement for inserting into the database
      */
     private PreparedStatement mInsertOne;
@@ -82,8 +87,6 @@ public class Database {
     * 
     * @return A Database object, or null if we cannot connect properly
     */
-
-
     static Database getDatabase(String host, String port, String path, String user, String pass) {
         if( path==null || "".equals(path) ){
             path="/";
@@ -124,6 +127,7 @@ public class Database {
 
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
+            db.mDeleteLike = db.mConnection.prepareStatement("UPDATE tblData SET likes = likes-1 WHERE id = ?");
             db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData VALUES (default, ?, ?)");
             db.mSelectAll = db.mConnection.prepareStatement("SELECT id, subject FROM tblData");
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * from tblData WHERE id=?");
@@ -199,6 +203,7 @@ public class Database {
         try {
             mInsertOne.setString(1, subject);
             mInsertOne.setString(2, message);
+            mInsertOne.setInt(3, 0);
             count += mInsertOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -260,6 +265,22 @@ public class Database {
             mDeleteOne.setInt(1, id);
             res = mDeleteOne.executeUpdate();
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    /**
+     * Delete a like by row ID
+     * @param id id of the row to remove a like by
+     * @return number of likes deleted. -1 indicates an error
+     */
+    int deleteLike(int id){
+        int res = -1;
+        try{
+            mDeleteLike.setInt(1, id);
+            res = mDeleteLike.executeUpdate();
+        } catch (SQLException e){
             e.printStackTrace();
         }
         return res;
