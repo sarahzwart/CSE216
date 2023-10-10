@@ -85,17 +85,12 @@ public class DataStore {
     }
 
         /**
-     * Update the title and content of a row in the DataStore
+     * Update the number of likes of a row in the DataStore
      *
      * @param id The Id of the row to update
-     * @param title The new title for the row
-     * @param content The new content for the row
      * @return a copy of the data in the row, if it exists, or null otherwise
      */
-    public synchronized DataRow updateOne(int id, String title, String content) {
-        // Do not update if we don't have valid data
-        if (title == null || content == null)
-            return null;
+    public synchronized DataRow updateLikes(int id) {
         // Only update if the current entry is valid (not null)
         if (id >= mRows.size())
             return null;
@@ -103,8 +98,7 @@ public class DataStore {
         if (data == null)
             return null;
         // Update and then return a copy of the data, as a DataRow
-        data.mTitle = title;
-        data.mContent = content;
+        data.mLikes = data.mLikes + 1;
         return new DataRow(data);
     }
 
