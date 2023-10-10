@@ -6,6 +6,9 @@ import {Counter} from "./Counter";
 import {GlobalCounter} from "./GlobalCounter";
 import {Net} from "./Net";
 import {TwoWay} from "./TwoWay";
+import {Home} from "./Test-Features/Home";
+import {Add} from "./Test-Features/Add";
+import {Edit} from "./Test-Features/Edit";
 
 
 
@@ -34,9 +37,11 @@ export class App extends React.Component<AppProps> {
             <Router>
                 <div>
                     <nav>
-                        <Link to="/">Hello (1)</Link>
+                        <Link to="/home">Home</Link>
                         &nbsp;|&nbsp;
-                        <Link to="/hello">Hello (2)</Link>
+                        <Link to="/add">Add</Link>
+                        &nbsp;|&nbsp;
+                        <Link to="/edit">Edit</Link>
                         &nbsp;|&nbsp;
                         <Link to="/url/1">Url (1)</Link>
                         &nbsp;|&nbsp;
@@ -51,9 +56,9 @@ export class App extends React.Component<AppProps> {
                         <Link to="/twoway">Two-Way</Link>
                     </nav>
                     <Switch>
-                        <Route exact path="/" component={Hello} />
-                        <Route exact path="/hello" component={Hello} />
-                        <Route exact path="/hello" render={() => <Hello message={"There"} />} />
+                        <Route exact path="/home" component={Home} />
+                        <Route exact path="/add" component={Add} />
+                        <Route exact path="/edit" component={Edit} />
                         <Route exact path="/url/:num" component={Url} />
                         <Route exact path="/counter" component={Counter} />
                         <Route exact path="/globalcounter" render={() => <GlobalCounter getNum={this.getNum} setNum={this.setNum} />} />
@@ -61,11 +66,11 @@ export class App extends React.Component<AppProps> {
                         <Route exact path="/twoway" component={TwoWay} />
                     </Switch>
                     <div>
-                        &copy; 2021
-                    </div>
-                    <div>
+
                         &copy; 2021 &mdash; The global counter value is {this.state.num}
                     </div>
+                      <div id="app"></div>
+
                 </div>
             </Router>
         );
