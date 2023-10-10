@@ -39,7 +39,7 @@ export class Net extends React.Component {
     }
 
     /** This render method will do some conditional rendering */
-    render() {
+    render () { 
         if (this.state.waiting)
             return <div>Loading...</div>;
         else if (this.state.error !== "")

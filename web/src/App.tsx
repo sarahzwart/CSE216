@@ -1,11 +1,11 @@
 import * as React from "react";
 import { HashRouter as Router, Route, Link, Switch } from 'react-router-dom';
-import { Hello } from "./Hello";
-import {Url} from "./Url";
-import {Counter} from "./Counter";
-import {GlobalCounter} from "./GlobalCounter";
-import {Net} from "./Net";
-import {TwoWay} from "./TwoWay";
+import { Hello } from "./Tutorial-Features/Hello";
+import {Url} from "./Tutorial-Features/Url";
+import {Counter} from "./Tutorial-Features/Counter";
+import {GlobalCounter} from "./Tutorial-Features/GlobalCounter";
+import {Net} from "./Tutorial-Features/Net";
+import {TwoWay} from "./Tutorial-Features/TwoWay";
 import {Home} from "./Test-Features/Home";
 import {Add} from "./Test-Features/Add";
 import {Edit} from "./Test-Features/Edit";
