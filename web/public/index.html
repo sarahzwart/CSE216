@@ -1,14 +1,30 @@
-<!DOCTYPE html>
+<!DOCTYPE html />
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Example TypesScript React App</title>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THE WEB-FRONTEND</title>
 </head>
-
 <body>
   <div id="app"></div>
+  <app-root></app-root>
+
 </body>
+
+<script>
+function changeText() {
+    document.getElementById("demo").innerHTML = "Greetings, planet!";
+}
+
+window.addEventListener('load', function() {
+    // your code here
+    fetch('/messages')
+        .then(response => response.json()) // could use .then(response => response.text())
+        // .then(json => console.log(json))  // could use .then(text => console.log(text));
+        .then(json => document.getElementById("demo").innerHTML = "The data is " + JSON.stringify(json))        
+        .catch(error => console.error(error));
+});
+</script>
 
 </html>
