@@ -11,9 +11,9 @@ import {Add_Edit} from "./Test-Features/Add_Edit";
 
 
 /** App has one property: a number */
-type AppProps = { num: number }
+type App2Props = { num: number }
 
-export class App extends React.Component<AppProps> {
+export class App2 extends React.Component<App2Props> {
     /** The global state for this component is a counter */
     state = { num: 0 };
 
