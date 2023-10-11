@@ -10,22 +10,22 @@
 TARGETFOLDER=../backend/src/main/resources
 
 # This is the folder that we used with the Spark.staticFileLocation command
-WEBFOLDERNAME=web
+WEBFOLDERNAME=build
 
 # step 1: make sure we have someplace to put everything.  We will delete the
 #         old folder tree, and then make it from scratch
 echo "deleting $TARGETFOLDER and creating an empty $TARGETFOLDER/$WEBFOLDERNAME"
 rm -rf $TARGETFOLDER
 mkdir $TARGETFOLDER
-mkdir $TARGETFOLDER/$WEBFOLDERNAME
+mkdir $WEBFOLDERNAME $TARGETFOLDER/$WEBFOLDERNAME
 
 # there are many more steps to be done.  For now, we will just copy an HTML file
-echo "copying index_simple.html to $TARGETFOLDER/$WEBFOLDERNAME/index.html"
-cp index_simple.html $TARGETFOLDER/$WEBFOLDERNAME/index.html
+echo "$WEBFOLDERNAME to $TARGETFOLDER"
+cp -r $WEBFOLDERNAME $TARGETFOLDER
 
 # step 2: update our npm dependencies
-echo "updating npm dependencies"
-npm update
+#echo "updating npm dependencies"
+#npm update
 
 # step 3: copy javascript and other files from src folder
 echo "Copying source files to $TARGETFOLDER/$WEBFOLDERNAME"
