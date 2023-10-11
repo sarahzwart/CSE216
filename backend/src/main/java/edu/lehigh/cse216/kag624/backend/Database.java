@@ -43,9 +43,9 @@ public class Database {
     private PreparedStatement mInsertOne;
 
     /**
-     * A prepared statement for updating a single row in the database
+     * A prepared statement for add a like to a post
      */
-    private PreparedStatement mUpdateOne;
+    private PreparedStatement mInsertLike;
 
     /**
      * A prepared statement for creating the table in our database
@@ -122,16 +122,16 @@ public class Database {
             // creation/deletion, so multiple executions will cause an exception
             db.mCreateTable = db.mConnection.prepareStatement(
                     "CREATE TABLE tblData (id SERIAL PRIMARY KEY, subject VARCHAR(50) "
-                    + "NOT NULL, message VARCHAR(500) NOT NULL)");
+                    + "NOT NULL, message VARCHAR(500) NOT NULL), likes INTEGER NOT NULL");
             db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
 
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
+            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData VALUES (default, ?, ?, 0)");
             db.mDeleteLike = db.mConnection.prepareStatement("UPDATE tblData SET likes = likes-1 WHERE id = ?");
-            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData VALUES (default, ?, ?)");
-            db.mSelectAll = db.mConnection.prepareStatement("SELECT id, subject FROM tblData");
+            db.mInsertLike = db.mConnection.prepareStatement("UPDATE tblData SET likes = likes+1 WHERE id = ?");
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * from tblData WHERE id=?");
-            db.mUpdateOne = db.mConnection.prepareStatement("UPDATE tblData SET message = ? WHERE id = ?");
+            db.mSelectAll = db.mConnection.prepareStatement("SELECT id, subject FROM tblData");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -287,19 +287,17 @@ public class Database {
     }
 
     /**
-     * Update the message for a row in the database
+     * Update the likes on a message for a row in the database
      * 
      * @param id The id of the row to update
-     * @param message The new message contents
      * 
      * @return The number of rows that were updated.  -1 indicates an error.
      */
-    int updateOne(int id, String message) {
+    int insertLike(int id, String message) {
         int res = -1;
         try {
-            mUpdateOne.setString(1, message);
-            mUpdateOne.setInt(2, id);
-            res = mUpdateOne.executeUpdate();
+            mInsertLike.setInt(1, id);
+            res = mInsertLike.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }

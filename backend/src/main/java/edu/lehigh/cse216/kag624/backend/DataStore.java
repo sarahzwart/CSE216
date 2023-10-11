@@ -84,7 +84,22 @@ public class DataStore {
         return data;
     }
 
-        /**
+    /**
+     * Return number of likes on a message
+     * @param id
+     * @return int likes
+     */
+    public synchronized int readLikes(int id){
+        if (id >= mRows.size())
+            return -1;
+        DataRow data = mRows.get(id);
+        if (data == null)
+            return -1;
+        int likes = data.mLikes;
+        return likes;
+    }
+
+    /**
      * Update the number of likes of a row in the DataStore
      *
      * @param id The Id of the row to update
@@ -127,17 +142,17 @@ public class DataStore {
      * @param id The Id of the row to delete a like from
      * @return true if the like was deleted, false otherwise
      */
-    public synchronized boolean deleteLike(int id) {
+    public synchronized DataRow deleteLike(int id) {
         // Deletion fails for an invalid Id or an Id that has already been 
         // deleted
         if (id >= mRows.size())
-            return false;
+            return null;
         if (mRows.get(id) == null)
-            return false;
+            return null;
         // Delete by setting to null, so that any Ids used by other clients
         // still refer to the same positions in the ArrayList.
-        DataRow row = mRows.get(id);
-        row.mLikes -= 1;
-        return true;
+        DataRow data = mRows.get(id);
+        data.mLikes = data.mLikes - 1;
+        return new DataRow(data);
     }
 }
