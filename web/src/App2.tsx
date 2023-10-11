@@ -7,7 +7,7 @@ import {GlobalCounter} from "./Tutorial-Features/GlobalCounter";
 import {Net} from "./Tutorial-Features/Net";
 import {TwoWay} from "./Tutorial-Features/TwoWay";
 import {Home} from "./Test-Features/Home";
-import {Add_Edit} from "./Test-Features/Add_Edit";
+/**import {Add_Edit} from "./Test-Features/Add_Edit";
 
 
 /** App has one property: a number */
@@ -37,8 +37,6 @@ export class App2 extends React.Component<App2Props> {
                     <nav>
                         <Link to="/home">Home</Link>
                         &nbsp;|&nbsp;
-                        <Link to="/Add_Edit">Add_Edit</Link>
-                        &nbsp;|&nbsp;
                         <Link to="/url/1">Url (1)</Link>
                         &nbsp;|&nbsp;
                         <Link to="/url/2">Url (2)</Link>
@@ -53,7 +51,6 @@ export class App2 extends React.Component<App2Props> {
                     </nav>
                     <Switch>
                         <Route exact path="/home" component={Home} />
-                        <Route exact path="/Add_Edit" component={Add_Edit} />
                         <Route exact path="/url/:num" component={Url} />
                         <Route exact path="/counter" component={Counter} />
                         <Route exact path="/globalcounter" render={() => <GlobalCounter getNum={this.getNum} setNum={this.setNum} />} />
