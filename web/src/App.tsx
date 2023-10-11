@@ -7,9 +7,7 @@ import {GlobalCounter} from "./Tutorial-Features/GlobalCounter";
 import {Net} from "./Tutorial-Features/Net";
 import {TwoWay} from "./Tutorial-Features/TwoWay";
 import {Home} from "./Test-Features/Home";
-import {Add} from "./Test-Features/Add";
-import {Edit} from "./Test-Features/Edit";
-
+import {Add_Edit} from "./Test-Features/Add_Edit";
 
 
 /** App has one property: a number */
@@ -39,9 +37,7 @@ export class App extends React.Component<AppProps> {
                     <nav>
                         <Link to="/home">Home</Link>
                         &nbsp;|&nbsp;
-                        <Link to="/add">Add</Link>
-                        &nbsp;|&nbsp;
-                        <Link to="/edit">Edit</Link>
+                        <Link to="/Add_Edit">Add_Edit</Link>
                         &nbsp;|&nbsp;
                         <Link to="/url/1">Url (1)</Link>
                         &nbsp;|&nbsp;
@@ -57,8 +53,7 @@ export class App extends React.Component<AppProps> {
                     </nav>
                     <Switch>
                         <Route exact path="/home" component={Home} />
-                        <Route exact path="/add" component={Add} />
-                        <Route exact path="/edit" component={Edit} />
+                        <Route exact path="/Add_Edit" component={Add_Edit} />
                         <Route exact path="/url/:num" component={Url} />
                         <Route exact path="/counter" component={Counter} />
                         <Route exact path="/globalcounter" render={() => <GlobalCounter getNum={this.getNum} setNum={this.setNum} />} />
@@ -66,10 +61,8 @@ export class App extends React.Component<AppProps> {
                         <Route exact path="/twoway" component={TwoWay} />
                     </Switch>
                     <div>
-
                         &copy; 2021 &mdash; The global counter value is {this.state.num}
                     </div>
-                      <div id="app"></div>
 
                 </div>
             </Router>

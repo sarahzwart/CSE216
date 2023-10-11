@@ -21,5 +21,13 @@ export class Home extends React.Component<HomeProps> {
      * The render function will return a JSX element.  In the jsx, we use the
      * "{}" syntax to read fields of the Hello class, using "one-way" binding.
      */
-    render() { return <h1>Welcome to the {this.props.message}page</h1>; }
+    render() { return (
+                    <>
+                        <h1>Welcome to the {this.props.message}page</h1>
+                        <h4>This is the webpage</h4>
+                        <p>Hows it hanging there bucko</p>
+                        <p>Welcome to Margarittaville</p>
+                    </>
+            ); 
+    }
 }
