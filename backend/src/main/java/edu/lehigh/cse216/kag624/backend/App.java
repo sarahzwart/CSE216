@@ -97,7 +97,7 @@ public class App {
             SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
             // ensure status 200 OK, with a MIME type of JSON
             // NB: even on error, we return 200, but with a JSON object that
-            //     describes the error.
+            // describes the error.
             response.status(200);
             response.type("application/json");
             // NB: createEntry checks for null title and message
@@ -109,8 +109,7 @@ public class App {
             }
         });
 
-                // PUT route for updating a row in the DataStore.  This is almost 
-        // exactly the same as POST
+        //  PUT route for adding a like to a message
         Spark.put("/messages/:id", (request, response) -> {
             // If we can't get an ID or can't parse the JSON, Spark will send
             // a status 500
@@ -119,7 +118,8 @@ public class App {
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
-            DataRow result = dataStore.updateOne(idx, req.mTitle, req.mMessage);
+            // NB: updateLikes checks for null ids
+            DataRow result = dataStore.updateLikes(idx);
             if (result == null) {
                 return gson.toJson(new StructuredResponse("error", "unable to update row " + idx, null));
             } else {
@@ -139,6 +139,23 @@ public class App {
             boolean result = dataStore.deleteOne(idx);
             if (!result) {
                 return gson.toJson(new StructuredResponse("error", "unable to delete row " + idx, null));
+            } else {
+                return gson.toJson(new StructuredResponse("ok", null, null));
+            }
+        });
+
+        // Put route for removing a like from the DataStore
+        Spark.put("/messages/:id", (request, response) -> {
+            // If we can't get an ID, Spark will send a status 500
+            int idx = Integer.parseInt(request.params("id"));
+            // ensure status 200 OK, with a MIME type of JSON
+            response.status(200);
+            response.type("application/json");
+            // NB: we won't concern ourselves too much with the quality of the 
+            //     message sent on a successful delete
+            DataRow result = dataStore.deleteLike(idx);
+            if (result == null) {
+                return gson.toJson(new StructuredResponse("error", "unable to remove like from " + idx, null));
             } else {
                 return gson.toJson(new StructuredResponse("ok", null, null));
             }
