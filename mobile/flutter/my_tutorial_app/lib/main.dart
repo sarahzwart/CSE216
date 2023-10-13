@@ -1,9 +1,8 @@
+
 import 'package:flutter/material.dart';
-import 'package:english_words/english_words.dart';
 import 'dart:developer' as developer;
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import './net/webRequests.dart';
 const String backendURL = 'team-margaritavillians.dokku.cse.lehigh.edu';
 
 void main() {
@@ -210,10 +209,36 @@ Future<List<Message>> getMessageData() async {
 Future<void> addMessage(String messageText) async{
   final response = await http.post(
     Uri.parse(backendURL),
-
-  )
-//Error handling 
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({
+      'text': messageText,
+      'likes': 0,
+      'isLiked': false,
+    }),
+  );
+  //Error handling
+  if(response.statusCode !=200){
+    throw Exception (
+      'Failed to add new message'
+    );
+  } 
 }
+
+Future<void> toggleLike(Message message) async {
+  final response = await http.put(
+    Uri.parse(backendURL),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({
+      'isLiked': message.isLiked,
+    }),
+  );
+  if(response.statusCode !=200){
+    throw Exception (
+      'Failed to add new message'
+    );
+  } 
+}
+
 
 //Put a like
 
