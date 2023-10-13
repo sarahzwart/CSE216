@@ -194,25 +194,27 @@ Future<List<Message>> getMessageData() async {
     final List<Message> messages = jsonMessages.map((json) {
       return Message(
         json['text'],
-        json['likes']
+        json['likes'],
+        false, // 'isLiked is initially set to false becuase the user hasnt liked it yet
       );
     }).toList();
-    print('json decode: $res');
     return messages;
-  /*
-    if (res is List) {
-      returnData = (res as List<dynamic>).map((x) => x.toString()).toList();
-    } else if (res is Map) {
-      returnData = <String>[(res as Map<String, dynamic>).toString()];
-    } else {
-      developer
-          .log('ERROR: Unexpected json response type (was not a List or Map).');
-      returnData = List.empty();
-    }*/
   } else {
     throw Exception(
         'Failed to retrieve web data (server returned ${response.statusCode})');
   }
 }
+
+//Post a message
+
+Future<void> addMessage(String messageText) async{
+  final response = await http.post(
+    Uri.parse(backendURL),
+
+  )
+//Error handling 
+}
+
+//Put a like
 
 //Put a toggle like and add message button 
