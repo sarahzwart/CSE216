@@ -61,6 +61,8 @@ class _MessageAppState extends State<MyApp> {
                 itemBuilder: (BuildContext context, int index) {
                   return MessageTile(
                     message: messages[index],
+                      //https://dart.dev/codelabs/async-await
+                     //this is always asynchronous because the user can like or unlike a message
                     onLike: () async {
                       final message = messages[index];
                       // Increment the likes for the message
@@ -174,7 +176,10 @@ class _MessageInputState extends State<MessageInput> {
     );
   }
 }
-
+//Resources:
+//https://docs.flutter.dev/cookbook/networking/fetch-data
+//https://www.woolha.com/tutorials/dart-create-http-request-examples
+//https://stackoverflow.com/questions/70839460/http-requests-with-dart
 // GET Request to retrieve the messages
 Future<List<Message>> getMessageData() async {
   developer.log('Making web request...');
@@ -206,6 +211,7 @@ Future<List<Message>> getMessageData() async {
 
 //Post a message
 
+
 Future<void> addMessage(String messageText) async{
   final response = await http.post(
     Uri.parse(backendURL),
@@ -224,6 +230,7 @@ Future<void> addMessage(String messageText) async{
   } 
 }
 
+//Put Like
 Future<void> toggleLike(Message message) async {
   final response = await http.put(
     Uri.parse(backendURL),
