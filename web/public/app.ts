@@ -150,7 +150,7 @@ class ElementList {
         // make the AJAX post and output value or error message to console
         doAjax().then(console.log).catch(console.log);
     }
-
+    //messagesList
     private update(data: any) {
         let elem_messageList = document.getElementById("messageList");
 
@@ -166,8 +166,10 @@ class ElementList {
                 let td_id = document.createElement('td');
                 td_title.innerHTML = data.mData[i].mTitle;
                 td_id.innerHTML = data.mData[i].mId;
+                //Here show the id and title
                 tr.appendChild(td_id);
                 tr.appendChild(td_title);
+                //Here attach buttons to each thing in messageList
                 tr.appendChild( this.buttons(data.mData[i].mId) );
                 table.appendChild(tr);
             }
@@ -186,6 +188,13 @@ class ElementList {
         for (let i = 0; i < all_editbtns.length; ++i) {
             all_editbtns[i].addEventListener("click", (e) => {mainList.clickEdit( e );});
         }   
+        // Find all of the edit buttons, and set their behavior 
+        
+        const all_likebtns = (<HTMLCollectionOf<HTMLInputElement>>document.getElementsByClassName("likebtn"));
+        for (let i = 0; i < all_likebtns.length; ++i) {
+            all_likebtns[i].addEventListener("click", (e) => {mainList.clickLike( e );});
+        }   
+        
     }
     /**
      * clickDelete is the code we run in response to a click of a delete button
@@ -259,6 +268,39 @@ class ElementList {
         doAjax().then(console.log).catch(console.log);
     }
     /**
+     * clickLike is the code we run in response to a click of a delete button
+     */
+    private clickLike(e: Event) {
+        // as in clickLike, we need the ID of the row
+        const id = (<HTMLElement>e.target).getAttribute("data-value");
+
+        // Issue an AJAX GET and then pass the result to editEntryForm.init()
+        const doAjax = async () => {
+            await fetch(`${backendUrl}/messages/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8'
+                }
+            }).then( (response) => {
+                if (response.ok) {
+                    return Promise.resolve( response.json() );
+                }
+                else{
+                    window.alert(`The server replied not ok: ${response.status}\n` + response.statusText);
+                }
+                return Promise.reject(response);
+            }).then( (data) => {
+                editEntryForm.init(data);
+                console.log(data);
+            }).catch( (error) => {
+                console.warn('Something went wrong.', error);
+                window.alert("Unspecified error");
+            });
+        }
+        // make the AJAX post and output value or error message to console
+        doAjax().then(console.log).catch(console.log);
+    }
+    /**
      * buttons() adds a 'delete' button and an 'edit' button to the HTML for each row
      */
     private buttons(id: string): DocumentFragment {
@@ -267,6 +309,7 @@ class ElementList {
 
         // create edit button, add to new td, add td to returned fragment
         let btn = document.createElement('button');
+
         btn.classList.add("editbtn");
         btn.setAttribute('data-value', id);
         btn.innerHTML = 'Edit';
@@ -282,6 +325,15 @@ class ElementList {
         td.appendChild(btn);
         fragment.appendChild(td);
 
+        td = document.createElement('td');
+        btn = document.createElement('button');
+        btn.classList.add("likebtn");
+        btn.setAttribute('data-value', id);
+        btn.innerHTML = 'Put';
+        td.appendChild(btn);
+        fragment.appendChild(td);
+
+        // create like button, add to new td, add td to returned fragment
         return fragment;
     }
 } // end class ElementList
@@ -299,6 +351,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // set up initial UI state
     (<HTMLElement>document.getElementById("editElement")).style.display = "none";
     (<HTMLElement>document.getElementById("addElement")).style.display = "none";
+    
+    //(<HTMLElement>document.getElementById("likeElement")).style.display = "none";
+    
     (<HTMLElement>document.getElementById("showElements")).style.display = "block";
     // set up the "Add Message" button
     document.getElementById("showFormButton")?.addEventListener("click", (e) => {
@@ -321,6 +376,7 @@ class EditEntryForm {
     constructor() {
         document.getElementById("editCancel")?.addEventListener("click", (e) => {editEntryForm.clearForm();});
         document.getElementById("editButton")?.addEventListener("click", (e) => {editEntryForm.submitForm();});
+        document.getElementById("likeButton")?.addEventListener("click", (e) => {editEntryForm.submitForm();});
     }
 
     /**
