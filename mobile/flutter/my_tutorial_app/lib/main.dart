@@ -4,11 +4,13 @@ import 'dart:developer' as developer;
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import './net/webRequests.dart';
+const String backendURL = 'team-margaritavillians.dokku.cse.lehigh.edu';
 
 void main() {
   runApp(MyApp());
 }
 
+//Each messages has a text, a boolean of whether it is liked by the current user and likes
 class Message {
   String text; //the message
   bool isLiked; //if it is liked by the user
@@ -37,8 +39,8 @@ class _MessageAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
+    return MaterialApp( //Provides basic app structure
+      home: Scaffold( //represents the overall structure of the app
         appBar: AppBar(
           title: const Text(
             'Anonymous Posts',
@@ -54,6 +56,7 @@ class _MessageAppState extends State<MyApp> {
         body: Column(
           children: [
             Expanded(
+              //Displays the list of messages
               child: ListView.builder(
                 itemCount: messages.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -173,17 +176,12 @@ class _MessageInputState extends State<MessageInput> {
   }
 }
 
-
-Future<List<String>> getWebData() async {
+// GET Request to retrieve the messages
+Future<List<Message>> getMessageData() async {
   developer.log('Making web request...');
-  // var url = Uri.http('www.cse.lehigh.edu', '~spear/courses.json');
-  // var url = Uri.parse('http://www.cse.lehigh.edu/~spear/courses.json'); // list of strings
-  var url =
-      Uri.parse('http://www.cse.lehigh.edu/~spear/5k.json'); // list of maps
-  // var url = Uri.parse('https://jsonplaceholder.typicode.com/albums/1'); // single map
   var headers = {"Accept": "application/json"}; // <String,String>{};
 
-  var response = await http.get(url, headers: headers);
+  var response = await http.get(Uri.parse(backendURL));
 
   developer.log('Response status: ${response.statusCode}');
   developer.log('Response headers: ${response.headers}');
@@ -192,9 +190,16 @@ Future<List<String>> getWebData() async {
   final List<String> returnData;
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response, then parse the JSON.
-    var res = jsonDecode(response.body);
+    final List<dynamic> jsonMessages = jsonDecode(response.body);
+    final List<Message> messages = jsonMessages.map((json) {
+      return Message(
+        json['text'],
+        json['likes']
+      );
+    }).toList();
     print('json decode: $res');
-
+    return messages;
+  /*
     if (res is List) {
       returnData = (res as List<dynamic>).map((x) => x.toString()).toList();
     } else if (res is Map) {
@@ -203,11 +208,11 @@ Future<List<String>> getWebData() async {
       developer
           .log('ERROR: Unexpected json response type (was not a List or Map).');
       returnData = List.empty();
-    }
+    }*/
   } else {
     throw Exception(
         'Failed to retrieve web data (server returned ${response.statusCode})');
   }
-
-  return returnData;
 }
+
+//Put a toggle like and add message button 
