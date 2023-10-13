@@ -79,11 +79,13 @@ class _MessageAppState extends State<MyApp> {
                 },
               ),
             ),
+            // Add a new message to the list
             MessageInput(onMessageAdded: (messageText) {
-              // Add a new message to the list
-              final newMessage = Message(messageText, 0, false);
+              //Create a new message with likes equal to 0, and isLiked = false
+              final newMessage = Message(messageText, 0, false); 
+              //Updating the widgets state when adding a new message
               setState(() {
-                messages.add(newMessage);
+                messages.add(newMessage); //add to the list
               });
             }),
           ],
