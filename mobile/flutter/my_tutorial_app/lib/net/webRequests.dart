@@ -2,12 +2,11 @@
  import 'package:http/http.dart' as http;
  import 'dart:developer' as developer;
 import 'dart:convert';
-const String backendURL = 'team-margaritavillians.dokku.cse.lehigh.edu';
 
 Future<List<Message>> getWebData() async {
   developer.log("Making Web Request");
   final response = await http
-      .get(Uri.parse(backendURL));
+      .get(Uri.parse("team-margaritavillians.dokku.cse.lehigh.edu"));
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response, then parse the JSON.
     List<Message> returnData = [];
@@ -48,7 +47,7 @@ Future<void> addMessage(String messageText) async{
   );
 
   final response = await http.post(
-    Uri.parse(backendURL),
+    Uri.parse('team-margaritavillians.dokku.cse.lehigh.edu'),
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode(newMessage.toJson()),
   );
@@ -64,11 +63,11 @@ Future<void> addMessage(String messageText) async{
 Future<void> toggleLike(Message message) async {
   final updatedMessage = Message(
     text: message.text, // Copy text from the original message
-    likes: message.likes, // Copy likes from the original message
+    likes: message.likes + (message.isLiked ? -1 : 1), // Copy likes from the original message
     isLiked: !message.isLiked, // Toggle the isLiked state
   );
   final response = await http.put(
-    Uri.parse(backendURL),
+    Uri.parse('team-margaritavillians.dokku.cse.lehigh.edu'),
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode(updatedMessage.toJson()), // Convert updatedMessage to JSON
   );

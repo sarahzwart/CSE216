@@ -1,4 +1,4 @@
-
+import '../net/webRequests.dart';
 import 'package:flutter/material.dart';
 import '../models/Message.dart';
 const String backendURL = 'team-margaritavillians.dokku.cse.lehigh.edu';
@@ -6,7 +6,6 @@ const String backendURL = 'team-margaritavillians.dokku.cse.lehigh.edu';
 void main() {
   runApp(MyApp());
 }
-
 /*
 Stateful Widgets can maintain and update their internal state.
 They are used when you need to create interactive UI elements that change 
@@ -24,6 +23,29 @@ class _MessageAppState extends State<MyApp> {
   final List<Message> messages = [];
   bool userIsLoggedIn = true;
   //URL of Backend
+  @override
+  void initState() {
+    super.initState();
+    retrieveMessages(); // Retrieve messages when the app starts
+  }
+
+  void retrieveMessages() async {
+    final fetchedMessages = await getWebData();
+    setState(() {
+      messages.clear();
+      messages.addAll(fetchedMessages);
+    });
+  }
+
+  void addNewMessage(String messageText) async {
+    await addMessage(messageText);
+    retrieveMessages();
+  }
+
+  void toggleMessageLike(Message message) async {
+    await toggleLike(message);
+    retrieveMessages();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,33 +76,14 @@ class _MessageAppState extends State<MyApp> {
                      //this is always asynchronous because the user can like or unlike a message
                     onLike: () async {
                       final message = messages[index];
-                      // Increment the likes for the message
-                      setState(() {
-                        message.isLiked = !message.isLiked;
-                        if (messages[index].isLiked) {
-                          messages[index].likes++;
-                        } else {
-                          messages[index].likes--;
-                        }
-                      });
-                    }
+                      toggleMessageLike(message);
+                    },
                   );
                 },
               ),
             ),
             // Add a new message to the list
-            MessageInput(onMessageAdded: (messageText) {
-              //Create a new message with likes equal to 0, and isLiked = false
-              final newMessage = Message(
-                text: messageText, 
-                likes: 0, 
-                isLiked: false
-              ); 
-              //Updating the widgets state when adding a new message
-              setState(() {
-                messages.add(newMessage); //add to the list
-              });
-            }),
+            MessageInput(onMessageAdded: addNewMessage),
           ],
         ),
       ),
