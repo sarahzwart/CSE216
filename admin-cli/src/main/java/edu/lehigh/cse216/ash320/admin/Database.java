@@ -80,7 +80,7 @@ public class Database {
         String mMessage;
 
         /**
-         * Stores number of likes a post got
+         * Stores number of likes a post has
          */
         int mLikes;
 
@@ -91,7 +91,7 @@ public class Database {
             mId = id;
             mSubject = subject;
             mMessage = message;
-            mLikes=likes;
+            mLikes=likes; //Set likes added to a rowData constructor
         }
     }
 
@@ -142,16 +142,16 @@ public class Database {
             // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table 
             // creation/deletion, so multiple executions will cause an exception
             db.mCreateTable = db.mConnection.prepareStatement(
-                    "CREATE TABLE tblData (id SERIAL PRIMARY KEY, subject VARCHAR(50) NOT NULL, message VARCHAR(2048) NOT NULL, likes int)");
+                    "CREATE TABLE tblData (id SERIAL PRIMARY KEY, subject VARCHAR(50) NOT NULL, message VARCHAR(2048) NOT NULL, likes int)"); //messages limited to 2048 characters and likes added as a table factor
             db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
 
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
-            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData (id, subject, message, likes) VALUES (DEFAULT, ?, ?, ?)");
+            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData (id, subject, message, likes) VALUES (DEFAULT, ?, ?, ?)"); //prepared statement altered to inclues likes
             db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM tblData");
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * FROM tblData WHERE id=?");
             db.mUpdateOne = db.mConnection.prepareStatement("UPDATE tblData SET message = ? WHERE id = ?");
-            db.mLikeOne = db.mConnection.prepareStatement("UPDATE tblData SET likes = ? WHERE id = ?");
+            db.mLikeOne = db.mConnection.prepareStatement("UPDATE tblData SET likes = ? WHERE id = ?"); //New prepared statement to increment likes
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -170,13 +170,13 @@ public class Database {
      * @return True if the connection was cleanly closed, false otherwise
      */
     boolean disconnect() {
-        if (mConnection == null) {
+        if (mConnection == null) { //No connection exists
             System.err.println("Unable to close connection: Connection was null");
             return false;
         }
         try {
             mConnection.close();
-        } catch (SQLException e) {
+        } catch (SQLException e) { //SQL exception
             System.err.println("Error: Connection.close() threw a SQLException");
             e.printStackTrace();
             mConnection = null;
@@ -199,7 +199,7 @@ public class Database {
         try {
             mInsertOne.setString(1, subject);
             mInsertOne.setString(2, message);
-            mInsertOne.setInt(3, 0);
+            mInsertOne.setInt(3, 0); //sets initial like count of a post to 0
             count += mInsertOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -309,15 +309,20 @@ public class Database {
         }
     }
 
+    /**
+     * increments likes for on a post based on the ID of it
+     * @param id
+     */
     void likePost(int id){
-        try {
-        ResultSet currData = mSelectOne.executeQuery();
-        currData.next();
-        int likes = currData.getInt("likes");
-        mLikeOne.setInt(1, likes+1);
+        try { 
+        ResultSet currData = mSelectOne.executeQuery(); 
+        currData.next(); //go to next data point (this is the one you want to be on)
+        int likes = currData.getInt("likes"); //current number of likes
+        //sets parameters
+        mLikeOne.setInt(1, likes+1); 
         mLikeOne.setInt(2, id);
-        mLikeOne.execute();
-        } catch (SQLException e) {
+        mLikeOne.execute(); //executes incrementations 
+        } catch (SQLException e) { //catch SQL error
             e.printStackTrace();
         }
     }

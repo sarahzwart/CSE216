@@ -73,10 +73,6 @@ public class App {
         try {
             System.out.print(message + " :> ");
             s = in.readLine();
-            if(!charLimit(s)){ //ensures input is within constraints
-                System.out.println("Please try again");
-                s=in.readLine();
-            }
         } catch (IOException e) {
             e.printStackTrace();
             return "";
@@ -133,15 +129,15 @@ public class App {
             // NB: for better testability, each action should be a separate
             //     function call
             char action = prompt(in);
-            if (action == '?') {
+            if (action == '?') { //Show table
                 menu();
-            } else if (action == 'q') {
+            } else if (action == 'q') { //Quit app
                 break;
-            } else if (action == 'T') {
+            } else if (action == 'T') {//Create a table
                 db.createTable();
-            } else if (action == 'D') {
+            } else if (action == 'D') {//Drop a table
                 db.dropTable();
-            } else if(action == 'L'){
+            } else if(action == 'L'){ //Like a specific post
                 int id = getInt(in, "Enter the row ID");
                 if (id == -1)
                     continue;
@@ -149,29 +145,29 @@ public class App {
                 if (res != null) {
                     db.likePost(id);
                 }
-            } else if (action == '1') {
+            } else if (action == '1') {//get all information for one post
                 int id = getInt(in, "Enter the row ID");
                 if (id == -1)
                     continue;
                 Database.RowData res = db.selectOne(id);
                 if (res != null) {
-                    System.out.println("  [" + res.mId + "] " + res.mSubject);
-                    System.out.println("  --> " + res.mMessage);
-                    System.out.println("   -->" +res.mLikes + " Likes");
+                    System.out.println("  [" + res.mId + "] " + res.mSubject); //outputs subject
+                    System.out.println("  --> " + res.mMessage); //outputs full message
+                    System.out.println("   -->" +res.mLikes + " Likes"); //outputs current number of likes
                 }
                 else{
                     System.out.println("No such index exists");
                 }
-            } else if (action == '*') {
+            } else if (action == '*') { //Gets subject and ID for each post in the database
                 ArrayList<Database.RowData> res = db.selectAll();
                 if (res == null)
                     continue;
                 System.out.println("  Current Database Contents");
                 System.out.println("  -------------------------");
-                for (Database.RowData rd : res) {
+                for (Database.RowData rd : res) { //Loops through through and prints all posts 
                     System.out.println("  [" + rd.mId + "] " + rd.mSubject);
                 }
-            } else if (action == '-') {
+            } else if (action == '-') { //Deletes a post based on its ID
                 int id = getInt(in, "Enter the row ID");
                 if (id == -1)
                     continue;
@@ -181,14 +177,14 @@ public class App {
                     continue;
                 } 
                 System.out.println("  " + res + " rows deleted");
-            } else if (action == '+') {
+            } else if (action == '+') { //Adds a new post to the database 
                 String subject = getString(in, "Enter the subject");
                 String message = getString(in, "Enter the message");
                 if (subject.equals("") || message.equals(""))
                     continue;
                 int res = db.insertRow(subject, message);
                 System.out.println(res + " rows added");
-            } else if (action == '~') {
+            } else if (action == '~') { //edits the message of a post based on its ID
                 int id = getInt(in, "Enter the row ID :> ");
                 if (id == -1)
                     continue;
@@ -201,18 +197,6 @@ public class App {
         }
         // Always remember to disconnect from the database when the program 
         // exits
-        db.disconnect();
-    }
-    /**
-     * Limits the numer of characters allowed in a post
-     * @param statement
-     * @return
-     */
-     static boolean charLimit(String statement){
-        if(statement.length() >2048){
-            System.out.println("Input exceeds 2048 character limit");
-            return false;
-        }
-        return true;
+        db.disconnect(); //Quits app
     }
 }
