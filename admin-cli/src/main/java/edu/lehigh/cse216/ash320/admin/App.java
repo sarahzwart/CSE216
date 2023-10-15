@@ -157,6 +157,7 @@ public class App {
                 if (res != null) {
                     System.out.println("  [" + res.mId + "] " + res.mSubject);
                     System.out.println("  --> " + res.mMessage);
+                    System.out.println("   -->" +res.mLikes + " Likes");
                 }
                 else{
                     System.out.println("No such index exists");

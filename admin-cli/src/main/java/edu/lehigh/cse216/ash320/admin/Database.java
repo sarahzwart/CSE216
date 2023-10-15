@@ -314,9 +314,9 @@ public class Database {
         ResultSet currData = mSelectOne.executeQuery();
         currData.next();
         int likes = currData.getInt("likes");
-            mLikeOne.setInt(1, likes+1);
-            mLikeOne.setInt(2, id);
-            mLikeOne.execute();
+        mLikeOne.setInt(1, likes+1);
+        mLikeOne.setInt(2, id);
+        mLikeOne.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
