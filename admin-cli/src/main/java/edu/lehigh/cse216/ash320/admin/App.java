@@ -158,6 +158,9 @@ public class App {
                     System.out.println("  [" + res.mId + "] " + res.mSubject);
                     System.out.println("  --> " + res.mMessage);
                 }
+                else{
+                    System.out.println("No such index exists");
+                }
             } else if (action == '*') {
                 ArrayList<Database.RowData> res = db.selectAll();
                 if (res == null)
@@ -172,8 +175,10 @@ public class App {
                 if (id == -1)
                     continue;
                 int res = db.deleteRow(id);
-                if (res == -1)
+                if (res == -1){
+                    System.out.println("No such index exists");
                     continue;
+                } 
                 System.out.println("  " + res + " rows deleted");
             } else if (action == '+') {
                 String subject = getString(in, "Enter the subject");
