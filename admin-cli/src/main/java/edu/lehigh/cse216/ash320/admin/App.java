@@ -1,5 +1,5 @@
 package edu.lehigh.cse216.ash320.admin;
-
+ 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -25,6 +25,7 @@ public class App {
         System.out.println("  [-] Delete a row");
         System.out.println("  [+] Insert a new row");
         System.out.println("  [~] Update a row");
+        System.out.println("  [L] Like a message");
         System.out.println("  [q] Quit Program");
         System.out.println("  [?] Help (this message)");
     }
@@ -38,7 +39,7 @@ public class App {
      */
     static char prompt(BufferedReader in) {
         // The valid actions:
-        String actions = "TD1*-+~q?";
+        String actions = "TD1L*-+~q?";
 
         // We repeat until a valid single-character option is selected        
         while (true) {
@@ -72,6 +73,10 @@ public class App {
         try {
             System.out.print(message + " :> ");
             s = in.readLine();
+            if(!charLimit(s)){ //ensures input is within constraints
+                System.out.println("Please try again");
+                s=in.readLine();
+            }
         } catch (IOException e) {
             e.printStackTrace();
             return "";
@@ -136,6 +141,14 @@ public class App {
                 db.createTable();
             } else if (action == 'D') {
                 db.dropTable();
+            } else if(action == 'L'){
+                int id = getInt(in, "Enter the row ID");
+                if (id == -1)
+                    continue;
+                Database.RowData res = db.selectOne(id);
+                if (res != null) {
+                    db.likePost(id);
+                }
             } else if (action == '1') {
                 int id = getInt(in, "Enter the row ID");
                 if (id == -1)
@@ -183,5 +196,17 @@ public class App {
         // Always remember to disconnect from the database when the program 
         // exits
         db.disconnect();
+    }
+    /**
+     * Limits the numer of characters allowed in a post
+     * @param statement
+     * @return
+     */
+     static boolean charLimit(String statement){
+        if(statement.length() >2048){
+            System.out.println("Input exceeds 2048 character limit");
+            return false;
+        }
+        return true;
     }
 }
