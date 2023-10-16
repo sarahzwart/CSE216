@@ -1,5 +1,5 @@
 package edu.lehigh.cse216.ash320.admin;
-
+ 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -25,6 +25,7 @@ public class App {
         System.out.println("  [-] Delete a row");
         System.out.println("  [+] Insert a new row");
         System.out.println("  [~] Update a row");
+        System.out.println("  [L] Like a message");
         System.out.println("  [q] Quit Program");
         System.out.println("  [?] Help (this message)");
     }
@@ -38,7 +39,7 @@ public class App {
      */
     static char prompt(BufferedReader in) {
         // The valid actions:
-        String actions = "TD1*-+~q?";
+        String actions = "TD1L*-+~q?";
 
         // We repeat until a valid single-character option is selected        
         while (true) {
@@ -128,48 +129,62 @@ public class App {
             // NB: for better testability, each action should be a separate
             //     function call
             char action = prompt(in);
-            if (action == '?') {
+            if (action == '?') { //Show table
                 menu();
-            } else if (action == 'q') {
+            } else if (action == 'q') { //Quit app
                 break;
-            } else if (action == 'T') {
+            } else if (action == 'T') {//Create a table
                 db.createTable();
-            } else if (action == 'D') {
+            } else if (action == 'D') {//Drop a table
                 db.dropTable();
-            } else if (action == '1') {
+            } else if(action == 'L'){ //Like a specific post
                 int id = getInt(in, "Enter the row ID");
                 if (id == -1)
                     continue;
                 Database.RowData res = db.selectOne(id);
                 if (res != null) {
-                    System.out.println("  [" + res.mId + "] " + res.mSubject);
-                    System.out.println("  --> " + res.mMessage);
+                    db.likePost(id);
                 }
-            } else if (action == '*') {
+            } else if (action == '1') {//get all information for one post
+                int id = getInt(in, "Enter the row ID");
+                if (id == -1)
+                    continue;
+                Database.RowData res = db.selectOne(id);
+                if (res != null) {
+                    System.out.println("  [" + res.mId + "] " + res.mSubject); //outputs subject
+                    System.out.println("  --> " + res.mMessage); //outputs full message
+                    System.out.println("   -->" +res.mLikes + " Likes"); //outputs current number of likes
+                }
+                else{
+                    System.out.println("No such index exists");
+                }
+            } else if (action == '*') { //Gets subject and ID for each post in the database
                 ArrayList<Database.RowData> res = db.selectAll();
                 if (res == null)
                     continue;
                 System.out.println("  Current Database Contents");
                 System.out.println("  -------------------------");
-                for (Database.RowData rd : res) {
+                for (Database.RowData rd : res) { //Loops through through and prints all posts 
                     System.out.println("  [" + rd.mId + "] " + rd.mSubject);
                 }
-            } else if (action == '-') {
+            } else if (action == '-') { //Deletes a post based on its ID
                 int id = getInt(in, "Enter the row ID");
                 if (id == -1)
                     continue;
                 int res = db.deleteRow(id);
-                if (res == -1)
+                if (res == -1){
+                    System.out.println("No such index exists");
                     continue;
+                } 
                 System.out.println("  " + res + " rows deleted");
-            } else if (action == '+') {
+            } else if (action == '+') { //Adds a new post to the database 
                 String subject = getString(in, "Enter the subject");
                 String message = getString(in, "Enter the message");
                 if (subject.equals("") || message.equals(""))
                     continue;
                 int res = db.insertRow(subject, message);
                 System.out.println(res + " rows added");
-            } else if (action == '~') {
+            } else if (action == '~') { //edits the message of a post based on its ID
                 int id = getInt(in, "Enter the row ID :> ");
                 if (id == -1)
                     continue;
@@ -182,6 +197,6 @@ public class App {
         }
         // Always remember to disconnect from the database when the program 
         // exits
-        db.disconnect();
+        db.disconnect(); //Quits app
     }
 }

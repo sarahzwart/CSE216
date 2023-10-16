@@ -1,5 +1,5 @@
 package edu.lehigh.cse216.ash320.admin;
-
+ 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -51,6 +51,11 @@ public class Database {
     private PreparedStatement mDropTable;
 
     /**
+     * A prepared statement for liking a row or "post" in our database
+     */
+    private PreparedStatement mLikeOne;
+
+    /**
      * RowData is like a struct in C: we use it to hold data, and we allow 
      * direct access to its fields.  In the context of this Database, RowData 
      * represents the data we'd see in a row.
@@ -75,12 +80,18 @@ public class Database {
         String mMessage;
 
         /**
+         * Stores number of likes a post has
+         */
+        int mLikes;
+
+        /**
          * Construct a RowData object by providing values for its fields
          */
-        public RowData(int id, String subject, String message) {
+        public RowData(int id, String subject, String message, int likes) {
             mId = id;
             mSubject = subject;
             mMessage = message;
+            mLikes=likes; //Set likes added to a rowData constructor
         }
     }
 
@@ -131,16 +142,16 @@ public class Database {
             // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table 
             // creation/deletion, so multiple executions will cause an exception
             db.mCreateTable = db.mConnection.prepareStatement(
-                    "CREATE TABLE tblData (id SERIAL PRIMARY KEY, subject VARCHAR(50) "
-                    + "NOT NULL, message VARCHAR(500) NOT NULL)");
+                    "CREATE TABLE tblData (id SERIAL PRIMARY KEY, subject VARCHAR(50) NOT NULL, message VARCHAR(2048) NOT NULL, likes int)"); //messages limited to 2048 characters and likes added as a table factor
             db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
 
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
-            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData VALUES (default, ?, ?)");
-            db.mSelectAll = db.mConnection.prepareStatement("SELECT id, subject FROM tblData");
-            db.mSelectOne = db.mConnection.prepareStatement("SELECT * from tblData WHERE id=?");
+            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData (id, subject, message, likes) VALUES (DEFAULT, ?, ?, ?)"); //prepared statement altered to inclues likes
+            db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM tblData");
+            db.mSelectOne = db.mConnection.prepareStatement("SELECT * FROM tblData WHERE id=?");
             db.mUpdateOne = db.mConnection.prepareStatement("UPDATE tblData SET message = ? WHERE id = ?");
+            db.mLikeOne = db.mConnection.prepareStatement("UPDATE tblData SET likes = ? WHERE id = ?"); //New prepared statement to increment likes
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -159,13 +170,13 @@ public class Database {
      * @return True if the connection was cleanly closed, false otherwise
      */
     boolean disconnect() {
-        if (mConnection == null) {
+        if (mConnection == null) { //No connection exists
             System.err.println("Unable to close connection: Connection was null");
             return false;
         }
         try {
             mConnection.close();
-        } catch (SQLException e) {
+        } catch (SQLException e) { //SQL exception
             System.err.println("Error: Connection.close() threw a SQLException");
             e.printStackTrace();
             mConnection = null;
@@ -188,6 +199,7 @@ public class Database {
         try {
             mInsertOne.setString(1, subject);
             mInsertOne.setString(2, message);
+            mInsertOne.setInt(3, 0); //sets initial like count of a post to 0
             count += mInsertOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -205,7 +217,7 @@ public class Database {
         try {
             ResultSet rs = mSelectAll.executeQuery();
             while (rs.next()) {
-                res.add(new RowData(rs.getInt("id"), rs.getString("subject"), null));
+                res.add(new RowData(rs.getInt("id"), rs.getString("subject"), rs.getString("message"), rs.getInt("likes")));
             }
             rs.close();
             return res;
@@ -228,7 +240,7 @@ public class Database {
             mSelectOne.setInt(1, id);
             ResultSet rs = mSelectOne.executeQuery();
             if (rs.next()) {
-                res = new RowData(rs.getInt("id"), rs.getString("subject"), rs.getString("message"));
+                res = new RowData(rs.getInt("id"), rs.getString("subject"), rs.getString("message"), rs.getInt("likes"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -293,6 +305,24 @@ public class Database {
         try {
             mDropTable.execute();
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * increments likes for on a post based on the ID of it
+     * @param id
+     */
+    void likePost(int id){
+        try { 
+        ResultSet currData = mSelectOne.executeQuery(); 
+        currData.next(); //go to next data point (this is the one you want to be on)
+        int likes = currData.getInt("likes"); //current number of likes
+        //sets parameters
+        mLikeOne.setInt(1, likes+1); 
+        mLikeOne.setInt(2, id);
+        mLikeOne.execute(); //executes incrementations 
+        } catch (SQLException e) { //catch SQL error
             e.printStackTrace();
         }
     }
