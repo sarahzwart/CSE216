@@ -90,7 +90,13 @@ public class Database {
         public RowData(int id, String subject, String message, int likes) {
             mId = id;
             mSubject = subject;
-            mMessage = message;
+            if(message.length()<=2048){ //ensures correct length
+                mMessage = message;
+            }
+            else{ //shortens message if it is too large
+                mMessage = message.substring(0, Math.min(message.length(), 2048));
+            }
+            
             mLikes=likes; //Set likes added to a rowData constructor
         }
     }
