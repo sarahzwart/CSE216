@@ -164,11 +164,14 @@ class ElementList {
                 let tr = document.createElement('tr');
                 let td_title = document.createElement('td');
                 let td_id = document.createElement('td');
+                let td_likes = document.createElement('td');
                 td_title.innerHTML = data.mData[i].mTitle;
                 td_id.innerHTML = data.mData[i].mId;
+                td_likes.innerHTML = data.mData[i].mLikes;
                 //Here show the id and title
                 tr.appendChild(td_id);
                 tr.appendChild(td_title);
+                tr.appendChild(td_likes);
                 //Here attach buttons to each thing in messageList
                 tr.appendChild( this.buttons(data.mData[i].mId) );
                 table.appendChild(tr);
@@ -196,6 +199,42 @@ class ElementList {
         }   
         
     }
+    /**
+     * Like is the public method for updating liking a message
+     
+    private like(data:any) {
+        let td_likes = document.createElement('td');
+
+        // Issue an AJAX GET and then pass the result to update(). 
+        const doAjax = async () => {
+            await fetch(`${backendUrl}/messages`, {
+                method: 'GET',
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8'
+                }
+            }).then( (response) => {
+                // If we get an "ok" message, clear the form
+                if (response.ok) {
+                    return Promise.resolve( response.json() );
+                }
+                // Otherwise, handle server errors with a detailed popup message
+                else{
+                    window.alert(`The server replied not ok: ${response.status}\n` + response.statusText);
+                }
+                return Promise.reject(response);
+            }).then( (data) => {
+                mainList.update(data);
+                console.log(data);
+            }).catch( (error) => {
+                console.warn('Something went wrong.', error);
+                window.alert("Unspecified error");
+            });
+        }
+
+        // make the AJAX post and output value or error message to console
+        doAjax().then(console.log).catch(console.log);
+    } */
+
     /**
      * clickDelete is the code we run in response to a click of a delete button
      */
@@ -290,7 +329,7 @@ class ElementList {
                 }
                 return Promise.reject(response);
             }).then( (data) => {
-                editEntryForm.init(data);
+                mainList.refresh();
                 console.log(data);
             }).catch( (error) => {
                 console.warn('Something went wrong.', error);
@@ -329,7 +368,7 @@ class ElementList {
         btn = document.createElement('button');
         btn.classList.add("likebtn");
         btn.setAttribute('data-value', id);
-        btn.innerHTML = 'Put';
+        btn.innerHTML = 'Like';
         td.appendChild(btn);
         fragment.appendChild(td);
 
@@ -351,8 +390,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // set up initial UI state
     (<HTMLElement>document.getElementById("editElement")).style.display = "none";
     (<HTMLElement>document.getElementById("addElement")).style.display = "none";
-    
-    //(<HTMLElement>document.getElementById("likeElement")).style.display = "none";
+    (<HTMLElement>document.getElementById("likeElement")).style.display = "none";
     
     (<HTMLElement>document.getElementById("showElements")).style.display = "block";
     // set up the "Add Message" button
@@ -376,7 +414,6 @@ class EditEntryForm {
     constructor() {
         document.getElementById("editCancel")?.addEventListener("click", (e) => {editEntryForm.clearForm();});
         document.getElementById("editButton")?.addEventListener("click", (e) => {editEntryForm.submitForm();});
-        document.getElementById("likeButton")?.addEventListener("click", (e) => {editEntryForm.submitForm();});
     }
 
     /**
