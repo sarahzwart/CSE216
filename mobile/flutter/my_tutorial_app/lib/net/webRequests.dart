@@ -1,7 +1,8 @@
- import '../models/Message.dart';
- import 'package:http/http.dart' as http;
- import 'dart:developer' as developer;
+import '../models/Message.dart';
+import 'package:http/http.dart' as http;
+import 'dart:developer' as developer;
 import 'dart:convert';
+import 'package:uuid/uuid.dart';
 
 Future<List<Message>> getWebData() async {
   developer.log("Making Web Request");
@@ -44,6 +45,7 @@ Future<void> addMessage(String messageText) async{
     text: messageText,
     likes: 0,
     isLiked: false,
+    uuid: Uuid(),
   );
 
   final response = await http.post(
@@ -65,6 +67,7 @@ Future<void> toggleLike(Message message) async {
     text: message.text, // Copy text from the original message
     likes: message.likes + (message.isLiked ? -1 : 1), // Copy likes from the original message
     isLiked: !message.isLiked, // Toggle the isLiked state
+    uuid: Uuid(),
   );
   final response = await http.put(
     Uri.parse('team-margaritavillians.dokku.cse.lehigh.edu'),
