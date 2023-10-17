@@ -56,7 +56,6 @@ var NewEntryForm = /** @class */ (function () {
         var _a, _b;
         (_a = document.getElementById("addCancel")) === null || _a === void 0 ? void 0 : _a.addEventListener("click", function (e) { newEntryForm.clearForm(); });
         (_b = document.getElementById("addButton")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", function (e) { newEntryForm.submitForm(); });
-        (_b = document.getElementById("addLike")) === null || _b === void 0 ? void 0 : _b.addEventListener("click", function (e) { newEntryForm.submitForm(); });
     }
     /**
      * Clear the form's input fields
@@ -205,10 +204,13 @@ var ElementList = /** @class */ (function () {
                 var tr = document.createElement('tr');
                 var td_title = document.createElement('td');
                 var td_id = document.createElement('td');
+                var td_likes = document.createElement('td');
                 td_title.innerHTML = data.mData[i].mTitle;
                 td_id.innerHTML = data.mData[i].mId;
+                td_likes.innerHTML = data.mData[i].mLikes;
                 tr.appendChild(td_id);
                 tr.appendChild(td_title);
+                tr.appendChild(td_likes);
                 tr.appendChild(this.buttons(data.mData[i].mId));
                 table.appendChild(tr);
             }
@@ -322,7 +324,6 @@ var ElementList = /** @class */ (function () {
         var id = e.target.getAttribute("data-value");
         // Issue an AJAX GET and then pass the result to editEntryForm.init()
         var doAjax = function () { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, fetch("/messages/".concat(id), {
                             method: 'PUT',
@@ -338,7 +339,7 @@ var ElementList = /** @class */ (function () {
                             }
                             return Promise.reject(response);
                         }).then(function (data) {
-                            editEntryForm.init(data);
+                            mainList.refresh();
                             console.log(data);
                         }).catch(function (error) {
                             console.warn('Something went wrong.', error);
@@ -349,7 +350,7 @@ var ElementList = /** @class */ (function () {
                         return [2 /*return*/];
                 }
             });
-        }); };
+        };
         // make the AJAX post and output value or error message to console
         doAjax().then(console.log).catch(console.log);
     };
