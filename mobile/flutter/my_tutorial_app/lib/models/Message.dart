@@ -5,7 +5,7 @@ class Message {
   /// The int representation of the like
   int likes;
   bool isLiked;
-  var id = Uuid();
+  var id = const Uuid();
 
   Message({
     required this.text,
@@ -27,7 +27,7 @@ class Message {
     'text': text,
     'likes': likes,
     'isLiked': isLiked,
-    'id': Uuid(),
+    'id': const Uuid(),
   };
 
   
