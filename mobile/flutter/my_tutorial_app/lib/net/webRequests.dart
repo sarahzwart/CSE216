@@ -12,7 +12,7 @@ Future<List<Message>> getWebData() async {
     // If the server did return a 200 OK response, then parse the JSON.
     List<Message> returnData = [];
     var res = jsonDecode(response.body);
-    print('JSON decode: $res');
+    developer.log('JSON decode: $res');
     if( res is List ){
       returnData = res.map( (x) => Message.fromJson(x) ).toList();
     }else if( res is Map ){
