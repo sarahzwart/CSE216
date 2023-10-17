@@ -45,7 +45,7 @@ Future<void> addMessage(String messageText) async{
     text: messageText,
     likes: 0,
     isLiked: false,
-    uuid: Uuid(),
+    id: Uuid(),
   );
 
   final response = await http.post(
@@ -67,7 +67,7 @@ Future<void> toggleLike(Message message) async {
     text: message.text, // Copy text from the original message
     likes: message.likes + (message.isLiked ? -1 : 1), // Copy likes from the original message
     isLiked: !message.isLiked, // Toggle the isLiked state
-    uuid: Uuid(),
+    id: Uuid(),
   );
   final response = await http.put(
     Uri.parse('team-margaritavillians.dokku.cse.lehigh.edu'),
