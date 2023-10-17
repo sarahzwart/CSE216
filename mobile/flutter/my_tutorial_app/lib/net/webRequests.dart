@@ -47,7 +47,6 @@ Future<void> addMessage(String messageText) async{
     isLiked: false,
     id: const Uuid(),
   );
-
   final response = await http.post(
     Uri.parse('team-margaritavillians.dokku.cse.lehigh.edu'),
     headers: {'Content-Type': 'application/json'},

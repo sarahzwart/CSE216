@@ -5,7 +5,7 @@ class Message {
   /// The int representation of the like
   int likes;
   bool isLiked;
-  var id;
+  Uuid id;
 
   Message({
     required this.text,
