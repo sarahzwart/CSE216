@@ -39,7 +39,7 @@ public class App {
         // from "/web"
         String static_location_override = System.getenv("STATIC_LOCATION");
         if (static_location_override == null) {
-            Spark.staticFileLocation("/web");
+            Spark.staticFileLocation("/build"); // could also be problematic
         } else {
             Spark.staticFiles.externalLocation(static_location_override);
         }
@@ -53,7 +53,7 @@ public class App {
 
         // Set up a route for serving the main page
         Spark.get("/", (req, res) -> {
-            res.redirect("/index.html");
+            res.redirect("/public/index.html"); //might become a problem if its wrong
             return "";
         });
 
