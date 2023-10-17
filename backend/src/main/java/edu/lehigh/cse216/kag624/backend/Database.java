@@ -33,11 +33,6 @@ public class Database {
     private PreparedStatement mDeleteOne;
 
     /**
-     * A prepared statement for deleting a like from a post
-     */
-    private PreparedStatement mDeleteLike;
-
-    /**
      * A prepared statement for inserting into the database
      */
     private PreparedStatement mInsertOne;
@@ -45,7 +40,7 @@ public class Database {
     /**
      * A prepared statement for add a like to a post
      */
-    private PreparedStatement mInsertLike;
+    private PreparedStatement mUpdateLike;
 
     /**
      * A prepared statement for creating the table in our database
@@ -128,8 +123,7 @@ public class Database {
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
             db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData VALUES (default, ?, ?, 0)");
-            db.mDeleteLike = db.mConnection.prepareStatement("UPDATE tblData SET likes = likes-1 WHERE id = ?");
-            db.mInsertLike = db.mConnection.prepareStatement("UPDATE tblData SET likes = likes+1 WHERE id = ?");
+            db.mUpdateLike = db.mConnection.prepareStatement("UPDATE tblData SET likes = ? WHERE id = ?");
             db.mSelectOne = db.mConnection.prepareStatement("SELECT * from tblData WHERE id=?");
             db.mSelectAll = db.mConnection.prepareStatement("SELECT id, subject FROM tblData");
         } catch (SQLException e) {
@@ -271,33 +265,17 @@ public class Database {
     }
 
     /**
-     * Delete a like by row ID
-     * @param id id of the row to remove a like by
-     * @return number of likes deleted. -1 indicates an error
-     */
-    int deleteLike(int id){
-        int res = -1;
-        try{
-            mDeleteLike.setInt(1, id);
-            res = mDeleteLike.executeUpdate();
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-        return res;
-    }
-
-    /**
      * Update the likes on a message for a row in the database
      * 
      * @param id The id of the row to update
      * 
      * @return The number of rows that were updated.  -1 indicates an error.
      */
-    int insertLike(int id, String message) {
+    int updateLike(int id, int likes) {
         int res = -1;
         try {
-            mInsertLike.setInt(1, id);
-            res = mInsertLike.executeUpdate();
+            mUpdateLike.setInt(3, likes);
+            res = mUpdateLike.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }

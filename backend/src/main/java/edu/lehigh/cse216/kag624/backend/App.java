@@ -30,6 +30,7 @@ public class App {
         //     every time we start the server, we'll have an empty dataStore,
         //     with IDs starting over from 0.
         final DataStore dataStore = new DataStore();
+        final Database db = getDatabaseConnection();
 
         // Set the port on which to listen for requests from the environment
         Spark.port(getIntFromEnv("PORT", DEFAULT_PORT_SPARK));
@@ -109,7 +110,7 @@ public class App {
             }
         });
 
-        //  PUT route for adding a like to a message
+        //  PUT route for updating the likes on a message
         Spark.put("/messages/:id", (request, response) -> {
             // If we can't get an ID or can't parse the JSON, Spark will send
             // a status 500
@@ -119,7 +120,7 @@ public class App {
             response.status(200);
             response.type("application/json");
             // NB: updateLikes checks for null ids
-            DataRow result = dataStore.updateLikes(idx);
+            DataRow result = dataStore.updateLikes(idx, req.mLikes);
             if (result == null) {
                 return gson.toJson(new StructuredResponse("error", "unable to update row " + idx, null));
             } else {
@@ -140,23 +141,8 @@ public class App {
             if (!result) {
                 return gson.toJson(new StructuredResponse("error", "unable to delete row " + idx, null));
             } else {
-                return gson.toJson(new StructuredResponse("ok", null, null));
-            }
-        });
-
-        // Put route for removing a like from the DataStore
-        Spark.put("/messages/:id", (request, response) -> {
-            // If we can't get an ID, Spark will send a status 500
-            int idx = Integer.parseInt(request.params("id"));
-            // ensure status 200 OK, with a MIME type of JSON
-            response.status(200);
-            response.type("application/json");
-            // NB: we won't concern ourselves too much with the quality of the 
-            //     message sent on a successful delete
-            DataRow result = dataStore.deleteLike(idx);
-            if (result == null) {
-                return gson.toJson(new StructuredResponse("error", "unable to remove like from " + idx, null));
-            } else {
+                // proposed code to edit the database such that data can be kept throughout sessions
+                // db.deleteRow(idx);
                 return gson.toJson(new StructuredResponse("ok", null, null));
             }
         });
