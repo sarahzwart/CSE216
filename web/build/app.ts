@@ -390,8 +390,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // set up initial UI state
     (<HTMLElement>document.getElementById("editElement")).style.display = "none";
     (<HTMLElement>document.getElementById("addElement")).style.display = "none";
-    
-    //(<HTMLElement>document.getElementById("likeElement")).style.display = "none";
+    (<HTMLElement>document.getElementById("likeElement")).style.display = "none";
     
     (<HTMLElement>document.getElementById("showElements")).style.display = "block";
     // set up the "Add Message" button

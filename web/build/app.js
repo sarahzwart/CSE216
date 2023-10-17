@@ -324,8 +324,10 @@ var ElementList = /** @class */ (function () {
         var id = e.target.getAttribute("data-value");
         // Issue an AJAX GET and then pass the result to editEntryForm.init()
         var doAjax = function () { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, fetch("/messages/".concat(id), {
+                            method: 'GET', 
                             method: 'PUT',
                             headers: {
                                 'Content-type': 'application/json; charset=UTF-8'
@@ -348,9 +350,9 @@ var ElementList = /** @class */ (function () {
                     case 1:
                         _a.sent();
                         return [2 /*return*/];
-                }
-            });
-        };
+                    }
+                });
+            }); };
         // make the AJAX post and output value or error message to console
         doAjax().then(console.log).catch(console.log);
     };
