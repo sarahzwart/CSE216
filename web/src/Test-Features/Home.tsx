@@ -22,12 +22,12 @@ export class Home extends React.Component<HomeProps> {
      * "{}" syntax to read fields of the Hello class, using "one-way" binding.
      */
     render() { return (
-                    <>
+                    <div>
                         <h1>Welcome to the {this.props.message}page</h1>
                         <h4>This is the webpage</h4>
                         <p>Hows it hanging there bucko</p>
                         <p>Welcome to Margarittaville</p>
-                    </>
+                    </div>
             ); 
     }
 }
