@@ -67,7 +67,7 @@ Future<void> toggleLike(Message message) async {
     text: message.text, // Copy text from the original message
     likes: message.likes + (message.isLiked ? -1 : 1), // Copy likes from the original message
     isLiked: !message.isLiked, // Toggle the isLiked state
-    id: const Uuid(),
+    id: message.id,
   );
   final response = await http.put(
     Uri.parse('team-margaritavillians.dokku.cse.lehigh.edu'),
