@@ -5,13 +5,12 @@ class Message {
   /// The int representation of the like
   int likes;
   bool isLiked;
-  Uuid id;
+
 
   Message({
     required this.text,
     required this.likes,
     required this.isLiked,
-    required this.id,
   });
 
   factory Message.fromJson(Map<String, dynamic> json) {
@@ -19,7 +18,6 @@ class Message {
       text: json['text'],
       likes: json['likes'],
       isLiked: json['isLiked'],
-      id: json['id'],
     );
   }
 
@@ -27,7 +25,6 @@ class Message {
     'text': text,
     'likes': likes,
     'isLiked': isLiked,
-    'id': id,
   };
 
   

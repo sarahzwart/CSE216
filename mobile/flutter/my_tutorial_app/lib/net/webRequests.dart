@@ -6,8 +6,7 @@ import 'package:uuid/uuid.dart';
 
 Future<List<Message>> getWebData() async {
   developer.log("Making Web Request");
-  final response = await http
-      .get(Uri.parse("team-margaritavillians.dokku.cse.lehigh.edu"));
+  final response = await http.get(Uri.parse("http://128.180.220.196:4567"));
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response, then parse the JSON.
     List<Message> returnData = [];
@@ -45,10 +44,9 @@ Future<void> addMessage(String messageText) async{
     text: messageText,
     likes: 0,
     isLiked: false,
-    id: const Uuid(),
   );
   final response = await http.post(
-    Uri.parse('team-margaritavillians.dokku.cse.lehigh.edu'),
+    Uri.parse('http://128.180.220.196:4567'),
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode(newMessage.toJson()),
   );
@@ -66,10 +64,9 @@ Future<void> toggleLike(Message message) async {
     text: message.text, // Copy text from the original message
     likes: message.likes + (message.isLiked ? -1 : 1), // Copy likes from the original message
     isLiked: !message.isLiked, // Toggle the isLiked state
-    id: message.id,
   );
   final response = await http.put(
-    Uri.parse('team-margaritavillians.dokku.cse.lehigh.edu'),
+    Uri.parse('http://128.180.220.196:4567'),
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode(updatedMessage.toJson()), // Convert updatedMessage to JSON
   );
