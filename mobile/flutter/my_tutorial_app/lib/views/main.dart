@@ -1,10 +1,16 @@
 import '../net/webRequests.dart';
 import 'package:flutter/material.dart';
 import '../models/Message.dart';
+import 'package:flutter/services.dart';
+import 'dart:io';
 
 const String backendURL = 'team-margaritavillians.dokku.cse.lehigh.edu';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  ByteData data = await rootBundle.load('lib/assets/ca/lets-encrypt-r3.pem');
+  SecurityContext.defaultContext
+      .setTrustedCertificatesBytes(data.buffer.asUint8List());
   runApp(MyApp());
 }
 
@@ -47,7 +53,8 @@ class _MessageAppState extends State<MyApp> {
 
   void toggleMessageLike(int index) async {
     setState(() {
-      likeStatus[index] = !likeStatus[index]; // Toggle like status for the message at the specified index
+      likeStatus[index] = !likeStatus[
+          index]; // Toggle like status for the message at the specified index
     });
   }
 
@@ -102,7 +109,8 @@ class MessageTile extends StatelessWidget {
   final bool isLiked;
   final VoidCallback onLike;
 
-  const MessageTile({required this.message, required this.onLike, required this.isLiked});
+  const MessageTile(
+      {required this.message, required this.onLike, required this.isLiked});
 
   @override
   Widget build(BuildContext context) {

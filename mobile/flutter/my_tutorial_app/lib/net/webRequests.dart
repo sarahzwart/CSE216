@@ -2,11 +2,10 @@ import '../models/Message.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as developer;
 import 'dart:convert';
-import 'package:uuid/uuid.dart';
 
 Future<List<Message>> getWebData() async {
   developer.log("Making Web Request");
-  var url = Uri.parse("http://localhost:4567");
+  var url = Uri.parse("http://team-margaritavillians.dokku.cse.lehigh.edu");
   var headers = {"Accept": "application/json"};
   var response = await http.get(url, headers: headers);
   developer.log('HTTP Response Status Code: ${response.statusCode}');
@@ -48,7 +47,7 @@ Future<void> addMessage(String messageText) async {
     mLikes: 0,
   );
   final response = await http.post(
-    Uri.parse('http://localhost:4567'),
+    Uri.parse("http://team-margaritavillians.dokku.cse.lehigh.edu"),
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode(newMessage.toJson()),
   );
@@ -63,11 +62,12 @@ Future<void> toggleLike(Message message) async {
   final updatedMessage = Message(
     mTitle: message.mTitle,
     mMessage: message.mMessage, // Copy text from the original message
-    mLikes: message.mLikes, // Copy likes from the original message // Toggle the isLiked state
+    mLikes: message
+        .mLikes, // Copy likes from the original message // Toggle the isLiked state
   );
 
   final response = await http.put(
-    Uri.parse('http://localhost:4567'),
+    Uri.parse("http://team-margaritavillians.dokku.cse.lehigh.edu"),
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode(updatedMessage.toJson()), // Convert updatedMessage to JSON
   );
