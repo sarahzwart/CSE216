@@ -1,10 +1,6 @@
-import 'package:uuid/uuid.dart';
 
 class Message {
-  /// The string representation of message
   String mMessage;
-
-  /// The int representation of the like
   int mLikes;
   String mTitle;
 

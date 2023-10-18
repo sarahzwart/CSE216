@@ -4,7 +4,7 @@ import '../models/Message.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
 
-const String backendURL = 'team-margaritavillians.dokku.cse.lehigh.edu';
+const String backendURL = 'http://team-margaritavillians.dokku.cse.lehigh.edu';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +30,7 @@ class MyApp extends StatefulWidget {
 class _MessageAppState extends State<MyApp> {
   final List<Message> messages = [];
   bool userIsLoggedIn = true;
-  final List<bool> likeStatus = List.filled(0, false);
+  List<bool> likeStatus = [];
   //URL of Backend
   @override
   void initState() {
@@ -39,22 +39,30 @@ class _MessageAppState extends State<MyApp> {
   }
 
   void retrieveMessages() async {
-    final fetchedMessages = await getWebData();
-    setState(() {
-      messages.clear();
-      messages.addAll(fetchedMessages);
-    });
+     try {
+      final fetchedMessages = await getWebData();
+      setState(() {
+        messages.clear();
+        messages.addAll(fetchedMessages);
+        likeStatus = List.filled(messages.length, false); // Initialize likeStatus list based on the number of messages
+      });
+    } catch (e) {
+      print('Error retrieving messages: $e');
+    }
   }
 
   void addNewMessage(String messageText) async {
-    await addMessage(messageText);
-    retrieveMessages();
+    try {
+      await addMessage(messageText);
+      retrieveMessages();
+    } catch (e) {
+      print('Error adding a new message: $e');
+    }
   }
 
   void toggleMessageLike(int index) async {
     setState(() {
-      likeStatus[index] = !likeStatus[
-          index]; // Toggle like status for the message at the specified index
+      likeStatus[index] = !likeStatus[index]; // Toggle like status for the message at the specified index
     });
   }
 
@@ -88,7 +96,7 @@ class _MessageAppState extends State<MyApp> {
                     //https://dart.dev/codelabs/async-await
                     //this is always asynchronous because the user can like or unlike a message
                     isLiked: likeStatus[index],
-                    onLike: () async {
+                    onLike: () {
                       toggleMessageLike(index);
                     },
                   );

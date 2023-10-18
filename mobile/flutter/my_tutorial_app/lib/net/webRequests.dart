@@ -5,30 +5,36 @@ import 'dart:convert';
 
 Future<List<Message>> getWebData() async {
   developer.log("Making Web Request");
-  var url = Uri.parse("http://team-margaritavillians.dokku.cse.lehigh.edu");
-  var headers = {"Accept": "application/json"};
-  var response = await http.get(url, headers: headers);
+  http.Response response = await http
+      .get(
+        Uri.parse('https://team-margaritavillians.dokku.cse.lehigh.edu/messages'), 
+        headers: {"Content-Type": "application/json"},
+        );
   developer.log('HTTP Response Status Code: ${response.statusCode}');
   developer.log('HTTP Response Body: ${response.body}');
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response, then parse the JSON.
-    List<Message> returnData = [];
-    var res = jsonDecode(response.body);
-    developer.log('JSON decode: $res');
-    if (res is List) {
-      returnData = res.map((x) => Message.fromJson(x)).toList();
-    } else if (res is Map) {
-      returnData = <Message>[Message.fromJson(res as Map<String, dynamic>)];
+    if (response.body.isNotEmpty) {
+      List<Message> returnData = [];
+      var res = jsonDecode(response.body);
+      developer.log('JSON decode: $res');
+      if (res is List) {
+        returnData = res.map((x) => Message.fromJson(x)).toList();
+      } else if (res is Map) {
+        returnData = <Message>[Message.fromJson(res as Map<String, dynamic>)];
+      } else {
+        developer.log('ERROR: Unexpected json response type (was not a List or Map).');
+      }
+      return returnData;
     } else {
-      developer
-          .log('ERROR: Unexpected json response type (was not a List or Map).');
-      returnData = List.empty();
+      // Handle the case where the server returned an empty response.
+      developer.log('Server returned an empty response.');
+      return [];
     }
-    return returnData;
   } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Did not receive success status code from request.');
+    // Handle the case where the server returned a non-200 status code.
+    developer.log('Server returned a non-200 status code: ${response.statusCode}');
+    throw Exception('Did not receive a success status code from the request.');
   }
 }
 
@@ -42,17 +48,40 @@ Future<List<Message>> getWebData() async {
 
 Future<void> addMessage(String messageText) async {
   final newMessage = Message(
-    mTitle: '  ',
+    mTitle: 'Title',
     mMessage: messageText,
     mLikes: 0,
   );
+  final jsonBody = jsonEncode(newMessage.toJson());
   final response = await http.post(
-    Uri.parse("http://team-margaritavillians.dokku.cse.lehigh.edu"),
+    Uri.parse("https://team-margaritavillians.dokku.cse.lehigh.edu/messages"),
     headers: {'Content-Type': 'application/json'},
-    body: jsonEncode(newMessage.toJson()),
+    body: jsonBody,
   );
   //Error handling
-  if (response.statusCode != 200) {
+  if (response.statusCode == 200) {
+    // Parse the response JSON
+    final responseData = json.decode(response.body);
+
+    // Handle the response data according to the actual server structure
+    // You can access individual fields in responseData, e.g., responseData['status']
+    
+    // Example: Check if the response contains a 'status' field
+    if (responseData.containsKey('status')) {
+      final status = responseData['status'];
+      if (status == 'ok') {
+        // The request was successful
+      } else {
+        // Handle the error based on the 'status' and any other fields in responseData
+        final message = responseData['message'];
+        throw Exception('Request failed: $message');
+      }
+    } else {
+      // Handle the response if it doesn't conform to the expected structure
+      throw Exception('Unexpected response format');
+    }
+  } else {
+    // If the request failed, you can throw an exception or return an error response.
     throw Exception('Failed to add new message');
   }
 }
@@ -67,7 +96,7 @@ Future<void> toggleLike(Message message) async {
   );
 
   final response = await http.put(
-    Uri.parse("http://team-margaritavillians.dokku.cse.lehigh.edu"),
+    Uri.parse("https://team-margaritavillians.dokku.cse.lehigh.edu/messages"),
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode(updatedMessage.toJson()), // Convert updatedMessage to JSON
   );
