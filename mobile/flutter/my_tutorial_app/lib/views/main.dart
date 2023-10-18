@@ -1,11 +1,13 @@
 import '../net/webRequests.dart';
 import 'package:flutter/material.dart';
 import '../models/Message.dart';
+
 const String backendURL = 'team-margaritavillians.dokku.cse.lehigh.edu';
 
 void main() {
   runApp(MyApp());
 }
+
 /*
 Stateful Widgets can maintain and update their internal state.
 They are used when you need to create interactive UI elements that change 
@@ -22,6 +24,7 @@ class MyApp extends StatefulWidget {
 class _MessageAppState extends State<MyApp> {
   final List<Message> messages = [];
   bool userIsLoggedIn = true;
+  final List<bool> likeStatus = List.filled(0, false);
   //URL of Backend
   @override
   void initState() {
@@ -42,15 +45,18 @@ class _MessageAppState extends State<MyApp> {
     retrieveMessages();
   }
 
-  void toggleMessageLike(Message message) async {
-    await toggleLike(message);
-    retrieveMessages();
+  void toggleMessageLike(int index) async {
+    setState(() {
+      likeStatus[index] = !likeStatus[index]; // Toggle like status for the message at the specified index
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp( //Provides basic app structure
-      home: Scaffold( //represents the overall structure of the app
+    return MaterialApp(
+      //Provides basic app structure
+      home: Scaffold(
+        //represents the overall structure of the app
         appBar: AppBar(
           title: const Text(
             'Anonymous Posts',
@@ -72,11 +78,11 @@ class _MessageAppState extends State<MyApp> {
                 itemBuilder: (BuildContext context, int index) {
                   return MessageTile(
                     message: messages[index],
-                      //https://dart.dev/codelabs/async-await
-                     //this is always asynchronous because the user can like or unlike a message
+                    //https://dart.dev/codelabs/async-await
+                    //this is always asynchronous because the user can like or unlike a message
+                    isLiked: likeStatus[index],
                     onLike: () async {
-                      final message = messages[index];
-                      toggleMessageLike(message);
+                      toggleMessageLike(index);
                     },
                   );
                 },
@@ -93,19 +99,20 @@ class _MessageAppState extends State<MyApp> {
 
 class MessageTile extends StatelessWidget {
   final Message message;
+  final bool isLiked;
   final VoidCallback onLike;
 
-  const MessageTile({required this.message, required this.onLike});
+  const MessageTile({required this.message, required this.onLike, required this.isLiked});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.all(8.0),
       child: ListTile(
-        title: Text(message.text),
-        subtitle: Text('Likes: ${message.likes}'),
+        title: Text(message.mMessage),
+        subtitle: Text('Likes: ${message.mLikes}'),
         trailing: LikeButton(
-          isLiked: message.isLiked,
+          isLiked: isLiked,
           onPressed: onLike,
         ),
       ),
@@ -174,6 +181,3 @@ class _MessageInputState extends State<MessageInput> {
     );
   }
 }
-
-
-

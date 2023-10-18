@@ -1,31 +1,30 @@
 import 'package:uuid/uuid.dart';
+
 class Message {
   /// The string representation of message
-  final String text; 
-  /// The int representation of the like
-  int likes;
-  bool isLiked;
+  String mMessage;
 
+  /// The int representation of the like
+  int mLikes;
+  String mTitle;
 
   Message({
-    required this.text,
-    required this.likes,
-    required this.isLiked,
+    required this.mTitle,
+    required this.mMessage,
+    required this.mLikes,
   });
 
   factory Message.fromJson(Map<String, dynamic> json) {
     return Message(
-      text: json['text'],
-      likes: json['likes'],
-      isLiked: json['isLiked'],
+      mTitle: json['mTitle'],
+      mMessage: json['mMessage'],
+      mLikes: json['mLikes'],
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'text': text,
-    'likes': likes,
-    'isLiked': isLiked,
-  };
-
-  
+        'mTitle': mTitle,
+        'mMessage': mMessage,
+        'mLikes': mLikes,
+      };
 }
