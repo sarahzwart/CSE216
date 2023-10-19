@@ -106,6 +106,7 @@ public class App {
             if (newId == -1) {
                 return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
             } else {
+                db.insertRow(req.mTitle, req.mMessage);
                 return gson.toJson(new StructuredResponse("ok", "" + newId, null));
             }
         });
@@ -124,6 +125,7 @@ public class App {
             if (result == null) {
                 return gson.toJson(new StructuredResponse("error", "unable to update row " + idx, null));
             } else {
+                db.updateLike(idx, req.mLikes);
                 return gson.toJson(new StructuredResponse("ok", null, result));
             }
         });
@@ -142,7 +144,7 @@ public class App {
                 return gson.toJson(new StructuredResponse("error", "unable to delete row " + idx, null));
             } else {
                 // proposed code to edit the database such that data can be kept throughout sessions
-                // db.deleteRow(idx);
+                db.deleteRow(idx);
                 return gson.toJson(new StructuredResponse("ok", null, null));
             }
         });
