@@ -5,13 +5,13 @@ import 'package:flutter/services.dart';
 import 'dart:io';
 
 const String backendURL = 'http://team-margaritavillians.dokku.cse.lehigh.edu';
-
+//ssh -i ~/.ssh/id_ed25519 -t dokku@dokku.cse.lehigh.edu 'config:set 2023fa-tutorial-sml3 CORS_ENABLED=true'
+// ssh -i ~/.ssh/id_ed25519 -t dokku@dokku.cse.lehigh.edu 'config:set 2023fa-tutorial-sml3 CORS_ENABLED=false'
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   ByteData data = await rootBundle.load('lib/assets/ca/lets-encrypt-r3.pem');
-  SecurityContext.defaultContext
-      .setTrustedCertificatesBytes(data.buffer.asUint8List());
-  runApp(MyApp());
+  SecurityContext.defaultContext.setTrustedCertificatesBytes(data.buffer.asUint8List());
+  runApp(const MyApp());
 }
 
 /*
@@ -21,13 +21,14 @@ in response to user input or data changes.
 The setState method is used to trigger a rebuild of the widget 
 when the internal state changes.
 */
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+/*class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
   @override
-  _MessageAppState createState() => _MessageAppState();
+  MessageAppState createState() => MessageAppState();
 }
-
-class _MessageAppState extends State<MyApp> {
+*/
+/*
+class MessageAppState extends State<MyApp> {
   final List<Message> messages = [];
   bool userIsLoggedIn = true;
   List<bool> likeStatus = [];
@@ -42,28 +43,35 @@ class _MessageAppState extends State<MyApp> {
      try {
       final fetchedMessages = await getWebData();
       setState(() {
-        messages.clear();
         messages.addAll(fetchedMessages);
         likeStatus = List.filled(messages.length, false); // Initialize likeStatus list based on the number of messages
       });
     } catch (e) {
-      print('Error retrieving messages: $e');
+      ('Error retrieving messages: $e');
     }
   }
 
   void addNewMessage(String messageText) async {
     try {
+      // Add the new message to the messages list
+      final newMessage = Message(mTitle: "title", mMessage: messageText, mLikes: 0); // You might need to adjust this based on your Message model
+      setState(() {
+        messages.insert(0, newMessage); // Add the new message to the beginning of the list
+        likeStatus.insert(0, false); // Initialize likeStatus for the new message
+      });
+      // Send the new message to the server
       await addMessage(messageText);
-      retrieveMessages();
     } catch (e) {
-      print('Error adding a new message: $e');
+      ('Error adding a new message: $e');
     }
   }
 
-  void toggleMessageLike(int index) async {
-    setState(() {
-      likeStatus[index] = !likeStatus[index]; // Toggle like status for the message at the specified index
-    });
+  void addLike(int index) async {
+    final message = messages[index];
+    message.mLikes = message.mLikes + 1;
+    // Now toggle the like on the server
+    await toggleLike(message);
+    setState(() {});
   }
 
   @override
@@ -76,7 +84,6 @@ class _MessageAppState extends State<MyApp> {
           title: const Text(
             'Anonymous Posts',
             style: TextStyle(
-              fontFamily: 'San Francisco',
               color: Color.fromARGB(255, 0, 43, 117),
               fontSize: 24.0,
               fontWeight: FontWeight.bold,
@@ -93,18 +100,16 @@ class _MessageAppState extends State<MyApp> {
                 itemBuilder: (BuildContext context, int index) {
                   return MessageTile(
                     message: messages[index],
-                    //https://dart.dev/codelabs/async-await
-                    //this is always asynchronous because the user can like or unlike a message
                     isLiked: likeStatus[index],
                     onLike: () {
-                      toggleMessageLike(index);
+                      addLike(index);
                     },
                   );
                 },
               ),
             ),
             // Add a new message to the list
-            MessageInput(onMessageAdded: addNewMessage),
+            MessageInput(onMessageAdded: addNewMessage,),
           ],
         ),
       ),
@@ -118,8 +123,7 @@ class MessageTile extends StatelessWidget {
   final VoidCallback onLike;
 
   const MessageTile(
-      {required this.message, required this.onLike, required this.isLiked});
-
+      {required this.message, required this.onLike, required this.isLiked, Key? key,}):super(key: key);
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -141,8 +145,7 @@ class MessageTile extends StatelessWidget {
 class LikeButton extends StatelessWidget {
   final bool isLiked;
   final VoidCallback onPressed;
-
-  LikeButton({required this.isLiked, required this.onPressed});
+  const LikeButton({required this.isLiked, required this.onPressed,Key?key,}):super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -159,19 +162,146 @@ class LikeButton extends StatelessWidget {
 class MessageInput extends StatefulWidget {
   final ValueChanged<String> onMessageAdded;
 
-  MessageInput({required this.onMessageAdded});
+  const MessageInput({required this.onMessageAdded, Key?key}): super(key: key);
 
   @override
-  _MessageInputState createState() => _MessageInputState();
+  MessageInputState createState() => MessageInputState();
 }
 
-class _MessageInputState extends State<MessageInput> {
+class MessageInputState extends State<MessageInput> {
   final TextEditingController _textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _textController,
+              decoration: const InputDecoration(
+                hintText: 'Enter a message...',
+              ),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.send),
+            onPressed: () {
+              final messageText = _textController.text;
+              if (messageText.isNotEmpty) {
+                widget.onMessageAdded(messageText);
+                _textController.clear();
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+*/
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
+  @override
+  MessageAppState createState() => MessageAppState();
+}
+
+class MessageAppState extends State<MyApp> {
+  final List<Message> messages = [];
+  @override
+  void initState() {
+    super.initState();
+    fetchData(); // Call the function to fetch initial data
+  }
+  Future<void> fetchData() async {
+    try {
+      final data = await getWebData();
+      setState(() {
+        messages.addAll(data);
+      });
+    } catch (error) {
+      // Handle errors if needed
+      ('Error fetching data: $error');
+    }
+  }
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Anonymous Message Board'),
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: ListView.builder(
+                itemCount: messages.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return MessageTile(
+                    message: messages[index],
+                    onLike: () {
+                      // Increment the likes for the message
+                      setState(() {
+                        messages[index].mLikes++;
+                      });
+                    },
+                  );
+                },
+              ),
+            ),
+            MessageInput(onMessageAdded: (messageText) {
+              // Add a new message to the list
+              final newMessage = Message(mTitle: "new message", mMessage: messageText, mLikes: 0);
+              setState(() {
+                messages.add(newMessage);
+              });
+            }),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MessageTile extends StatelessWidget {
+  final Message message;
+  final VoidCallback onLike;
+
+  MessageTile({required this.message, required this.onLike});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.all(8.0),
+      child: ListTile(
+        title: Text(message.mMessage),
+        subtitle: Text('Likes: ${message.mLikes}'),
+        trailing: IconButton(
+          icon: const Icon(
+            Icons.favorite,
+            color: Colors.pink),
+          onPressed: onLike,
+        ),
+      ),
+    );
+  }
+}
+
+class MessageInput extends StatefulWidget {
+  final ValueChanged<String> onMessageAdded;
+  MessageInput({required this.onMessageAdded});
+  @override
+  MessageInputState createState() => MessageInputState();
+}
+
+class MessageInputState extends State<MessageInput> {
+  final TextEditingController _textController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
           Expanded(

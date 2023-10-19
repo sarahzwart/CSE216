@@ -1,4 +1,3 @@
-
 class Message {
   String mMessage;
   int mLikes;

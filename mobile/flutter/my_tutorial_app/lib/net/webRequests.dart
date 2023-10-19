@@ -3,27 +3,28 @@ import 'package:http/http.dart' as http;
 import 'dart:developer' as developer;
 import 'dart:convert';
 
+//https://stackoverflow.com/questions/55331782/flutter-send-json-body-for-http-get-request
 Future<List<Message>> getWebData() async {
   developer.log("Making Web Request");
-  http.Response response = await http
-      .get(
-        Uri.parse('https://team-margaritavillians.dokku.cse.lehigh.edu/messages'), 
-        headers: {"Content-Type": "application/json"},
-        );
+  http.Response response = await http.get(
+    Uri.parse('https://team-margaritavillians.dokku.cse.lehigh.edu/messages'),
+    headers: {"Content-Type": "application/json"},
+  );
   developer.log('HTTP Response Status Code: ${response.statusCode}');
   developer.log('HTTP Response Body: ${response.body}');
   if (response.statusCode == 200) {
     // If the server did return a 200 OK response, then parse the JSON.
     if (response.body.isNotEmpty) {
       List<Message> returnData = [];
-      var res = jsonDecode(response.body);
+      var res = json.decode(response.body);
       developer.log('JSON decode: $res');
       if (res is List) {
         returnData = res.map((x) => Message.fromJson(x)).toList();
       } else if (res is Map) {
         returnData = <Message>[Message.fromJson(res as Map<String, dynamic>)];
       } else {
-        developer.log('ERROR: Unexpected json response type (was not a List or Map).');
+        developer.log(
+            'ERROR: Unexpected json response type (was not a List or Map).');
       }
       return returnData;
     } else {
@@ -33,7 +34,8 @@ Future<List<Message>> getWebData() async {
     }
   } else {
     // Handle the case where the server returned a non-200 status code.
-    developer.log('Server returned a non-200 status code: ${response.statusCode}');
+    developer
+        .log('Server returned a non-200 status code: ${response.statusCode}');
     throw Exception('Did not receive a success status code from the request.');
   }
 }
@@ -46,60 +48,35 @@ Future<List<Message>> getWebData() async {
 
 //Post a message
 
-Future<void> addMessage(String messageText) async {
-  final newMessage = Message(
-    mTitle: 'Title',
-    mMessage: messageText,
-    mLikes: 0,
-  );
-  final jsonBody = jsonEncode(newMessage.toJson());
+Future<void> addMessage(String message) async {
   final response = await http.post(
     Uri.parse("https://team-margaritavillians.dokku.cse.lehigh.edu/messages"),
-    headers: {'Content-Type': 'application/json'},
-    body: jsonBody,
+    headers: {"content-type": "application/json"},
+    body: jsonEncode(Message(mTitle: "Title", mMessage: message, mLikes: 0))
   );
   //Error handling
   if (response.statusCode == 200) {
-    // Parse the response JSON
-    final responseData = json.decode(response.body);
-
-    // Handle the response data according to the actual server structure
-    // You can access individual fields in responseData, e.g., responseData['status']
-    
-    // Example: Check if the response contains a 'status' field
-    if (responseData.containsKey('status')) {
-      final status = responseData['status'];
-      if (status == 'ok') {
-        // The request was successful
-      } else {
-        // Handle the error based on the 'status' and any other fields in responseData
-        final message = responseData['message'];
-        throw Exception('Request failed: $message');
-      }
-    } else {
-      // Handle the response if it doesn't conform to the expected structure
-      throw Exception('Unexpected response format');
-    }
+    final responseData = jsonDecode(response.body);
+    if (responseData['mStatus'] == 'ok') {
+      return; // The request was successful
+    } 
   } else {
-    // If the request failed, you can throw an exception or return an error response.
     throw Exception('Failed to add new message');
   }
 }
 
 //Put Like
-Future<void> toggleLike(Message message) async {
-  final updatedMessage = Message(
-    mTitle: message.mTitle,
-    mMessage: message.mMessage, // Copy text from the original message
-    mLikes: message
-        .mLikes, // Copy likes from the original message // Toggle the isLiked state
-  );
-
+Future<void> toggleLike(Message updatedMessage) async {
+  
   final response = await http.put(
     Uri.parse("https://team-margaritavillians.dokku.cse.lehigh.edu/messages"),
-    headers: {'Content-Type': 'application/json'},
-    body: jsonEncode(updatedMessage.toJson()), // Convert updatedMessage to JSON
+    headers: {
+      "content-type": "application/json",
+      "accept": "application/json",
+    },
+    body: jsonEncode(updatedMessage), // Convert updatedMessage to JSON
   );
+
   if (response.statusCode != 200) {
     throw Exception('Failed to update message like status');
   }
