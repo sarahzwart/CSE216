@@ -3,7 +3,6 @@ package edu.lehigh.cse216.ash320.admin;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import java.util.ArrayList;
 
 /**
  * Unit test for simple App.
