@@ -74,12 +74,12 @@ public class DataStore {
      * Get all of the ids and titles that are present in the DataStore
      * @return An ArrayList with all of the data
      */
-    public synchronized ArrayList<DataRowLite> readAll() {
-        ArrayList<DataRowLite> data = new ArrayList<>();
+    public synchronized ArrayList<DataRow> readAll() {
+        ArrayList<DataRow> data = new ArrayList<>();
         // NB: we copy the data, so that our ArrayList only has ids and titles
         for (DataRow row : mRows) {
             if (row != null)
-                data.add(new DataRowLite(row));
+                data.add(new DataRow(row));
         }
         return data;
     }

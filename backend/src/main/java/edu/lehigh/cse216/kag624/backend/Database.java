@@ -115,10 +115,12 @@ public class Database {
 
             // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table 
             // creation/deletion, so multiple executions will cause an exception
+            /* CREATE and DROP table have been moved to admin, backend can only edit the tables
             db.mCreateTable = db.mConnection.prepareStatement(
                     "CREATE TABLE tblData (id SERIAL PRIMARY KEY, subject VARCHAR(50) "
                     + "NOT NULL, message VARCHAR(500) NOT NULL), likes INTEGER NOT NULL");
             db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
+            */
 
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
