@@ -49,17 +49,19 @@ Future<List<Message>> getWebData() async {
 //Post a message
 
 Future<void> addMessage(String message) async {
+  final newMessage = Message(mTitle: "Title", mMessage: message, mLikes: 0);
   final response = await http.post(
     Uri.parse("https://team-margaritavillians.dokku.cse.lehigh.edu/messages"),
     headers: {"content-type": "application/json"},
-    body: jsonEncode(Message(mTitle: "Title", mMessage: message, mLikes: 0))
+    body: jsonEncode(newMessage),
   );
-  //Error handling
   if (response.statusCode == 200) {
     final responseData = jsonDecode(response.body);
     if (responseData['mStatus'] == 'ok') {
-      return; // The request was successful
-    } 
+      return;
+    } else {
+      throw Exception('Failed to add new message');
+    }
   } else {
     throw Exception('Failed to add new message');
   }
@@ -67,7 +69,6 @@ Future<void> addMessage(String message) async {
 
 //Put Like
 Future<void> toggleLike(Message updatedMessage) async {
-  
   final response = await http.put(
     Uri.parse("https://team-margaritavillians.dokku.cse.lehigh.edu/messages"),
     headers: {
