@@ -79,7 +79,7 @@ public class DataStore {
         // NB: we copy the data, so that our ArrayList only has ids and titles
         for (DataRow row : mRows) {
             if (row != null)
-                data.add(new DataRowLite(row));
+                data.add(new DataRow(row));
         }
         return data;
     }

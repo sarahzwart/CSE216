@@ -26,7 +26,7 @@ public class DataRow {
     /**
      * The content for this row of data
      */
-    public String mContent;
+    public String mMessage;
 
     /**
      * Number of likes
@@ -51,10 +51,10 @@ public class DataRow {
      * 
      * @param content The content string for this row of data
      */
-    DataRow(int id, String title, String content) {
+    DataRow(int id, String title, String message) {
         mId = id;
         mTitle = title;
-        mContent = content;
+        mMessage = message;
         mLikes = 0;
         mCreated = new Date();
     }
@@ -66,7 +66,7 @@ public class DataRow {
         mId = data.mId;
         // NB: Strings and Dates are immutable, so copy-by-reference is safe
         mTitle = data.mTitle;
-        mContent = data.mContent;
+        mMessage = data.mMessage;
         mLikes = data.mLikes;
         mCreated = data.mCreated;
     }
