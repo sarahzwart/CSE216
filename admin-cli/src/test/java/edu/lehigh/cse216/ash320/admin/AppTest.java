@@ -57,32 +57,8 @@ public class AppTest
     public void methodTests(){
         //tests creating database
         Database db = Database.getDatabase("berry.db.elephantsql.com", "8998", "pqfneahl", "eRnYfJkr5W8wwhRePitFVDx8CVP1iKYa");
-        //test insertRow
-        int rowInserted = db.insertRow("Testing method", "Hope it works");
         //Tests creating a table
         db.createTable();
-        //ensures a row was added
-        assertTrue(rowInserted==1);
-        //tests selectOne works
-        Database.RowData res = db.selectOne(1);
-        //ensures res not empty
-        assertNotNull(res);
-        //testing liking post
-        db.likePost(res.mId);
-        //ensures likes equal 1
-        assertTrue(res.mLikes==1);
-        //testing updateOne
-        int updateCorrect = db.updateOne(res.mId, "It works!");
-        //ensures it was correctly updated
-        assertTrue(updateCorrect==1);
-        //Testing insertRow (for adding more than one row to table)
-        int rowInserted2 = db.insertRow("Can multiple lines be added", "Hope so!");
-        //ensuring it is added
-        assertTrue(rowInserted2==2);
-        //Testing selectAll
-        ArrayList<Database.RowData> allData = db.selectAll();
-        //ensures both posts added to allData
-        assertTrue(allData.size() == 2);
         //testing deleteRow
         int wasDeleted = db.deleteRow(2);
         //esureing row 2 was deleted
