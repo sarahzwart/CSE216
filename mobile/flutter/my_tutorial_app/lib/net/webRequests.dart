@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import '../models/Message.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as developer;
@@ -73,14 +75,22 @@ Future<void> addMessage(String message) async {
 Future<void> addLikes(Message updatedMessage) async {
   // Make a PUT request to update the message on the server
   //if the message of the frontend matches the message of the backend, give the ID
-  Future<List<Message>> messageList = getWebData();
-  
-  final Map<String, String> messageData = {
-    'mLikes': ,
-    'mId': ,
+  final List<Message> messageList = await getWebData();
+  Message matchingMessage =
+      Message(mTitle: "", mMessage: "", mLikes: 0); //Initializing a message
+  for (var m in messageList) {
+    if (m.mMessage == updatedMessage.mMessage) {
+      matchingMessage = m;
+      break;
+    }
+  }
+  final Map<String, dynamic> messageData = {
+    'mLikes': updatedMessage.mLikes,
+    'mId': matchingMessage.mId,
   };
+
   final response = await http.put(
-    Uri.parse("https://team-margaritavillians.dokku.cse.lehigh.edu/messages/:${id}"),
+    Uri.parse("https://team-margaritavillians.dokku.cse.lehigh.edu/messages/"),
     headers: {
       "content-type": "application/json",
       "accept": "application/json",
