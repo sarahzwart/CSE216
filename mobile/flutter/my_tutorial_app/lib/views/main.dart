@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/Message.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
-
+//deleting duplicate files: find . -type f -name '* [0-9]' -exec rm {} +, find . -type f -name '* [0-9].*' -exec rm {} +
 const String backendURL = 'http://team-margaritavillians.dokku.cse.lehigh.edu';
 //ssh -i ~/.ssh/id_ed25519 -t dokku@dokku.cse.lehigh.edu 'config:set 2023fa-tutorial-sml3 CORS_ENABLED=true'
 // ssh -i ~/.ssh/id_ed25519 -t dokku@dokku.cse.lehigh.edu 'config:set 2023fa-tutorial-sml3 CORS_ENABLED=false'
@@ -79,7 +79,7 @@ class MessageAppState extends State<MyApp> {
             ),
             MessageInput(onMessageAdded: (messageText) {
               // Add a new message to the list
-              final newMessage = Message(mTitle: "new message", mMessage: messageText, mLikes: 0);
+              final newMessage = Message(mTitle: "new message", mMessage: messageText, mLikes: 0, mId: 0);
               setState(() {
                 messages.add(newMessage);
               });

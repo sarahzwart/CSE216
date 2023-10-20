@@ -4,12 +4,12 @@ import '../models/Message.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as developer;
 import 'dart:convert';
-
+String backendURL = 'https://team-margaritavillians.dokku.cse.lehigh.edu/messages';
 //https://stackoverflow.com/questions/55331782/flutter-send-json-body-for-http-get-request
 Future<List<Message>> getWebData() async {
   developer.log("Making Web Request");
   http.Response response = await http.get(
-    Uri.parse('https://team-margaritavillians.dokku.cse.lehigh.edu/messages'),
+    Uri.parse(backendURL),
     headers: {"Content-Type": "application/json"},
   );
   developer.log('HTTP Response Status Code: ${response.statusCode}');
@@ -77,20 +77,20 @@ Future<void> addLikes(Message updatedMessage) async {
   //if the message of the frontend matches the message of the backend, give the ID
   final List<Message> messageList = await getWebData();
   Message matchingMessage =
-      Message(mTitle: "", mMessage: "", mLikes: 0); //Initializing a message
+      Message(mTitle: "", mMessage: "", mLikes: 0, mId: 7); //Initializing a message
   for (var m in messageList) {
     if (m.mMessage == updatedMessage.mMessage) {
       matchingMessage = m;
       break;
     }
   }
+
   final Map<String, dynamic> messageData = {
     'mLikes': updatedMessage.mLikes,
-    'mId': matchingMessage.mId,
   };
 
   final response = await http.put(
-    Uri.parse("https://team-margaritavillians.dokku.cse.lehigh.edu/messages/"),
+    Uri.parse("https://team-margaritavillians.dokku.cse.lehigh.edu/messages/${matchingMessage.mId}"),
     headers: {
       "content-type": "application/json",
       "accept": "application/json",
