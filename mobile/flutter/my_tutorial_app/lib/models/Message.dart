@@ -1,7 +1,8 @@
 class Message {
   String mMessage;
-  int mLikes;
   String mTitle;
+  int? mId;
+  int mLikes;
 
   Message({
     required this.mTitle,
@@ -13,13 +14,13 @@ class Message {
     return Message(
       mTitle: json['mTitle'],
       mMessage: json['mMessage'],
-      mLikes: json['mLikes'],
+      mLikes: json['mLikes']
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'mTitle': mTitle,
-        'mMessage': mMessage,
-        'mLikes': mLikes,
-      };
+    'mTitle': mTitle,
+    'mMessage': mMessage,
+    'mLikes': mLikes
+  };
 }

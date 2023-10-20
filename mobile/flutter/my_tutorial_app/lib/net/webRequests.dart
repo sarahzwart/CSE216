@@ -49,12 +49,14 @@ Future<List<Message>> getWebData() async {
 //Post a message
 
 Future<void> addMessage(String message) async {
-  final newMessage = Message(mTitle: "Title", mMessage: message, mLikes: 0);
+  final Map<String, String> messageData = {
+    'mTitle': 'Title',
+    'mMessage': message,
+  };
   final response = await http.post(
-    Uri.parse("https://team-margaritavillians.dokku.cse.lehigh.edu/messages"),
-    headers: {"content-type": "application/json"},
-    body: jsonEncode(newMessage),
-  );
+      Uri.parse("https://team-margaritavillians.dokku.cse.lehigh.edu/messages"),
+      headers: {"content-type": "application/json"},
+      body: jsonEncode(messageData));
   if (response.statusCode == 200) {
     final responseData = jsonDecode(response.body);
     if (responseData['mStatus'] == 'ok') {
@@ -68,14 +70,22 @@ Future<void> addMessage(String message) async {
 }
 
 //Put Like
-Future<void> toggleLike(Message updatedMessage) async {
+Future<void> addLikes(Message updatedMessage) async {
+  // Make a PUT request to update the message on the server
+  //if the message of the frontend matches the message of the backend, give the ID
+  Future<List<Message>> messageList = getWebData();
+  
+  final Map<String, String> messageData = {
+    'mLikes': ,
+    'mId': ,
+  };
   final response = await http.put(
-    Uri.parse("https://team-margaritavillians.dokku.cse.lehigh.edu/messages"),
+    Uri.parse("https://team-margaritavillians.dokku.cse.lehigh.edu/messages/:${id}"),
     headers: {
       "content-type": "application/json",
       "accept": "application/json",
     },
-    body: jsonEncode(updatedMessage), // Convert updatedMessage to JSON
+    body: jsonEncode(messageData), // Convert the updated message to JSON
   );
 
   if (response.statusCode != 200) {

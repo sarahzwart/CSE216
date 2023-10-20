@@ -10,7 +10,8 @@ const String backendURL = 'http://team-margaritavillians.dokku.cse.lehigh.edu';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   ByteData data = await rootBundle.load('lib/assets/ca/lets-encrypt-r3.pem');
-  SecurityContext.defaultContext.setTrustedCertificatesBytes(data.buffer.asUint8List());
+  SecurityContext.defaultContext
+      .setTrustedCertificatesBytes(data.buffer.asUint8List());
   runApp(const MyApp());
 }
 
@@ -27,6 +28,7 @@ class MessageAppState extends State<MyApp> {
     super.initState();
     fetchData(); // Call the function to fetch initial data
   }
+
   Future<void> fetchData() async {
     try {
       final data = await getWebData();
@@ -38,6 +40,18 @@ class MessageAppState extends State<MyApp> {
       ('Error fetching data: $error');
     }
   }
+  Future<void> toggleLike(Message message) async {
+    // Increment the likes for the message
+    setState(() {
+      message.mLikes++;
+    });
+    try {
+      await addLikes(message);
+    } catch (error) {
+      ('Error updating likes: $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -50,14 +64,14 @@ class MessageAppState extends State<MyApp> {
             Expanded(
               child: ListView.builder(
                 itemCount: messages.length,
-                itemBuilder: (BuildContext context, int index) {
+                itemBuilder: (BuildContext context, mId) {
                   return MessageTile(
-                    message: messages[index],
-                    onLike: () {
-                      // Increment the likes for the message
+                    message: messages[mId],
+                    onLike: (message) {
                       setState(() {
-                        messages[index].mLikes++;
+                        message.mLikes++;
                       });
+                      addLikes(message);
                     },
                   );
                 },
@@ -79,22 +93,22 @@ class MessageAppState extends State<MyApp> {
 
 class MessageTile extends StatelessWidget {
   final Message message;
-  final VoidCallback onLike;
+  final Function(Message) onLike;
 
   MessageTile({required this.message, required this.onLike});
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.all(8.0),
+      margin: const EdgeInsets.all(8.0),
       child: ListTile(
         title: Text(message.mMessage),
         subtitle: Text('Likes: ${message.mLikes}'),
         trailing: IconButton(
-          icon: const Icon(
-            Icons.favorite,
-            color: Colors.pink),
-          onPressed: onLike,
+          icon: const Icon(Icons.favorite, color: Colors.pink),
+          onPressed: () {
+             onLike(message);
+          }
         ),
       ),
     );
@@ -102,7 +116,7 @@ class MessageTile extends StatelessWidget {
 }
 
 class MessageInput extends StatefulWidget {
-   final Function(String) onMessageAdded; 
+  final Function(String) onMessageAdded;
   MessageInput({required this.onMessageAdded});
   @override
   MessageInputState createState() => MessageInputState();
@@ -110,14 +124,15 @@ class MessageInput extends StatefulWidget {
 
 class MessageInputState extends State<MessageInput> {
   final TextEditingController _textController = TextEditingController();
-  void _sendMessage() async{
+  void _sendMessage() async {
     final messageText = _textController.text;
     if (messageText.isNotEmpty) {
-        addMessage(messageText); // Call the function to add a new message
-        widget.onMessageAdded(messageText);
-        _textController.clear();
+      addMessage(messageText); // Call the function to add a new message
+      widget.onMessageAdded(messageText);
+      _textController.clear();
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
