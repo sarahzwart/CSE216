@@ -1,0 +1,16 @@
+{
+  "messages": [
+    {
+      "mId": 0,
+      "mTitle": "Don Bradman",
+      "mContent": "Don Bradman",
+      "mLikes": 0
+    },
+    {
+      "mId": 1,
+      "mTitle": "Edwardo",
+      "mContent": "Scatt Man",
+      "mLikes": 1
+    }
+  ]
+}

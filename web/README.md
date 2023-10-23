@@ -1,16 +1,27 @@
+# Cse216Angular
 
-# https://www.youtube.com/watch?v=FJDVKeh7RJI 
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.7.
 
-# Running the Web Branch Using REACT
-* To run the current version, use "npm start" in the root directory "web"
-    * Don't mess with anything without running "npm start" to determine if it will cause an error
-* You will need to change react-router-dom to a v5 build or statements will just not work
-* Create a new build file with "npm run build"
-* To run the build version WITHOUT backend functionality, use "serve -s build"
-* To run the build version WITH backend functionality, use "sh deploy.sh"
+## Development server
 
-# Something Went Wrong and Web Branch is Gone
- * To create a brand spankin' new typescript app in bitbucket, use "npx create-react-app web --template typescript" (The tutorial is kinda dookie 
-   I had to find workarounds for stuff that is outdated from the template. You may have already known but I sure didn't)
-* Make sure to remove "eslintConfig" from package.json to avoid it giving you a problem
-* You will need to change react-router-dom to a v5 build or statements will just not work
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+
+## Code scaffolding
+
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+
+## Build
+
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+
+## Running unit tests
+
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+
+## Running end-to-end tests
+
+Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+
+## Further help
+
+To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.

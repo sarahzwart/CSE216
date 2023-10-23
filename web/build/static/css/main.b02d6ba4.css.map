@@ -1,1 +1,0 @@
-{"version":3,"file":"static/css/main.b02d6ba4.css","mappings":"AAAA,OACE,aACF,CAEA,KAEE,iBAAkB,CADlB,cAEF,CAEA,GACE,cACF","sources":["style.css"],"sourcesContent":[".green {\r\n  color: rgb(24, 167, 24);\r\n}\r\n\r\nbody {\r\n  font-size: 14pt;\r\n  font-family: Arial;\r\n}\r\n\r\nh1 {\r\n  font-size: 18pt;\r\n}"],"names":[],"sourceRoot":""}
