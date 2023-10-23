@@ -19,6 +19,7 @@ export class MessagesService {
 
   constructor(public httpClient: HttpClient) { }
 
+  //These functions are GET POST DELETE and PUT for the backend
   public getMessages() {
     let messages: Message[] = [];
     //return this.httpClient.get<any>(this.url + "/mData");
@@ -61,17 +62,13 @@ export class MessagesService {
     //return this.httpClient.get<any>(this.url + "/messages");
     return messages;
   }
-
-  /**
-   * You probably want to add your other GET, POST, PUT, DELETE methods below here (hint)
-  **/
- //postMessage works byt adding in the title and string
+ //postMessage works by adding in the title and string
  //Then it runs the ajax to pass it to the database
  //but angular wont be satisfied unless we return an observable so we have to do that too
   //public postMessage(message: Message): Observable<any>{
   //public postMessage(title: string, content: string): void{
   public postMessage(title: string, content: string): Observable<any>{
-      //let id = mID;
+    //let id = mID;
     //let title = mTitle;
     //let msg = mContent;
     //const id = (<HTMLElement>any).getAttribute("data-value");
@@ -129,6 +126,7 @@ export class MessagesService {
     //return this.httpClient.delete<any>(this.url + "/mData/" + id);
     //await fetch(`${this.url}/messages`, {
     // as in clickLike, we need the ID of the row
+    
     // Issue an AJAX GET and then pass the result to editEntryForm.init()
     const doAjax = async () => {
       //await fetch(`${this.url}/messages`, {

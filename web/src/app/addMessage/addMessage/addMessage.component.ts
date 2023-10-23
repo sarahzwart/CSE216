@@ -10,40 +10,26 @@ import { MessagesService } from 'src/app/services/messages.service';
   templateUrl: './addMessage.component.html',
   styleUrls: ['./addMessage.component.css']
 })
-export class AddComponent implements OnInit {
-  // Variables
+export class AddComponent implements OnInit { 
+  //REAL LINKS
   //private url = 'https://team-margaritavillians.dokku.cse.lehigh.edu/index.html/'
   //private url = 'https://team-margaritavillians.dokku.cse.lehigh.edu'???
-  //private url = 'https://cse216-angular.onrender.com';
-  //private url = 'http://localhost:3000';
-  private url = 'http://localhost:4567';
+  
+  //TEST LINKS
+  //Test with make database
+  //private url = 'https://cse216-angular.onrender.com'; //Tutorial Test
+  //private url = 'http://localhost:3000'; //Fake Database Test
+  private url = 'http://localhost:4567'; //Run on Local Server with our backend functionality
 
   // Constructors
   constructor(private messageService: MessagesService, private router: Router) {}
   messages: Message[] = [];
   message = new Message();
 
-  // Methods
+  // Method to start adding a message
   ngOnInit(): void {
-    this.messages = this.messageService.getMessages();/*.subscribe(
-      data => {
-        console.log(data)
-        if (data.length!==0){
-          for (let i = 0; i < data.length; i++) {
-            let message = new Message();
-            message.mId = data[i].mId;
-            message.mTitle = data[i].mTitle;
-            message.mContent = data[i].mMessage;
-            message.mLikes = data[i].mLikes;
-            alert('message length ' + data[i].mId);
-            this.messages.push(message);
-          }
-        }
-
-      }) //*/
+    this.messages = this.messageService.getMessages();
   }
-  
-
   // Method to return to messages Page
   public returnToMessages(): void {
     // This gets us back to the messages component page.
@@ -51,14 +37,8 @@ export class AddComponent implements OnInit {
   }
   // Method to add messages
   public addToMessages(): void {
-    //messsage = new Message();
-    //let mId = this.messages.length;
-    //alert('POST check for ' + mId);
-    //this.message.mId = this.messages.length;
-    //if (this.message.mId==undefined){
-    //  this.message.mId = 0;
-    //}
     //alert('POST check for ' + message.mId);
+    //pull all the data from the addMessage html file
     this.message.mTitle = "" + (<HTMLInputElement>document.getElementById("newTitle")).value;
     this.message.mContent = "" + (<HTMLInputElement>document.getElementById("newMessage")).value;
     if (this.message.mTitle === "" || this.message.mContent === "") {
@@ -67,29 +47,11 @@ export class AddComponent implements OnInit {
     }
     this.message.mLikes = 0;
     //alert('POST check for ' + this.message.mTitle + ' and '+ this.message.mContent);
-    //{id; title; msg; like: 0};
-    //message: [{id, title, msg, like: 0}];
-    //this.http.delete(localUrl + id + '.json')
+    //send the necessary data to the database, only title and content since database creates likes and id
     try {
-    this.messageService.postMessage(this.message.mTitle, this.message.mContent);
-    /*.subscribe(data => {
-      alert('POST functionality broke down for ' + this.message.mTitle + ' and '+ this.message.mContent + ' and id: ' + this.message.mId);
-      console.log(data)
-    })     /*subscribe({
-      next: (response) => {
-        console.log('POST request successful, returned: ', response);
-        // 'response' is a json with mStatus and mData. mData contains the list of messages.
-      },
-      error: (err) => {
-        alert('POST functionality broke down for ' + this.message.mTitle + ' and '+ this.message.mContent + ' and id: ' + this.message.mId);
-        console.log('POST request failed: ', err);
-      },
-      complete: () => {
-        alert('POST completes the subscribe part');
-        console.log('POST complete!');
-      }
-    })//*/
+      this.messageService.postMessage(this.message.mTitle, this.message.mContent);
     } catch(err){
+      //alert to a breakdown but show what data is involved
       alert('POST functionality broke down for ' + this.message.mTitle + ' and '+ this.message.mContent);
       console.log('POST request failed: ', err);
     }

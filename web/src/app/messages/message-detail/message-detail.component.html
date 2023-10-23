@@ -4,11 +4,10 @@
         <mat-card-title>{{message.mTitle}}</mat-card-title>
     </mat-card-header>
     <mat-card-content>{{message.mContent}}</mat-card-content>
-    <mat-card-content>{{message.mLikes}}</mat-card-content>
-    <mat-card-content>{{message.mId}}</mat-card-content>
+    <mat-card-content>Likes: {{message.mLikes}}</mat-card-content>
 
     <mat-card-actions align="end">
-        <button mat-raised-button (click)="onLikeClick()" onclick="this.url.reload();">
+        <button mat-raised-button (click)="onLikeClick()">
             <mat-icon>like</mat-icon>
             Like
         </button>
@@ -16,7 +15,7 @@
             <mat-icon>edit</mat-icon>
             Edit 
         </button>
-        <button mat-raised-button (click)="onDeleteClick()" onclick="this.url.reload();"> 
+        <button mat-raised-button (click)="onDeleteClick()"> 
             <mat-icon>delete</mat-icon>
             Delete 
         </button>
