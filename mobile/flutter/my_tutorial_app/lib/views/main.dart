@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/Message.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
+import 'package:google_fonts/google_fonts.dart';
 
 //deleting duplicate files: find . -type f -name '* [0-9]' -exec rm {} +, find . -type f -name '* [0-9].*' -exec rm {} +
 const String backendURL = 'http://team-margaritavillians.dokku.cse.lehigh.edu';
@@ -59,15 +60,14 @@ class MessageAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text(
+          title: Text(
             'Margarita Villians',
-            style: TextStyle(
-              fontSize: 24, // Set the font size
-              fontFamily: 'FredokaOne', // Specify your custom font family
-              color: Color.fromARGB(255, 30, 105, 128), // Set the text color
+            style: GoogleFonts.amaticSc(
+              fontSize: 30.0, // Set the font size 
+              color: const Color.fromARGB(255, 208, 244, 255), // Set the text color
             ),
           ),
-          backgroundColor: Color.fromARGB(255, 115, 194, 181)
+          backgroundColor: const Color.fromARGB(255, 86, 72, 160)
         ),
         body: Column(
           //allows for scrolling
