@@ -1,95 +1,89 @@
 import '../net/webRequests.dart';
 import 'package:flutter/material.dart';
 import '../models/Message.dart';
-
-const String backendURL = 'team-margaritavillians.dokku.cse.lehigh.edu';
-
-void main() {
-  runApp(MyApp());
+import 'package:flutter/services.dart';
+import 'dart:io';
+//deleting duplicate files: find . -type f -name '* [0-9]' -exec rm {} +, find . -type f -name '* [0-9].*' -exec rm {} +
+const String backendURL = 'http://team-margaritavillians.dokku.cse.lehigh.edu';
+//ssh -i ~/.ssh/id_ed25519 -t dokku@dokku.cse.lehigh.edu 'config:set 2023fa-tutorial-sml3 CORS_ENABLED=true'
+// ssh -i ~/.ssh/id_ed25519 -t dokku@dokku.cse.lehigh.edu 'config:set 2023fa-tutorial-sml3 CORS_ENABLED=false'
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  ByteData data = await rootBundle.load('lib/assets/ca/lets-encrypt-r3.pem');
+  SecurityContext.defaultContext
+      .setTrustedCertificatesBytes(data.buffer.asUint8List());
+  runApp(const MyApp());
 }
 
-/*
-Stateful Widgets can maintain and update their internal state.
-They are used when you need to create interactive UI elements that change 
-in response to user input or data changes.
-The setState method is used to trigger a rebuild of the widget 
-when the internal state changes.
-*/
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
   @override
-  _MessageAppState createState() => _MessageAppState();
+  MessageAppState createState() => MessageAppState();
 }
 
-class _MessageAppState extends State<MyApp> {
+class MessageAppState extends State<MyApp> {
   final List<Message> messages = [];
-  bool userIsLoggedIn = true;
-  final List<bool> likeStatus = List.filled(0, false);
-  //URL of Backend
   @override
   void initState() {
     super.initState();
-    retrieveMessages(); // Retrieve messages when the app starts
+    fetchData(); // Call the function to fetch initial data
   }
 
-  void retrieveMessages() async {
-    final fetchedMessages = await getWebData();
+  Future<void> fetchData() async {
+    try {
+      final data = await getWebData();
+      setState(() {
+        messages.addAll(data);
+      });
+    } catch (error) {
+      // Handle errors if needed
+      ('Error fetching data: $error');
+    }
+  }
+  Future<void> toggleLike(Message message) async {
+    // Increment the likes for the message
     setState(() {
-      messages.clear();
-      messages.addAll(fetchedMessages);
+      message.mLikes++;
     });
-  }
-
-  void addNewMessage(String messageText) async {
-    await addMessage(messageText);
-    retrieveMessages();
-  }
-
-  void toggleMessageLike(int index) async {
-    setState(() {
-      likeStatus[index] = !likeStatus[index]; // Toggle like status for the message at the specified index
-    });
+    try {
+      await addLikes(message);
+    } catch (error) {
+      ('Error updating likes: $error');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      //Provides basic app structure
       home: Scaffold(
-        //represents the overall structure of the app
         appBar: AppBar(
-          title: const Text(
-            'Anonymous Posts',
-            style: TextStyle(
-              fontFamily: 'San Francisco',
-              color: Color.fromARGB(255, 0, 43, 117),
-              fontSize: 24.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          backgroundColor: const Color.fromARGB(255, 179, 187, 255),
+          title: const Text('Anonymous Message Board'),
         ),
         body: Column(
           children: [
             Expanded(
-              //Displays the list of messages
               child: ListView.builder(
                 itemCount: messages.length,
-                itemBuilder: (BuildContext context, int index) {
+                itemBuilder: (BuildContext context, mId) {
                   return MessageTile(
-                    message: messages[index],
-                    //https://dart.dev/codelabs/async-await
-                    //this is always asynchronous because the user can like or unlike a message
-                    isLiked: likeStatus[index],
-                    onLike: () async {
-                      toggleMessageLike(index);
+                    message: messages[mId],
+                    onLike: (message) {
+                      setState(() {
+                        message.mLikes++;
+                      });
+                      addLikes(message);
                     },
                   );
                 },
               ),
             ),
-            // Add a new message to the list
-            MessageInput(onMessageAdded: addNewMessage),
+            MessageInput(onMessageAdded: (messageText) {
+              // Add a new message to the list
+              final newMessage = Message(mTitle: "new message", mMessage: messageText, mLikes: 0, mId: 0);
+              setState(() {
+                messages.add(newMessage);
+              });
+            }),
           ],
         ),
       ),
@@ -99,10 +93,9 @@ class _MessageAppState extends State<MyApp> {
 
 class MessageTile extends StatelessWidget {
   final Message message;
-  final bool isLiked;
-  final VoidCallback onLike;
+  final Function(Message) onLike;
 
-  const MessageTile({required this.message, required this.onLike, required this.isLiked});
+  MessageTile({required this.message, required this.onLike});
 
   @override
   Widget build(BuildContext context) {
@@ -111,51 +104,39 @@ class MessageTile extends StatelessWidget {
       child: ListTile(
         title: Text(message.mMessage),
         subtitle: Text('Likes: ${message.mLikes}'),
-        trailing: LikeButton(
-          isLiked: isLiked,
-          onPressed: onLike,
+        trailing: IconButton(
+          icon: const Icon(Icons.favorite, color: Colors.pink),
+          onPressed: () {
+             onLike(message);
+          }
         ),
       ),
     );
   }
 }
 
-//Make a heart that fills in when liked and unfills if unliked, also keep
-//track of the likes from all users
-class LikeButton extends StatelessWidget {
-  final bool isLiked;
-  final VoidCallback onPressed;
-
-  LikeButton({required this.isLiked, required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(
-        isLiked ? Icons.favorite : Icons.favorite_border,
-        color: Colors.pink,
-      ),
-      onPressed: onPressed,
-    );
-  }
-}
-
 class MessageInput extends StatefulWidget {
-  final ValueChanged<String> onMessageAdded;
-
+  final Function(String) onMessageAdded;
   MessageInput({required this.onMessageAdded});
-
   @override
-  _MessageInputState createState() => _MessageInputState();
+  MessageInputState createState() => MessageInputState();
 }
 
-class _MessageInputState extends State<MessageInput> {
+class MessageInputState extends State<MessageInput> {
   final TextEditingController _textController = TextEditingController();
+  void _sendMessage() async {
+    final messageText = _textController.text;
+    if (messageText.isNotEmpty) {
+      addMessage(messageText); // Call the function to add a new message
+      widget.onMessageAdded(messageText);
+      _textController.clear();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       child: Row(
         children: [
           Expanded(
@@ -168,13 +149,7 @@ class _MessageInputState extends State<MessageInput> {
           ),
           IconButton(
             icon: const Icon(Icons.send),
-            onPressed: () {
-              final messageText = _textController.text;
-              if (messageText.isNotEmpty) {
-                widget.onMessageAdded(messageText);
-                _textController.clear();
-              }
-            },
+            onPressed: _sendMessage,
           ),
         ],
       ),
