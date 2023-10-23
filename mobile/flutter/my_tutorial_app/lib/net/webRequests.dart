@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import '../models/Message.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as developer;
@@ -15,17 +13,15 @@ Future<List<Message>> getWebData() async {
   developer.log('HTTP Response Status Code: ${response.statusCode}');
   developer.log('HTTP Response Body: ${response.body}');
   if (response.statusCode == 200) {
-    // If the server did return a 200 OK response, then parse the JSON.
     if (response.body.isNotEmpty) {
       List<Message> returnData = [];
-      var res = json.decode(response.body);
-      developer.log('JSON decode: $res');
-      if (res is List) {
-        returnData = res.map((x) => Message.fromJson(x)).toList();
-      } else if (res is Map) {
-        returnData = <Message>[Message.fromJson(res as Map<String, dynamic>)];
+      final jsonData = jsonDecode(response.body);
+      if (jsonData['mData'] is List) {
+          returnData = (jsonData['mData'] as List).map((data) => Message.fromJson(data)).toList();
+      } else if (jsonData['mData'] is Map) {
+          returnData = <Message>[Message.fromJson(jsonData['mData'] as Map<String, dynamic>)];
       } else {
-        developer.log(
+         developer.log(
             'ERROR: Unexpected json response type (was not a List or Map).');
       }
       return returnData;
@@ -77,18 +73,16 @@ Future<void> addLikes(Message updatedMessage) async {
   //if the message of the frontend matches the message of the backend, give the ID
   final List<Message> messageList = await getWebData();
   Message matchingMessage =
-      Message(mTitle: "", mMessage: "", mLikes: 0, mId: 7); //Initializing a message
+      Message(mId: 0, mTitle: " ", mMessage: " ", mLikes: 0); //Initializing a message
   for (var m in messageList) {
     if (m.mMessage == updatedMessage.mMessage) {
       matchingMessage = m;
       break;
     }
   }
-
   final Map<String, dynamic> messageData = {
     'mLikes': updatedMessage.mLikes,
   };
-
   final response = await http.put(
     Uri.parse("https://team-margaritavillians.dokku.cse.lehigh.edu/messages/${matchingMessage.mId}"),
     headers: {
@@ -97,7 +91,6 @@ Future<void> addLikes(Message updatedMessage) async {
     },
     body: jsonEncode(messageData), // Convert the updated message to JSON
   );
-
   if (response.statusCode != 200) {
     throw Exception('Failed to update message like status');
   }
