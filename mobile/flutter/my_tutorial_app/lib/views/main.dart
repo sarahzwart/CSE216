@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/Message.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
+
 //deleting duplicate files: find . -type f -name '* [0-9]' -exec rm {} +, find . -type f -name '* [0-9].*' -exec rm {} +
 const String backendURL = 'http://team-margaritavillians.dokku.cse.lehigh.edu';
 //ssh -i ~/.ssh/id_ed25519 -t dokku@dokku.cse.lehigh.edu 'config:set 2023fa-tutorial-sml3 CORS_ENABLED=true'
@@ -40,6 +41,7 @@ class MessageAppState extends State<MyApp> {
       ('Error fetching data: $error');
     }
   }
+
   Future<void> toggleLike(Message message) async {
     // Increment the likes for the message
     setState(() {
@@ -57,36 +59,60 @@ class MessageAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Anonymous Message Board'),
+          title: const Text(
+            'Margarita Villians',
+            style: TextStyle(
+              fontSize: 24, // Set the font size
+              fontFamily: 'FredokaOne', // Specify your custom font family
+              color: Color.fromARGB(255, 30, 105, 128), // Set the text color
+            ),
+          ),
+          backgroundColor: Color.fromARGB(255, 115, 194, 181)
         ),
         body: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: messages.length,
-                itemBuilder: (BuildContext context, mId) {
-                  return MessageTile(
-                    message: messages[mId],
-                    onLike: (message) {
-                      setState(() {
-                        message.mLikes++;
-                      });
-                      addLikes(message);
-                    },
-                  );
-                },
+          //allows for scrolling
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  shrinkWrap: true, // Important to prevent renderFlex error
+                  itemCount: messages.length,
+                  itemBuilder: (BuildContext context, mId) {
+                    return Card(
+                      margin: const EdgeInsets.all(8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: MessageTile(
+                        message: messages[mId],
+                        onLike: (message) {
+                          setState(() {
+                            message.mLikes++;
+                          });
+                          addLikes(message);
+                        },
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
-            MessageInput(onMessageAdded: (messageText) {
-              // Add a new message to the list
-              final newMessage = Message(mTitle: "new message", mMessage: messageText, mLikes: 0, mId: 0);
-              setState(() {
-                messages.add(newMessage);
-              });
-            }),
-          ],
+              Container(
+                alignment: Alignment.bottomCenter,
+                child: MessageInput(onMessageAdded: (messageText) {
+                // Add a new message to the list
+                  final newMessage = Message(
+                    mTitle: "new message",
+                    mMessage: messageText,
+                    mLikes: 0,
+                    mId: 0,
+                  );
+                  setState(() {
+                    messages.add(newMessage);
+                  });
+                }),
+              ),
+            ],
+          ),
         ),
-      ),
     );
   }
 }
@@ -105,11 +131,10 @@ class MessageTile extends StatelessWidget {
         title: Text(message.mMessage),
         subtitle: Text('Likes: ${message.mLikes}'),
         trailing: IconButton(
-          icon: const Icon(Icons.favorite, color: Colors.pink),
-          onPressed: () {
-             onLike(message);
-          }
-        ),
+            icon: const Icon(Icons.favorite, color: Colors.pink),
+            onPressed: () {
+              onLike(message);
+            }),
       ),
     );
   }
