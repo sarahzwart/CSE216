@@ -133,7 +133,7 @@ class MessageTile extends StatelessWidget {
         title: Text(message.mMessage),
         subtitle: Text('Likes: ${message.mLikes}'),
         trailing: IconButton(
-            icon: const Icon(Icons.favorite, color: Colors.pink),
+            icon: const Icon(Icons.sports_bar_rounded , color: Color.fromARGB(255, 255, 196, 0), size: 30.0),
             onPressed: () {
               onLike(message);
             }),
