@@ -1,3 +1,3 @@
 # Mobile App
 # DartDoc Folder 
-![](/flutter/my_tutorial_app/doc/api) 
+- Path to DART DOC: /flutter/my_tutorial_app/doc/api
