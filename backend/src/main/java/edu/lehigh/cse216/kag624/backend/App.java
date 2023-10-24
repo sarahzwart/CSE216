@@ -111,7 +111,10 @@ public class App {
             }
         });
 
-        //  PUT route for updating the likes on a message
+        //  PUT route for updating the likes on a message. Will read JOSN from the 
+        //  body of the request, turn it into a SimpleRequest object, extract the id
+        //  from the request and the likes and update the message with the given id
+        //  to the new passed value of likes
         Spark.put("/messages/:id", (request, response) -> {
             // If we can't get an ID or can't parse the JSON, Spark will send
             // a status 500

@@ -45,12 +45,12 @@ public class Database {
     /**
      * A prepared statement for creating the table in our database
      */
-    private PreparedStatement mCreateTable;
+    //private PreparedStatement mCreateTable;
 
     /**
      * A prepared statement for dropping the table in our database
      */
-    private PreparedStatement mDropTable;
+    //private PreparedStatement mDropTable;
 
     /**
      * RowData is like a struct in C: we use it to hold data, and we allow 
@@ -199,7 +199,6 @@ public class Database {
         try {
             mInsertOne.setString(1, subject);
             mInsertOne.setString(2, message);
-            mInsertOne.setInt(3, 0);
             count += mInsertOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -286,7 +285,7 @@ public class Database {
 
     /**
      * Create tblData.  If it already exists, this will print an error
-     */
+    
     void createTable() {
         try {
             mCreateTable.execute();
@@ -295,10 +294,9 @@ public class Database {
         }
     }
 
-    /**
      * Remove tblData from the database.  If it does not exist, this will print
      * an error.
-     */
+    
     void dropTable() {
         try {
             mDropTable.execute();
@@ -306,4 +304,5 @@ public class Database {
             e.printStackTrace();
         }
     } 
+    */
 }
