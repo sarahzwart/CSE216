@@ -10,7 +10,7 @@ import { MessagesService } from 'src/app/services/messages.service';
   templateUrl: './editMessage.component.html',
   styleUrls: ['./editMessage.component.css']
 })
-export class AddComponent implements OnInit {
+export class EditComponent implements OnInit {
   // Variables
   //private url = 'https://team-margaritavillians.dokku.cse.lehigh.edu/index.html/'
   //private url = 'https://team-margaritavillians.dokku.cse.lehigh.edu'???
