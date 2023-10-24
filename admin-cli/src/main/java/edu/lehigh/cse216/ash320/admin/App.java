@@ -3,8 +3,6 @@ package edu.lehigh.cse216.ash320.admin;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
-
-import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -20,12 +18,7 @@ public class App {
         System.out.println("Main Menu");
         System.out.println("  [T] Create tblData");
         System.out.println("  [D] Drop tblData");
-        System.out.println("  [1] Query for a specific row");
-        System.out.println("  [*] Query for all rows");
         System.out.println("  [-] Delete a row");
-        System.out.println("  [+] Insert a new row");
-        System.out.println("  [~] Update a row");
-        System.out.println("  [L] Like a message");
         System.out.println("  [q] Quit Program");
         System.out.println("  [?] Help (this message)");
     }
@@ -39,7 +32,7 @@ public class App {
      */
     static char prompt(BufferedReader in) {
         // The valid actions:
-        String actions = "TD1L*-+~q?";
+        String actions = "TD-q?";
 
         // We repeat until a valid single-character option is selected        
         while (true) {
@@ -137,36 +130,6 @@ public class App {
                 db.createTable();
             } else if (action == 'D') {//Drop a table
                 db.dropTable();
-            } else if(action == 'L'){ //Like a specific post
-                int id = getInt(in, "Enter the row ID");
-                if (id == -1)
-                    continue;
-                Database.RowData res = db.selectOne(id);
-                if (res != null) {
-                    db.likePost(id);
-                }
-            } else if (action == '1') {//get all information for one post
-                int id = getInt(in, "Enter the row ID");
-                if (id == -1)
-                    continue;
-                Database.RowData res = db.selectOne(id);
-                if (res != null) {
-                    System.out.println("  [" + res.mId + "] " + res.mSubject); //outputs subject
-                    System.out.println("  --> " + res.mMessage); //outputs full message
-                    System.out.println("   -->" +res.mLikes + " Likes"); //outputs current number of likes
-                }
-                else{
-                    System.out.println("No such index exists");
-                }
-            } else if (action == '*') { //Gets subject and ID for each post in the database
-                ArrayList<Database.RowData> res = db.selectAll();
-                if (res == null)
-                    continue;
-                System.out.println("  Current Database Contents");
-                System.out.println("  -------------------------");
-                for (Database.RowData rd : res) { //Loops through through and prints all posts 
-                    System.out.println("  [" + rd.mId + "] " + rd.mSubject);
-                }
             } else if (action == '-') { //Deletes a post based on its ID
                 int id = getInt(in, "Enter the row ID");
                 if (id == -1)
@@ -177,22 +140,6 @@ public class App {
                     continue;
                 } 
                 System.out.println("  " + res + " rows deleted");
-            } else if (action == '+') { //Adds a new post to the database 
-                String subject = getString(in, "Enter the subject");
-                String message = getString(in, "Enter the message");
-                if (subject.equals("") || message.equals(""))
-                    continue;
-                int res = db.insertRow(subject, message);
-                System.out.println(res + " rows added");
-            } else if (action == '~') { //edits the message of a post based on its ID
-                int id = getInt(in, "Enter the row ID :> ");
-                if (id == -1)
-                    continue;
-                String newMessage = getString(in, "Enter the new message");
-                int res = db.updateOne(id, newMessage);
-                if (res == -1)
-                    continue;
-                System.out.println("  " + res + " rows updated");
             }
         }
         // Always remember to disconnect from the database when the program 
