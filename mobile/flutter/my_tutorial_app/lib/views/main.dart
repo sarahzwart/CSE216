@@ -79,7 +79,7 @@ class MessageAppState extends State<MyApp> {
                   itemCount: messages.length,
                   itemBuilder: (BuildContext context, mId) {
                     return Card(
-                      color: Color.fromARGB(255, 215, 255, 248),
+                      color: const Color.fromARGB(255, 103, 150, 112),
                       margin: const EdgeInsets.all(8),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
