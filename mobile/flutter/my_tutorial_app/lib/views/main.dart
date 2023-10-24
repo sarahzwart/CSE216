@@ -63,11 +63,12 @@ class MessageAppState extends State<MyApp> {
           title: Text(
             'Margarita Villians',
             style: GoogleFonts.amaticSc(
-              fontSize: 30.0, // Set the font size 
-              color: const Color.fromARGB(255, 208, 244, 255), // Set the text color
+              fontWeight: FontWeight.w700,
+              fontSize: 40.0, // Set the font size 
+              color: const Color.fromARGB(255, 219, 245, 253), // Set the text color
             ),
           ),
-          backgroundColor: const Color.fromARGB(255, 86, 72, 160)
+          backgroundColor: const Color.fromARGB(255, 103, 150, 112)
         ),
         body: Column(
           //allows for scrolling
@@ -78,6 +79,7 @@ class MessageAppState extends State<MyApp> {
                   itemCount: messages.length,
                   itemBuilder: (BuildContext context, mId) {
                     return Card(
+                      color: Color.fromARGB(255, 215, 255, 248),
                       margin: const EdgeInsets.all(8),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
