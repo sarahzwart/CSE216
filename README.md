@@ -20,3 +20,5 @@ Members:
 The app will allow an admin to post new messages to the forum. Anonymous users will then be able to like these messages. Along with this, a mobile app will allow for the same functionalities, but on the emulator used in the tutorials.
 
 # Instructions on Running Locally
+
+Start dokku server using instructions in dokku.md in backend folder. To start web, run the deploy.sh file in the web folder. For mobile, launch mobile emulator in VS Code and then start debugging on main.dart in VS Code.
