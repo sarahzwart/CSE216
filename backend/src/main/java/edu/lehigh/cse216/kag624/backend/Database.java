@@ -195,15 +195,20 @@ public class Database {
      * @return The number of rows that were inserted
      */
     int insertRow(String subject, String message) {
-        int count = 0;
+        int newestId = -1;
+        PreparedStatement getRecentId;
         try {
             mInsertOne.setString(1, subject);
             mInsertOne.setString(2, message);
-            count += mInsertOne.executeUpdate();
+            getRecentId = mConnection.prepareStatement("SELECT id FROM tblData ORDER BY id DESC limit 1");
+            ResultSet resSet = getRecentId.executeQuery();
+            while (resSet.next()) {
+                newestId = (resSet.getInt("id"));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return count;
+        return newestId;
     }
 
     /**

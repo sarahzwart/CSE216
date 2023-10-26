@@ -66,7 +66,8 @@ public class App {
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
-            return gson.toJson(new StructuredResponse("ok", null, dataStore.readAll()));
+            return gson.toJson(new StructuredResponse("ok", null, db.selectAll()));
+            //return gson.toJson(new StructuredResponse("ok", null, dataStore.readAll()));
         });
 
         // GET route that returns everything for a single row in the DataStore.
@@ -80,7 +81,7 @@ public class App {
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
-            DataRow data = dataStore.readOne(idx);
+            DataRow data = db.selectOne(idx);
             if (data == null) {
                 return gson.toJson(new StructuredResponse("error", idx + " not found", null));
             } else {
@@ -102,11 +103,10 @@ public class App {
             response.status(200);
             response.type("application/json");
             // NB: createEntry checks for null title and message
-            int newId = dataStore.createEntry(req.mTitle, req.mMessage);
+            int newId = db.insertRow(req.mTitle, req.mMessage);
             if (newId == -1) {
                 return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
             } else {
-                db.insertRow(req.mTitle, req.mMessage);
                 return gson.toJson(new StructuredResponse("ok", "" + newId, null));
             }
         });
@@ -124,11 +124,10 @@ public class App {
             response.status(200);
             response.type("application/json");
             // NB: updateLikes checks for null ids
-            DataRow result = dataStore.updateLikes(idx, req.mLikes);
-            if (result == null) {
+            int result = db.updateLike(idx, req.mLikes);
+            if (result == -1) {
                 return gson.toJson(new StructuredResponse("error", "unable to update row " + idx, null));
             } else {
-                db.updateLike(idx, req.mLikes);
                 return gson.toJson(new StructuredResponse("ok", null, result));
             }
         });
@@ -142,12 +141,11 @@ public class App {
             response.type("application/json");
             // NB: we won't concern ourselves too much with the quality of the 
             //     message sent on a successful delete
-            boolean result = dataStore.deleteOne(idx);
-            if (!result) {
+            int result = db.deleteRow(idx);
+            if (result == -1) {
                 return gson.toJson(new StructuredResponse("error", "unable to delete row " + idx, null));
             } else {
                 // proposed code to edit the database such that data can be kept throughout sessions
-                db.deleteRow(idx);
                 return gson.toJson(new StructuredResponse("ok", null, null));
             }
         });
