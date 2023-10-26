@@ -45,12 +45,12 @@ public class Database {
     /**
      * A prepared statement for creating the table in our database
      */
-    private PreparedStatement mCreateTable;
+    //private PreparedStatement mCreateTable;
 
     /**
      * A prepared statement for dropping the table in our database
      */
-    private PreparedStatement mDropTable;
+    //private PreparedStatement mDropTable;
 
     /**
      * RowData is like a struct in C: we use it to hold data, and we allow 
@@ -195,16 +195,20 @@ public class Database {
      * @return The number of rows that were inserted
      */
     int insertRow(String subject, String message) {
-        int count = 0;
+        int newestId = -1;
+        PreparedStatement getRecentId;
         try {
             mInsertOne.setString(1, subject);
             mInsertOne.setString(2, message);
-            mInsertOne.setInt(3, 0);
-            count += mInsertOne.executeUpdate();
+            getRecentId = mConnection.prepareStatement("SELECT id FROM tblData ORDER BY id DESC limit 1");
+            ResultSet resSet = getRecentId.executeQuery();
+            while (resSet.next()) {
+                newestId = (resSet.getInt("id"));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return count;
+        return newestId;
     }
 
     /**
@@ -286,7 +290,7 @@ public class Database {
 
     /**
      * Create tblData.  If it already exists, this will print an error
-     */
+    
     void createTable() {
         try {
             mCreateTable.execute();
@@ -295,10 +299,9 @@ public class Database {
         }
     }
 
-    /**
      * Remove tblData from the database.  If it does not exist, this will print
      * an error.
-     */
+    
     void dropTable() {
         try {
             mDropTable.execute();
@@ -306,4 +309,5 @@ public class Database {
             e.printStackTrace();
         }
     } 
+    */
 }
