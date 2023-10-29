@@ -1,7 +1,7 @@
 
 # Team 6 - MargaritaVillians
 
-Members:
+# Members:
 * Phase 1:
 * Aidan Astle (apa225) - Backend
 * Kamil Gjondla (kag624) - Project Manager
