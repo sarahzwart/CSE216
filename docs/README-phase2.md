@@ -49,3 +49,10 @@
 
     1. Needs to connect to database
 
+# System Diagram
+
+![System Drawing](diagrams/Phase2_System_Drawing.jpg)
+
+# State Machine Diagram from User Perspective
+
+![User State Machine Diagram](diagrams/Phase2_User_State_Diagram.jpg)
