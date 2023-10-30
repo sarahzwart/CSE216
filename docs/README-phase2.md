@@ -66,3 +66,25 @@ https://docs.google.com/document/d/1K8kSes5hbc4sY5MNz98EBYR8Cx7yYY04osTwsXr-eZo/
 
 # Unit Tests
 https://docs.google.com/document/d/12otxU6lLwTojMmRcqqpRKlj5uO6V8lMntIydhbBi8WM/edit
+
+# Mock Mobile
+
+![Mock 1 Mobile](diagrams/phse2Diagrams/mockmobile/1.jpg)
+
+![Mock 2 Mobile](diagrams/phse2Diagrams/mockmobile/2.jpg)
+
+![Mock 3 Mobile](diagrams/phse2Diagrams/mockmobile/3.jpg)
+
+![Mock 4 Mobile](diagrams/phse2Diagrams/mockmobile/4.jpg)
+
+# Mock Web
+
+![Mock Web](diagrams/phse2Diagrams/mockweb/Posts\ Page.jpg)
+
+![Mock Web](diagrams/phse2Diagrams/mockweb/Profile\ Page.jpg)
+
+![Mock Web](diagrams/phse2Diagrams/mockweb/LogIN.jpg)
+
+# State Machine Diagram
+
+![State Machine Diagram](diagrams/phse2Diagrams/State\ Machine\ Drawing.jpg)
