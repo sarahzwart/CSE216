@@ -79,12 +79,12 @@ https://docs.google.com/document/d/12otxU6lLwTojMmRcqqpRKlj5uO6V8lMntIydhbBi8WM/
 
 # Mock Web
 
-![Mock Web](diagrams/phse2Diagrams/mockweb/Posts\ Page.jpg)
+![Mock Web](diagrams/phse2Diagrams/mockweb/Posts Page.jpg)
 
-![Mock Web](diagrams/phse2Diagrams/mockweb/Profile\ Page.jpg)
+![Mock Web](diagrams/phse2Diagrams/mockweb/Profile Page.jpg)
 
 ![Mock Web](diagrams/phse2Diagrams/mockweb/LogIN.jpg)
 
 # State Machine Diagram
 
-![State Machine Diagram](diagrams/phse2Diagrams/State\ Machine\ Drawing.jpg)
+![State Machine Diagram](diagrams/phse2Diagrams/State\ Machine\ Drawing.jpeg)
