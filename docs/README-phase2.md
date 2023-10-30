@@ -56,3 +56,6 @@
 # State Machine Diagram from User Perspective
 
 ![User State Machine Diagram](diagrams/Phase2_User_State_Diagram.jpg)
+
+# User Stories and Tests
+https://docs.google.com/document/d/1K8kSes5hbc4sY5MNz98EBYR8Cx7yYY04osTwsXr-eZo/edit?usp=sharing 
