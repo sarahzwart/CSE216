@@ -87,4 +87,4 @@ https://docs.google.com/document/d/12otxU6lLwTojMmRcqqpRKlj5uO6V8lMntIydhbBi8WM/
 
 # State Machine Diagram
 
-![State Machine Diagram](diagrams/phse2Diagrams/State\ Machine\ Drawing.jpeg)
+![State Machine Diagram](diagrams/phse2Diagrams/State Machine Drawing.jpeg)
