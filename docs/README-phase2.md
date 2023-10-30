@@ -18,14 +18,12 @@
 * Put routes
 
     1. .put('/messages/:id', (request, response)) - Edit the number of likes on a message, likes passed in through body
-    1. .put('/messages/:id/comments/:commentId', (request, response)) - Edit the number of likes on a comment (?), likes passed in through body
+    1. .put('/messages/:id/comments/:commentId', (request, response)) - Edit the comment message, comment passed through body
     1. .put('/users/:id', (request, response)) - Edit the details of a user. Name, email, GI, SO, and note are passed in through the body
 
 * Delete routes
 
-    1. .delete('/messages/:id', (request, response)) - Delete a specific message
-    1. .delete('/messages/:id/comments/:commentId', (request, response)) - Delete a specific comment
-    1. .delete('/users/:id', (request, response)) - Delete a specific user
+    1. .delete('/users/:id', (request, response)) - Delete a specific user (?)
 
 # Backlog Items
 
