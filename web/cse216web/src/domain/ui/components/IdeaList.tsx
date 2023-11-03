@@ -1,26 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { Component } from 'react';
-  class IdeaList extends Component {
-    constructor (props){
-        super(props);
-    }
-    render() {
-      return (
-        <div className="idea-list">
-          <h2>Idea List</h2>
-          {ideas.map((idea) => (
-            <div key={idea.id} className="idea-card">
-              <h3>{idea.title}</h3>
-              <p>{idea.content}</p>
-              <p>Author: {idea.author}</p>
-              <p>Likes: {idea.likes}</p>
-              <button className="upvote-button">Upvote</button>
-              <button className="downvote-button">Downvote</button>
-              <button className="comment-button">Comment</button>
-            </div>
-          ))}
-        </div>
-      );
-    }
-  }
-  export default IdeaList;
+import {Message} from '../../entitites/Message';
+import axios from 'axios';
+
+function IdeaList(){
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch the specific message using a GET request
+    const url = 'https://team-margaritavillians.dokku.cse.lehigh.edu/messages/'
+    axios.get(url).then((response) => {
+        const messageData: Message[] = response.data.mData;
+        setMessages(messageData);
+        setIsLoading(false);
+      })
+      .catch(error => {
+        console.error('Error when fetching message:', error);
+        setIsLoading(false);
+      });
+  }, []);
+  return(
+    <div>
+      <h1>Idea List</h1>
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        messages.map((message, index) => (
+          <div key={index}>
+            <h2>{message.mTitle}</h2>
+            <p>{message.mMessage}</p>
+            <p>Likes: {message.mLikes}</p>
+            <p>User ID: {message.uId}</p>
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
+
+export default IdeaList;
