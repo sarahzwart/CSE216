@@ -8,7 +8,6 @@ function IdeaList(){
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch the specific message using a GET request
     const url = 'https://team-margaritavillians.dokku.cse.lehigh.edu/messages/'
     axios.get(url).then((response) => {
         const messageData: Message[] = response.data.mData;
