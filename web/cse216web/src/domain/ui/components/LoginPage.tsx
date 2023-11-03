@@ -1,16 +1,29 @@
-import React from 'react';
-import { Link } from 'react-router-dom'; // Assuming you're using React Router
-import { Component } from 'react';
+import { RouterProvider, createBrowserRouter, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useEffect, useRef, useState, createContext, useContext, useCallback } from 'react';
 
+// Ensures cookie is sent
+axios.defaults.withCredentials = true;
 
-function LoginPage(){
-  return(
-      <button>
-          LogIn
-      </button>
+const authUrl = `${process.env.REACT_APP_SERVER_URL}/auth/google`; // OAuth authentication URL from your server
+
+function LoginPage() {
+  const handleLogin = async () => {
+    try {
+      const response = await axios.get(authUrl);
+      const { url } = response.data;
+      // Redirect the user to the Google OAuth consent screen
+      window.location.assign(url);
+    } catch (error) {
+      console.error('Error during login:', error);
+    }
+  };
+  return (
+    <div>
+      <h1>Login Page</h1>
+      <button onClick={handleLogin}>Log In with Google</button>
+    </div>
   )
-
 }
 
 export default LoginPage;
