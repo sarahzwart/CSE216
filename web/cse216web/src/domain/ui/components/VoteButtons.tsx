@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 //put likes --> /messages/id --> increment/decrements likes
+/*
 const VoteButtons = () => {
     const [voteCount, setVoteCount] = useState(0);
 
@@ -21,5 +22,7 @@ const VoteButtons = () => {
       </div>
     );
 };
+*/
+class VoteButtons 
 
 export default VoteButtons;
