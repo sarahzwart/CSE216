@@ -1,12 +1,12 @@
 export class Comment {
+    cId: number;
     mId: number; 
-    mMessage: string; 
-    mTitle: String; 
-    mUser: String;
-    constructor(id: number, content: string, user: string) {
-        this.mId = id;
-        this.mMessage = content;
-        this.mTitle = 'Title';
-        this.mUser = user;
+    uId: number;
+    cContent: String
+    constructor(commentId: number, messageId: number, userId: number, commentContent: string) {
+        this.cId = commentId;
+        this.mId = messageId;
+        this.uId = userId;
+        this.cContent = commentContent;
     }
 }

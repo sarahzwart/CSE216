@@ -1,6 +1,10 @@
+import UserProfile from '../domain/ui/components/UserProfile';
 function UserProfilePage() {
     return (
-     <p>This is the User Profile Page</p>
+    <div>
+      <p>This is the User Profile Page</p>
+      <UserProfile/>
+    </div>
     )
   }
   
