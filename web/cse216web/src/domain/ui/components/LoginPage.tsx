@@ -1,6 +1,5 @@
 import { RouterProvider, createBrowserRouter, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useEffect, useRef, useState, createContext, useContext, useCallback } from 'react';
 
 // Ensures cookie is sent
 axios.defaults.withCredentials = true;
