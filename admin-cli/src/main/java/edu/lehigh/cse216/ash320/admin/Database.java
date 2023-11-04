@@ -7,27 +7,37 @@ import java.sql.SQLException;
 
 
 public class Database {
+    //MESSAGE STATEMENTS
     /**
      * The connection to the database.  When there is no connection, it should
      * be null.  Otherwise, there is a valid open connection
      */
     private Connection mConnection;
-
     /**
      * A prepared statement for deleting a row from the database
      */
     private PreparedStatement mDeleteOne;
-
-
     /**
      * A prepared statement for creating the table in our database
      */
     private PreparedStatement mCreateTable;
-
     /**
      * A prepared statement for dropping the table in our database
      */
     private PreparedStatement mDropTable;
+    //USER STATEMENTS
+    /**
+     * A prepared statement for deleting a row from the database
+     */
+    private PreparedStatement uDeleteOne;
+    /**
+     * A prepared statement for creating the table in our database
+     */
+    private PreparedStatement uCreateTable;
+    /**
+     * A prepared statement for dropping the table in our database
+     */
+    private PreparedStatement uDropTable;
 
 
     /**
@@ -43,7 +53,7 @@ public class Database {
     public static class RowData {
         /**
          * The ID of this row of the database
-         */
+        */
         int mId;
         /**
          * The subject stored in this row
@@ -75,6 +85,71 @@ public class Database {
             mLikes=likes; //Set likes added to a rowData constructor
         }
     }
+
+    public static class userData {
+        /**
+         * The ID of this row of the database
+         */
+        int uId;
+        /**
+         * The ID of this row of the database
+         */
+        String uName;
+        /**
+         * The subject stored in this row
+         */
+        String uEmail;
+        /**
+         * The message stored in this row
+         */
+        String uGI;
+        /**
+         * Stores number of likes a post has
+         */
+        String uSO;
+        /**
+         * Stores Notes about users
+        */
+        String uNote;
+
+        /**
+         * Construct a RowData object by providing values for its fields
+         */
+        public userData(int id, String u, String c, String g, String so, String n) {
+            uId = id;
+            if(u.length()<=50){ //ensures correct length
+                uName = u;
+            }
+            else{ //shortens message if it is too large
+                uName = u.substring(0, Math.min(c.length(), 50));
+            }
+            if(c.length()<=50){ //ensures correct length
+                uEmail = c;
+            }
+            else{ //shortens message if it is too large
+                uEmail = c.substring(0, Math.min(c.length(), 50));
+            }
+            if(g.length()<=50){ //ensures correct length
+                uGI = g;
+            }
+            else{ //shortens message if it is too large
+                uGI = g.substring(0, Math.min(c.length(), 50));
+            }
+            if(so.length()<=50){ //ensures correct length
+                uSO = so;
+            }
+            else{ //shortens message if it is too large
+                uSO = so.substring(0, Math.min(c.length(), 50));
+            }
+            if(n.length()<=2048){ //ensures correct length
+                uNote = n;
+            }
+            else{ //shortens message if it is too large
+                uNote = n.substring(0, Math.min(c.length(), 2048));
+            }
+        }
+    }
+
 
     /**
      * The Database constructor is private: we only create Database objects 
@@ -122,12 +197,20 @@ public class Database {
 
             // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table 
             // creation/deletion, so multiple executions will cause an exception
+            //MESSAGE DATA
             db.mCreateTable = db.mConnection.prepareStatement(
-                    "CREATE TABLE tblData (id SERIAL PRIMARY KEY, subject VARCHAR(50) NOT NULL, message VARCHAR(2048) NOT NULL, likes int)"); //messages limited to 2048 characters and likes added as a table factor
+            "CREATE TABLE tblData (id SERIAL PRIMARY KEY, subject VARCHAR(50) NOT NULL, message VARCHAR(2048) NOT NULL, likes int)"); //messages limited to 2048 characters and likes added as a table factor
             db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
-
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
+
+            //USER STUFF
+            db.uCreateTable = db.mConnection.prepareStatement(
+            "CREATE TABLE usrData (uid SERIAL PRIMARY KEY, uName VARCHAR(50) NOT NULL, uEmail VARCHAR(50) NOT NULL, uGI VARCHAR(50) NOT NULL, uSO VARCHAR(50) NOT NULL, uSO VARCHAR(2048) NOT NULL)");
+            db.uDropTable = db.mConnection.prepareStatement("DROP TABLE usrData");
+            // Standard CRUD operations
+            db.uDeleteOne = db.mConnection.prepareStatement("DELETE FROM usrData WHERE id = ?");
+
             //IMPLIMENT IN BACKEND
             /*db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData (id, subject, message, likes) VALUES (DEFAULT, ?, ?, ?)"); //prepared statement altered to inclues likes
             db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM tblData");
@@ -168,7 +251,6 @@ public class Database {
         return true;
     }
 
-
     /**
      * Delete a row by ID
      * 
@@ -176,24 +258,63 @@ public class Database {
      * 
      * @return The number of rows that were deleted.  -1 indicates an error.
      */
-    int deleteRow(int id) {
+    int deleteMsgRow(int id) {
         int res = -1;
         try {
             mDeleteOne.setInt(1, id);
             res = mDeleteOne.executeUpdate();
+            //for () {
+            //}
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return res;
     }
-
-
+    /**
+     * Delete a row by ID
+     * 
+     * @param id The id of the row to delete
+     * 
+     * @return The number of rows that were deleted.  -1 indicates an error.
+     */
+    int deleteUsrRow(int id) {
+        int res = -1;
+        try {
+            uDeleteOne.setInt(1, id);
+            res = uDeleteOne.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+    
     /**
      * Create tblData.  If it already exists, this will print an error
      */
-    void createTable() {
+    void createMsgTable() {
         try {
             mCreateTable.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * Remove tblData from the database.  If it does not exist, this will print
+     * an error.
+     */
+    void dropMsgTable() {
+        try {
+            mDropTable.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * Create usrData.  If it already exists, this will print an error
+     */
+    void createUsrTable() {
+        try {
+            uCreateTable.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -203,9 +324,9 @@ public class Database {
      * Remove tblData from the database.  If it does not exist, this will print
      * an error.
      */
-    void dropTable() {
+    void dropUsrTable() {
         try {
-            mDropTable.execute();
+            uDropTable.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }

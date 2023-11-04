@@ -17,6 +17,8 @@ public class App {
     static void menu() {
         System.out.println("Main Menu");
         System.out.println("  [T] Create tblData");
+        System.out.println("  [U] Create User Data");
+        System.out.println("  [C] Create Comment Data");
         System.out.println("  [D] Drop tblData");
         System.out.println("  [-] Delete a row");
         System.out.println("  [q] Quit Program");
@@ -127,14 +129,16 @@ public class App {
             } else if (action == 'q') { //Quit app
                 break;
             } else if (action == 'T') {//Create a table
-                db.createTable();
+                db.createMsgTable();
+            } else if (action == 'U') {//Create a table
+                db.createUsrTable();
             } else if (action == 'D') {//Drop a table
-                db.dropTable();
+                db.dropMsgTable();
             } else if (action == '-') { //Deletes a post based on its ID
                 int id = getInt(in, "Enter the row ID");
                 if (id == -1)
                     continue;
-                int res = db.deleteRow(id);
+                int res = db.deleteMsgRow(id);
                 if (res == -1){
                     System.out.println("No such index exists");
                     continue;

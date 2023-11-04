@@ -37,7 +37,7 @@ public class AppTest
     }
 
 
-    public void testBasicConstructor(){
+    public void testMsgConstructor(){
         //Basic input for a post
         String subject = "testing";
         String message = "testing 123";
@@ -53,17 +53,37 @@ public class AppTest
         assertTrue(test.mLikes==likes);
     }
 
+    public void testUsrConstructor(){
+        //Basic input for a post
+        String name = "testing";
+        String email = "testing@lehigh.edu";
+        String GI = "Male";
+        String SO = "Shitting Myself";
+        int id = 1; //the first element added should have id=1
+        String note = "noted"; //String
+        //Create the row exampleso
+        Database.userData test = new Database.userData(id, name, email, GI, SO, note);
+        //ensures the row was correctly created
+        assertFalse(test==null); //ensures it was created at all
+        assertTrue(test.uName.equals(name));
+        assertTrue(test.uEmail.equals(email));
+        assertTrue(test.uGI.equals(GI));
+        assertTrue(test.uSO.equals(SO));
+        assertTrue(test.uId==id);
+        assertTrue(test.uNote.equals(note));
+    }
+
     public void methodTests(){
         //tests creating database
         Database db = Database.getDatabase("berry.db.elephantsql.com", "8998", "pqfneahl", "eRnYfJkr5W8wwhRePitFVDx8CVP1iKYa");
         //Tests creating a table
-        db.createTable();
+        db.createMsgTable();
         //testing deleteRow
-        int wasDeleted = db.deleteRow(2);
+        int wasDeleted = db.deleteMsgRow(2);
         //esureing row 2 was deleted
         assertTrue(wasDeleted==1);
         //testing dropTable
-        db.dropTable();
+        db.dropMsgTable();
         //testing disconnect
         db.disconnect();
     }
