@@ -16,10 +16,14 @@ public class App {
      */
     static void menu() {
         System.out.println("Main Menu");
-        System.out.println("  [T] Create tblData");
-        System.out.println("  [U] Create User Data");
-        System.out.println("  [C] Create Comment Data");
-        System.out.println("  [D] Drop tblData");
+        System.out.println("  [M] Create msgData");
+        System.out.println("  [U] Create usrData");
+        System.out.println("  [C] Create comData");
+        System.out.println("  [L] Create likData");
+        System.out.println("  [D] Drop msgData");
+        System.out.println("  [R] Drop usrData");
+        System.out.println("  [O] Drop comData");
+        System.out.println("  [P] Drop likData");
         System.out.println("  [-] Delete a row");
         System.out.println("  [q] Quit Program");
         System.out.println("  [?] Help (this message)");
@@ -128,12 +132,22 @@ public class App {
                 menu();
             } else if (action == 'q') { //Quit app
                 break;
-            } else if (action == 'T') {//Create a table
+            } else if (action == 'M') {//Create a table
                 db.createMsgTable();
             } else if (action == 'U') {//Create a table
                 db.createUsrTable();
+            } else if (action == 'C') {//Create a table
+                db.createComTable();
+            } else if (action == 'L') {//Create a table
+                db.createLikeTable();
             } else if (action == 'D') {//Drop a table
                 db.dropMsgTable();
+            } else if (action == 'R') {//Drop a table
+                db.dropUsrTable();
+            } else if (action == 'O') {//Drop a table
+                db.dropComTable();
+            } else if (action == 'P') {//Drop a table
+                db.dropLikeTable();
             } else if (action == '-') { //Deletes a post based on its ID
                 int id = getInt(in, "Enter the row ID");
                 if (id == -1)

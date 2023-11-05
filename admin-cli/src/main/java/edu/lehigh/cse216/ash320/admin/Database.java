@@ -200,10 +200,10 @@ public class Database {
             cId = cid;
             uId = uid;
             if(message.length()<=2048){ //ensures correct length
-                mMessage = message;
+                cContent = message;
             }
             else{ //shortens message if it is too large
-                mMessage = message.substring(0, Math.min(message.length(), 2048));
+                cContent = message.substring(0, Math.min(message.length(), 2048));
             }
         }
     }
@@ -216,7 +216,7 @@ public class Database {
         /**
          * The subject stored in this row
          */
-        String lId;
+        int lId;
         /**
          * The unique ID of the comment
          */

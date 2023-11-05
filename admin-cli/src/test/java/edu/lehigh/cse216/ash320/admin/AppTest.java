@@ -62,7 +62,7 @@ public class AppTest
         int id = 1; //the first element added should have id=1
         String note = "noted"; //String
         //Create the row exampleso
-        Database.userData test = new Database.userData(id, name, email, GI, SO, note);
+        Database.usrData test = new Database.usrData(id, name, email, GI, SO, note);
         //ensures the row was correctly created
         assertFalse(test==null); //ensures it was created at all
         assertTrue(test.uName.equals(name));
@@ -71,6 +71,22 @@ public class AppTest
         assertTrue(test.uSO.equals(SO));
         assertTrue(test.uId==id);
         assertTrue(test.uNote.equals(note));
+    }
+
+    public void testComConstructor(){
+        //Basic input for a post comData(int id, int cid, int uid, String message) {
+        int mid = 1;
+        int cid = 1;        
+        int uid = 1;
+        String message = "comentary"; //String
+        //Create the row exampleso
+        Database.comData test = new Database.comData(mid, cid, uid, message);
+        //ensures the row was correctly created
+        assertFalse(test==null); //ensures it was created at all
+        assertTrue(test.mId==mid);
+        assertTrue(test.cId==cid);
+        assertTrue(test.uId==uid);
+        assertTrue(test.cContent.equals(message));
     }
 
     public void methodTests(){
