@@ -89,6 +89,22 @@ public class AppTest
         assertTrue(test.cContent.equals(message));
     }
 
+    public void testLikeConstructor(){
+        //Basic input for a post likeData(int id, int l, int up, int down) {
+        int mid = 1;
+        int lid = 1;        
+        int up = 1;
+        int down = 1;
+        //Create the row exampleso
+        Database.likeData test = new Database.likeData(mid, lid, up, down);
+        //ensures the row was correctly created
+        assertFalse(test==null); //ensures it was created at all
+        assertTrue(test.mId==mid);
+        assertTrue(test.lId==lid);
+        assertTrue(test.upVote==up);
+        assertTrue(test.downVote==down);
+    }
+
     public void methodTests(){
         //tests creating database
         Database db = Database.getDatabase("berry.db.elephantsql.com", "8998", "pqfneahl", "eRnYfJkr5W8wwhRePitFVDx8CVP1iKYa");
