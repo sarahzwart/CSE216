@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useEffect } from 'react';
+import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 //put likes --> /messages/id --> increment/decrements likes
 import { Message } from '../../entitites/Message';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 let url = "https://team-margaritavillians.dokku.cse.lehigh.edu/messages/";
 
-function VoteButtons(message: Message){
+function VoteButtons({ message }: { message: Message }){
   const [likes, setLikes] = useState(message.mLikes);
   const [selectedVote, setSelectedVote] = useState<'upvote' | 'downvote' | null>(null);
   const handleUpVote = () => {
@@ -45,7 +48,7 @@ function VoteButtons(message: Message){
     }
     else{
       setSelectedVote('downvote')
-      axios.put(`${url}${message.mId}`, {mLikes: likes + 1})
+      axios.put(`${url}${message.mId}`, {mLikes: likes - 1})
         .then(() => {
           console.log("successfully updated likes");
           setLikes(likes - 1);
@@ -63,13 +66,13 @@ function VoteButtons(message: Message){
         onClick={handleUpVote}
         className={selectedVote === 'upvote' ? 'selected' : ''}
       >
-        Upvote
+        <FontAwesomeIcon icon={faArrowUp} className='fa-2x' ></FontAwesomeIcon>
       </button>
       <button
         onClick={handleDownVote}
         className={selectedVote === 'downvote' ? 'selected' : ''}
       >
-        Downvote
+         <FontAwesomeIcon icon={faArrowDown} className="fa-2x"/>
       </button>
       <p>Likes: {likes}</p>
     </div>

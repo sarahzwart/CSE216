@@ -1,28 +1,35 @@
 import { RouterProvider, createBrowserRouter, useNavigate } from 'react-router-dom';
+import React, { useState , useEffect} from 'react';
+import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
 import axios from 'axios';
+import {User} from '../../entitites/User';
 
 // Ensures cookie is sent
 axios.defaults.withCredentials = true;
 
-const authUrl = `${process.env.REACT_APP_SERVER_URL}/auth/google`; // OAuth authentication URL from your server
+const clientId = '69750154488-v2ko8le0do3lcrsmr2cj6dqnl4untjls.apps.googleusercontent.com ';
 
-function LoginPage() {
-  const handleLogin = async () => {
-    try {
-      const response = await axios.get(authUrl);
-      const { url } = response.data;
-      // Redirect the user to the Google OAuth consent screen
-      window.location.assign(url);
-    } catch (error) {
-      console.error('Error during login:', error);
-    }
-  };
+function GoogleOAuthLogin() {
+
+  const google = window.google;
+  const handleCallbackResponse = () => {
+    console.log("Encoded JWT ID token: " + response.credential)
+  }
+  useEffect(() =>{
+    google.accounts.id.initialize({
+      client_id: "69750154488-v2ko8le0do3lcrsmr2cj6dqnl4untjls.apps.googleusercontent.com",
+      callback: handleCallbackResponse
+    })
+    google.accounts.is.renderButton(
+      document.getElementById("sign-in"),
+      { theme: "outline", size: "large" }
+    )
+  }, [])
   return (
-    <div>
-      <h1>Login Page</h1>
-      <button onClick={handleLogin}>Log In with Google</button>
+    <div className = "Login">
+      <div id="sign-in-div"></div>
     </div>
-  )
+  );
 }
 
 export default LoginPage;

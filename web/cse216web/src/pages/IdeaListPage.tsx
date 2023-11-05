@@ -4,9 +4,10 @@ import { Link } from 'react-router-dom';
 function IdeaListPage() {
     return (
     <div className="IdeaListPage">
-     <p>This is the IdeaList Page</p>
+     <h1>The Buzz</h1>
      <Link to="/profile">Profile</Link>
      <IdeaList />
+     
      </div>
     );
   }

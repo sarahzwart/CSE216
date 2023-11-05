@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import {User} from '../../entitites/User';
+import {Message} from '../../entitites/Message';
+import {Comment} from '../../entitites/Comment';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 const url = 'https://team-margaritavillians.dokku.cse.lehigh.edu/users/';
-function UserProfile(userInfo : User){
+function UserProfile(){
+  const { userId } = useParams();
   const [user, setUserInfo] = useState<User>();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() =>{
-    axios.get(`${url}${userInfo.uId}`)
+    axios.get(`${url}${userId}`)
     .then((response) => {
       setUserInfo(response.data.mData);
       setIsLoading(false);
@@ -17,7 +21,24 @@ function UserProfile(userInfo : User){
       console.error('Error when fetching user information:', error);
       setIsLoading(false);
     });
-  });
+  }, []);
+
+  //Testing
+  useEffect(() => {
+    // Simulate an API call to fetch user data based on userInfo
+    // For this example, we'll use a simple if statement to determine which user to display
+    if (userId === '1') {
+      setUserInfo(mockUser1);
+    } else if (userId === '2') {
+      setUserInfo(mockUser2);
+    } else if (userId === '3') {
+      setUserInfo(mockUser3);
+    } else {
+      setUserInfo(undefined); // Handle the case where userInfo doesn't match any user
+    }
+
+    setIsLoading(false);
+  }, []);
 
   return(
     <div>
@@ -38,5 +59,33 @@ function UserProfile(userInfo : User){
     </div>
   );
 }
-  
+
+//Testing
+const mockUser1 = {
+  uName: "User1",
+  uEmail: "user1@example.com",
+  uSO: "Heterosexual",
+  uGO: "Male",
+  uNote: "Some note about User1",
+  uId: 1,
+};
+
+const mockUser2 = {
+  uName: "User2",
+  uEmail: "user2@example.com",
+  uSO: "Heterosexual",
+  uGO: "Female",
+  uNote: "Some note about User2",
+  uId: 2,
+};
+
+const mockUser3 = {
+  uName: "User3",
+  uEmail: "user3@example.com",
+  uSO: "Bisexual",
+  uGO: "Non-binary",
+  uNote: "Some note about User3",
+  uId: 3,
+};
+
 export default UserProfile;

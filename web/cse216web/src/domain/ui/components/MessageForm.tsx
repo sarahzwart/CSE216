@@ -1,24 +1,31 @@
 import React, { useState } from "react";
+import axios from 'axios';
 
-interface MessageFormProps {
-  onAddMessage: (message: string) => void;
-}
+type MessageFormProps = {
+  onAddMessage: (message: string) => void; 
+};
 
-const MessageForm: React.FC<MessageFormProps> = ({ onAddMessage }) => {
-  const [newMessage, setNewMessage] = useState<string>("");
+function MessageForm ({ onAddMessage }: MessageFormProps){
+  const [formData, setFormData] = useState({message: ''});
+  
+  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setFormData({
+      message: e.target.value,
+    });
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const onSubmit = (e : React.FormEvent) => {
     e.preventDefault();
-    onAddMessage(newMessage);
-    setNewMessage("");
+    onAddMessage(formData.message)
+    setFormData({message:''})
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={onSubmit}>
       <textarea
         placeholder="Add a new message"
-        value={newMessage}
-        onChange={(e) => setNewMessage(e.target.value)}
+        value={formData.message}
+        onChange={onChange}
       />
       <button type="submit">Add Message</button>
     </form>
