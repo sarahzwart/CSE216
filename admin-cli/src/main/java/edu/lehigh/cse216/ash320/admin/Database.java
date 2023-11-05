@@ -224,16 +224,16 @@ public class Database {
         /**
          * The unique ID of the comment
          */
-        int downVote;
+        //int downVote;
         
         /**
          * Construct a likeData object by providing values for its fields
          */
-        public likeData(int id, int l, int up, int down) {
+        public likeData(int id, int l, int up) {
             mId = id;
             lId = l;
             upVote = up;
-            downVote = down;
+            //downVote = down;
         }
     }
     /**
@@ -304,7 +304,7 @@ public class Database {
 
             //LIKE STUFF         public likeData(int id, int l, int up, int down) {
             db.lCreateTable = db.mConnection.prepareStatement(
-            "CREATE TABLE likeData (mid SERIAL PRIMARY KEY, lid SERIAL PRIMARY KEY, upVote SERIAL PRIMARY KEY, downVote SERIAL PRIMARY KEY"); //messages limited to 2048 characters and likes added as a table factor    
+            "CREATE TABLE likeData (mid SERIAL PRIMARY KEY, lid SERIAL PRIMARY KEY, upVote SERIAL PRIMARY KEY"); //messages limited to 2048 characters and likes added as a table factor    
             db.lDropTable = db.mConnection.prepareStatement("DROP TABLE likeData");
             db.lDeleteOne = db.mConnection.prepareStatement("DELETE FROM likeData WHERE id = ?");
             //IMPLIMENT IN BACKEND
