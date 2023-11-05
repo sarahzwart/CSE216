@@ -302,7 +302,7 @@ public class Database {
             db.cDropTable = db.mConnection.prepareStatement("DROP TABLE comData");
             db.cDeleteOne = db.mConnection.prepareStatement("DELETE FROM comData WHERE id = ?");
 
-            //LIKE STUFF         public likeData(int id, int l, int up, int down) {
+            //LIKE STUFF         public likeData(int id, int l, int up) {
             db.lCreateTable = db.mConnection.prepareStatement(
             "CREATE TABLE likeData (mid SERIAL PRIMARY KEY, lid SERIAL PRIMARY KEY, upVote SERIAL PRIMARY KEY"); //messages limited to 2048 characters and likes added as a table factor    
             db.lDropTable = db.mConnection.prepareStatement("DROP TABLE likeData");

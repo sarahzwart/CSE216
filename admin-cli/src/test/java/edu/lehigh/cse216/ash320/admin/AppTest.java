@@ -94,21 +94,22 @@ public class AppTest
         int mid = 1;
         int lid = 1;        
         int up = 1;
-        int down = 1;
+        //int down = 1;
         //Create the row exampleso
-        Database.likeData test = new Database.likeData(mid, lid, up, down);
+        Database.likeData test = new Database.likeData(mid, lid, up);
         //ensures the row was correctly created
         assertFalse(test==null); //ensures it was created at all
         assertTrue(test.mId==mid);
         assertTrue(test.lId==lid);
         assertTrue(test.upVote==up);
-        assertTrue(test.downVote==down);
+        //assertTrue(test.downVote==down);
     }
 
     public void methodTests(){
         //tests creating database
         Database db = Database.getDatabase("berry.db.elephantsql.com", "8998", "pqfneahl", "eRnYfJkr5W8wwhRePitFVDx8CVP1iKYa");
-        //Tests creating a table
+        
+        //Tests creating a message table
         db.createMsgTable();
         //testing deleteRow
         int wasDeleted = db.deleteMsgRow(2);
@@ -116,6 +117,34 @@ public class AppTest
         assertTrue(wasDeleted==1);
         //testing dropTable
         db.dropMsgTable();
+        
+        //Tests creating a user table
+        db.createUsrTable();
+        //testing deleteRow
+        wasDeleted = db.deleteUsrRow(2);
+        //esureing row 2 was deleted
+        assertTrue(wasDeleted==1);
+        //testing dropTable
+        db.dropUsrTable();
+
+        //Tests creating a comment table
+        db.createComTable();
+        //testing deleteRow
+        wasDeleted = db.deleteComRow(2);
+        //esureing row 2 was deleted
+        assertTrue(wasDeleted==1);
+        //testing dropTable
+        db.dropComTable();
+
+        //Tests creating a comment table
+        db.createLikeTable();
+        //testing deleteRow
+        wasDeleted = db.deleteLikeRow(2);
+        //esureing row 2 was deleted
+        assertTrue(wasDeleted==1);
+        //testing dropTable
+        db.dropLikeTable();
+        
         //testing disconnect
         db.disconnect();
     }
