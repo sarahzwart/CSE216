@@ -38,19 +38,45 @@ public class Database {
      * A prepared statement for dropping the table in our database
      */
     private PreparedStatement uDropTable;
+    //COMMENT STATEMENTS
+    /**
+     * A prepared statement for deleting a row from the database
+     */
+    private PreparedStatement cDeleteOne;
+    /**
+     * A prepared statement for creating the table in our database
+     */
+    private PreparedStatement cCreateTable;
+    /**
+     * A prepared statement for dropping the table in our database
+     */
+    private PreparedStatement cDropTable;
+    //LIKE STATEMENTS
+    /**
+     * A prepared statement for deleting a row from the database
+     */
+    private PreparedStatement lDeleteOne;
+    /**
+     * A prepared statement for creating the table in our database
+     */
+    private PreparedStatement lCreateTable;
+    /**
+     * A prepared statement for dropping the table in our database
+     */
+    private PreparedStatement lDropTable;
 
 
     /**
-     * RowData is like a struct in C: we use it to hold data, and we allow 
-     * direct access to its fields.  In the context of this Database, RowData 
+     * msgData is like a struct in C: we use it to hold data, and we allow 
+     * direct access to its fields.  In the context of this Database, msgData 
      * represents the data we'd see in a row.
      * 
-     * We make RowData a static class of Database because we don't really want
-     * to encourage users to think of RowData as being anything other than an
-     * abstract representation of a row of the database.  RowData and the 
+     * We make msgData a static class of Database because we don't really want
+     * to encourage users to think of msgData as being anything other than an
+     * abstract representation of a row of the database.  msgData and the 
      * Database are tightly coupled: if one changes, the other should too.
      */
-    public static class RowData {
+    public static class msgData {
         /**
          * The ID of this row of the database
         */
@@ -70,9 +96,9 @@ public class Database {
         int mLikes;
 
         /**
-         * Construct a RowData object by providing values for its fields
+         * Construct a msgData object by providing values for its fields
          */
-        public RowData(int id, String subject, String message, int likes) {
+        public msgData(int id, String subject, String message, int likes) {
             mId = id;
             mSubject = subject;
             if(message.length()<=2048){ //ensures correct length
@@ -82,11 +108,11 @@ public class Database {
                 mMessage = message.substring(0, Math.min(message.length(), 2048));
             }
             
-            mLikes=likes; //Set likes added to a rowData constructor
+            mLikes=likes; //Set likes added to a msgData constructor
         }
     }
 
-    public static class userData {
+    public static class usrData {
         /**
          * The ID of this row of the database
          */
@@ -111,11 +137,10 @@ public class Database {
          * Stores Notes about users
         */
         String uNote;
-
         /**
-         * Construct a RowData object by providing values for its fields
+         * Construct a usrData object by providing values for its fields
          */
-        public userData(int id, String u, String c, String g, String so, String n) {
+        public usrData(int id, String u, String c, String g, String so, String n) {
             uId = id;
             if(u.length()<=50){ //ensures correct length
                 uName = u;
@@ -149,8 +174,68 @@ public class Database {
             }
         }
     }
+    
+    public static class comData {
+        /**
+         * The Shared ID between Comment and Id
+         */
+        int mId;
+        /**
+         * The unique ID of the comment
+         */
+        int cId;
 
+        public final int uId;
 
+        /**
+         * The subject stored in this row
+         */
+        String cContent;
+        
+        /**
+         * Construct a usrData object by providing values for its fields
+         */
+        public comData(int id, int cid, int uid, String message) {
+            mId = id;
+            cId = cid;
+            uId = uid;
+            if(message.length()<=2048){ //ensures correct length
+                mMessage = message;
+            }
+            else{ //shortens message if it is too large
+                mMessage = message.substring(0, Math.min(message.length(), 2048));
+            }
+        }
+    }
+    
+    public static class likeData {
+        /**
+         * The Shared ID between Comment and Id
+         */
+        int mId;
+        /**
+         * The subject stored in this row
+         */
+        String lId;
+        /**
+         * The unique ID of the comment
+         */
+        int upVote;
+        /**
+         * The unique ID of the comment
+         */
+        int downVote;
+        
+        /**
+         * Construct a likeData object by providing values for its fields
+         */
+        public likeData(int id, int l, int up, int down) {
+            mId = id;
+            lId = l;
+            upVote = up;
+            downVote = down;
+        }
+    }
     /**
      * The Database constructor is private: we only create Database objects 
      * through the getDatabase() method.
@@ -211,6 +296,17 @@ public class Database {
             // Standard CRUD operations
             db.uDeleteOne = db.mConnection.prepareStatement("DELETE FROM usrData WHERE id = ?");
 
+            //COMMENT STUFF
+            db.cCreateTable = db.mConnection.prepareStatement(
+            "CREATE TABLE comData (mid SERIAL PRIMARY KEY, cid SERIAL PRIMARY KEY, uid SERIAL PRIMARY KEY, subject VARCHAR(2048) NOT NULL)"); //messages limited to 2048 characters and likes added as a table factor    
+            db.cDropTable = db.mConnection.prepareStatement("DROP TABLE comData");
+            db.cDeleteOne = db.mConnection.prepareStatement("DELETE FROM comData WHERE id = ?");
+
+            //LIKE STUFF         public likeData(int id, int l, int up, int down) {
+            db.lCreateTable = db.mConnection.prepareStatement(
+            "CREATE TABLE likeData (mid SERIAL PRIMARY KEY, lid SERIAL PRIMARY KEY, upVote SERIAL PRIMARY KEY, downVote SERIAL PRIMARY KEY"); //messages limited to 2048 characters and likes added as a table factor    
+            db.lDropTable = db.mConnection.prepareStatement("DROP TABLE likeData");
+            db.lDeleteOne = db.mConnection.prepareStatement("DELETE FROM likeData WHERE id = ?");
             //IMPLIMENT IN BACKEND
             /*db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData (id, subject, message, likes) VALUES (DEFAULT, ?, ?, ?)"); //prepared statement altered to inclues likes
             db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM tblData");
@@ -287,13 +383,76 @@ public class Database {
         }
         return res;
     }
-    
+    /**
+     * Delete a row by ID
+     * 
+     * @param id The id of the row to delete
+     * 
+     * @return The number of rows that were deleted.  -1 indicates an error.
+     */
+    int deleteComRow(int id) {
+        int res = -1;
+        try {
+            cDeleteOne.setInt(1, id);
+            res = cDeleteOne.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+    /**
+     * Delete a row by ID
+     * 
+     * @param id The id of the row to delete
+     * 
+     * @return The number of rows that were deleted.  -1 indicates an error.
+     */
+    int deleteLikeRow(int id) {
+        int res = -1;
+        try {
+            lDeleteOne.setInt(1, id);
+            res = cDeleteOne.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
     /**
      * Create tblData.  If it already exists, this will print an error
      */
     void createMsgTable() {
         try {
             mCreateTable.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * Create usrData.  If it already exists, this will print an error
+     */
+    void createUsrTable() {
+        try {
+            uCreateTable.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * Create usrData.  If it already exists, this will print an error
+     */
+    void createComTable() {
+        try {
+            cCreateTable.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * Create usrData.  If it already exists, this will print an error
+     */
+    void createLikeTable() {
+        try {
+            lCreateTable.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -310,23 +469,34 @@ public class Database {
         }
     }
     /**
-     * Create usrData.  If it already exists, this will print an error
-     */
-    void createUsrTable() {
-        try {
-            uCreateTable.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Remove tblData from the database.  If it does not exist, this will print
      * an error.
      */
     void dropUsrTable() {
         try {
             uDropTable.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * Remove tblData from the database.  If it does not exist, this will print
+     * an error.
+     */
+    void dropComTable() {
+        try {
+            cDropTable.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * Remove tblData from the database.  If it does not exist, this will print
+     * an error.
+     */
+    void dropLikeTable() {
+        try {
+            lDropTable.execute();
         } catch (SQLException e) {
             e.printStackTrace();
         }
