@@ -17,19 +17,23 @@ function IdeaList() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const headers = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
   const handleAddMessage = (message: string) => {
     const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/messages";
+    const data = {mTitle: 'Title', mMessage: message , uId: 1};
     axios
-      .post(url, { mMessage: message, mTitle: "Title" , uId: 1})
+      .post(url, data , {headers})
       .then((response) => {
         const newMessageData: number = response.data.mMessage; //int id
         setMessages([
+          ...messages,
           {
             mMessage: message,
             mId: newMessageData,
             mLikes: 0,
-            mDislikes: 0,
             mTitle: "title",
           },
         ]);
@@ -40,10 +44,10 @@ function IdeaList() {
       });
   };
 
-  const handleAddComment = (messageId: number, comment: string) => {
+  const handleAddComment = (userId: number, comment: string) => {
     const url = `https://team-margaritavillians.dokku.cse.lehigh.edu/messages/${messageId}`;
     axios
-      .post(url, { cContent: comment, mId: messageId })
+      .post(url, { cContent: comment, uId: userId })
       .then((response) => {
         const newCommentData: Comment = response.data.mData;
         setComments([newCommentData]);
@@ -52,11 +56,11 @@ function IdeaList() {
         console.error("Error when adding comment:", error);
       });
   };
-
+  
   useEffect(() => {
     const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/messages";
     axios
-      .get(url)
+      .get(url, {headers})
       .then((response) => {
         const messageData: Message[] = response.data.mData;
         setMessages(messageData);
@@ -71,7 +75,7 @@ function IdeaList() {
   useEffect(() => {
     const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/comments";
     axios
-      .get(url)
+      .get(url, {headers})
       .then((response) => {
         const commentData: Comment[] = response.data.mData;
         setComments(commentData);
@@ -84,7 +88,7 @@ function IdeaList() {
   useEffect(() => {
     const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/users";
     axios
-      .get(url)
+      .get(url, {headers})
       .then((response) => {
         const userData: User[] = response.data.mData;
         setUsers(userData);
@@ -93,7 +97,7 @@ function IdeaList() {
         console.error("Error when fetching message:", error);
       });
   }, []);
-
+ 
   useEffect(() => {
     if (process.env.NODE_ENV === "development") {
       setMessages(mockMessages);
@@ -123,9 +127,9 @@ function IdeaList() {
             <VoteButtons message={message} />
             <h3>Comments:</h3>
             <ul>{messageComments(message.mId)}</ul>
-            <CommentForm
+            <div> <CommentForm
               onAddComment={(comment) => handleAddComment(message.mId, comment)}
-            />
+            /></div>
           </div>
         ))
       )}
@@ -162,7 +166,6 @@ const mockMessages: Message[] = [
     mTitle: "Sample Idea 1",
     mMessage: "This is a sample idea.",
     mLikes: 5,
-    mDislikes: 2,
     uId: 1,
   },
   {
@@ -170,7 +173,6 @@ const mockMessages: Message[] = [
     mTitle: "Sample Idea 2",
     mMessage: "Another sample idea here.",
     mLikes: 3,
-    mDislikes: 0,
     uId: 2,
   },
   // Add more sample messages as needed

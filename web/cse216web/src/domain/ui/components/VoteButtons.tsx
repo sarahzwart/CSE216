@@ -11,12 +11,12 @@ let url = "https://team-margaritavillians.dokku.cse.lehigh.edu/messages/";
 
 function VoteButtons({ message }: { message: Message }){
   const [likes, setLikes] = useState(message.mLikes);
-  const [dislikes, setDislikes] = useState(message.mDislikes);
+  const [dislikes, setDislikes] = useState(message.mLikes);
   const [upVoteStatus, setUpVoteStatus] = useState(false);
   const [downVoteStatus, setDownVoteStatus] = useState(false);
   const handleUpVote = () => {
     if (upVoteStatus == false) {
-      axios.put(`${url}${message.mId}`, {uId: 1})
+      axios.put(`${url}${message.mId}/like`, {uId: 1})
         .then(() => {
           // Successfully updated on the server
           setLikes(likes + 1);
@@ -38,7 +38,7 @@ function VoteButtons({ message }: { message: Message }){
   }
   const handleDownVote = () => {
     if(downVoteStatus == false){
-      axios.put(`${url}${message.mId}`,  {uId: 1})
+      axios.put(`${url}${message.mId}/dislike`,  {uId: 1})
         .then(() => {
           // Successfully updated on the server
           setLikes(likes - 1);
