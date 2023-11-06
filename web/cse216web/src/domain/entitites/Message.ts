@@ -3,5 +3,5 @@ export interface Message {
     mTitle: string; // Title or subject of the idea
     mMessage: string; // Main content or description of the idea
     mLikes: number;
-    uId?: number;
+    uId: number;
 }

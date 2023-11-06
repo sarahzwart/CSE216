@@ -27,6 +27,7 @@ function MessageForm ({ onAddMessage }: MessageFormProps){
         value={formData.message}
         onChange={onChange}
       />
+      <div> </div>
       <button type="submit">Add Message</button>
     </form>
   );

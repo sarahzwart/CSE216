@@ -4,7 +4,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    background-color: #f0f0f0; /* Light gray background */
+    background-color: #aeb6ff; /* Light gray background */
     min-height: 100vh;
   }
   
@@ -21,9 +21,9 @@
     max-width: 100%; /* Ensure the message container doesn't exceed the viewport width */
     width: 300px; /* Adjust the width as needed, or use a percentage */
     padding: 20px;
-    border: 2px solid #006400; /* Dark green outline */
+    border: 2px solid #9370db; /* Dark green outline */
     border-radius: 10px;
-    background-color: #98ff98; /* Mint green background */
+    background-color: #befffa; /* Mint green background */
     margin: 10px;
   }
   

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Component } from "react";
 import { Link } from "react-router-dom";
 import { Message } from "../../entitites/Message";
 import { Comment } from "../../entitites/Comment";
@@ -52,7 +51,7 @@ function IdeaList() {
       });
   }, []);
 
-  // get user info
+  // Get user info
   useEffect(() => {
     const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/users";
     axios
@@ -66,6 +65,7 @@ function IdeaList() {
       });
   }, []);
 
+  // ADD a Message
   const handleAddMessage = (message: string) => {
     const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/messages";
     const data = { mTitle: "Title", mMessage: message, uId: 1 };
@@ -78,6 +78,7 @@ function IdeaList() {
           {
             mMessage: message,
             mId: newMessageData,
+            uId: 0,
             mLikes: 0,
             mTitle: "title",
           },
@@ -90,34 +91,36 @@ function IdeaList() {
   };
 
   // Adds a comment to a Message(Idea)
-  const handleAddComment = (userId: number, comment: string) => {
-    const url = `https://team-margaritavillians.dokku.cse.lehigh.edu/messages/`;
+  const handleAddComment = (userId: number, comment: string, mId: number) => {
+    const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/comments";
     axios
-      .post(`{url}`, { cContent: comment, uId: userId }, { headers })
+      .post(`${url}`, { cContent: comment, uId: userId, mId: mId }, { headers })
       .then((response) => {
         const newCommentData: Comment = response.data.mData;
-        setComments([newCommentData]);
+        //setComments(
+          //[...comments,
+            //newCommentData]);
       })
       .catch((error) => {
         console.error("Error when adding comment:", error);
       });
   };
 
-  // MOCK DATA IMPORT
-  useEffect(() => {
-    if (process.env.NODE_ENV === "development") {
-      setMessages(mockMessages);
-      setComments(mockComments);
-      setUsers(mockUsers);
-      setIsLoading(false);
-    } else {
-    }
-  }, []);
+  //Edit Comment with Put request
+  const handleEditComment = (cId: number, cContent: string) => {
+    const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/comments/";
+    axios
+      .put(`${url}${cId}`, {cContent: cContent}, { headers })
+      .then((response) =>{
+
+      })
+      .catch((error) => {
+        console.error("Error editing message", error);
+      })
+  }
 
   return (
     <div className="idea-list-container">
-      <h2>Idea List</h2>
-      <MessageForm onAddMessage={handleAddMessage} />
       <div className="message-list">
         {isLoading ? (
           <p>Loading...</p>
@@ -131,18 +134,18 @@ function IdeaList() {
               <VoteButtons message={message} />
               <h3>Comments:</h3>
               <ul>{messageComments(message.mId)}</ul>
-              <div>
-                {" "}
+              <h2>
                 <CommentForm
                   onAddComment={(comment) =>
-                    handleAddComment(message.mId, comment)
+                    handleAddComment(message.uId,comment,message.mId)
                   }
                 />
-              </div>
+              </h2>
             </div>
           ))
         )}
       </div>
+      <MessageForm onAddMessage={handleAddMessage} />
     </div>
   );
   
@@ -170,7 +173,24 @@ function IdeaList() {
   }
 }
 
-//Mock Data
+export default IdeaList;
+
+
+
+//Mock Tests
+  /*
+  useEffect(() => {
+    if (process.env.NODE_ENV === "development") {
+      setMessages(mockMessages);
+      setComments(mockComments);
+      setUsers(mockUsers);
+      setIsLoading(false);
+    } else {
+    }
+  }, []);
+  */
+
+  //Mock Data
 const mockMessages: Message[] = [
   {
     mId: 1,
@@ -223,5 +243,3 @@ const mockUsers: User[] = [
   },
   // Add more sample users as needed
 ];
-
-export default IdeaList;

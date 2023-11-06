@@ -32,7 +32,7 @@ function VoteButtons({ message }: { message: Message }){
     } else {
       setLikes(likes - 1);
       setUpVoteStatus(false);
-      axios.put(`${url}${message.mId}/like`, {uId: 1}, {headers})
+      axios.put(`${url}${message.mId}/like`, {uId: 0}, {headers})
         .then(() => {
           console.log("successfully updated likes");
         })
@@ -45,25 +45,25 @@ function VoteButtons({ message }: { message: Message }){
   // Handle Downvote Data
   const handleDownVote = () => {
     if(downVoteStatus == false){
+      setLikes(likes - 1);
+      setDownVoteStatus(true);
       axios.put(`${url}${message.mId}/dislike`,  {uId: 1}, {headers})
         .then(() => {
           // Successfully updated on the server
-          setLikes(likes - 1);
-          setDownVoteStatus(true);
         })
         .catch(error => {
           console.error('Error when downvoting:', error);
         });
     }
     else{
+      setLikes(likes + 1);
+      setDownVoteStatus(false);
       axios.put(`${url}${message.mId}/dislike`, {uId: 1}, {headers})
         .then(() => {
           console.log("successfully updated likes");
-          setLikes(likes + 1);
         })
         .catch(error => {
           console.error('Error when updating likes:', error);
-          setLikes(likes + 1);
         });
     }
   };

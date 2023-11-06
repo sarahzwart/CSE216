@@ -4,23 +4,29 @@ interface CommentFormProps {
   onAddComment: (comment: string) => void;
 }
 
-const CommentForm: React.FC<CommentFormProps> = ({ onAddComment }) => {
-  const [newComment, setNewComment] = useState<string>("");
+function CommentForm({ onAddComment }: CommentFormProps) {
+  const [formData, setFormData] = useState({comment: ''});
+  
+  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setFormData({
+      comment: e.target.value,
+    });
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const onSubmit = (e : React.FormEvent) => {
     e.preventDefault();
-    onAddComment(newComment);
-    setNewComment("");
+    onAddComment(formData.comment)
+    setFormData({comment:''})
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Add a comment"
-        value={newComment}
-        onChange={(e) => setNewComment(e.target.value)}
+    <form onSubmit={onSubmit}>
+      <textarea
+        placeholder="Add a new comment"
+        value={formData.comment}
+        onChange={onChange}
       />
+      <div></div>
       <button type="submit">Add Comment</button>
     </form>
   );
