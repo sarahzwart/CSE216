@@ -289,7 +289,7 @@ public class Database {
             // creation/deletion, so multiple executions will cause an exception
             //MESSAGE DATA
             db.mCreateTable = db.mConnection.prepareStatement(
-            "CREATE TABLE tblData (id SERIAL PRIMARY KEY, subject VARCHAR(50) NOT NULL, message VARCHAR(2048) NOT NULL, likes int)"); //messages limited to 2048 characters and likes added as a table factor
+            "CREATE TABLE tblData (id SERIAL PRIMARY KEY, uid SERIAL KEY, subject VARCHAR(50) NOT NULL, message VARCHAR(2048) NOT NULL, likes int)"); //messages limited to 2048 characters and likes added as a table factor
             db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
@@ -303,7 +303,7 @@ public class Database {
 
             //COMMENT STUFF
             db.cCreateTable = db.mConnection.prepareStatement(
-            "CREATE TABLE comData (mid SERIAL PRIMARY KEY, cid SERIAL PRIMARY KEY, uid SERIAL PRIMARY KEY, subject VARCHAR(2048) NOT NULL)"); //messages limited to 2048 characters and likes added as a table factor    
+            "CREATE TABLE comData (mid SERIAL KEY, cid SERIAL PRIMARY KEY, uid PRIMARY KEY, subject VARCHAR(2048) NOT NULL)"); //messages limited to 2048 characters and likes added as a table factor    
             db.cDropTable = db.mConnection.prepareStatement("DROP TABLE comData");
             db.cDeleteOne = db.mConnection.prepareStatement("DELETE FROM comData WHERE id = ?");
 
