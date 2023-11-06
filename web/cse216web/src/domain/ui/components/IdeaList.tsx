@@ -9,6 +9,9 @@ import CommentForm from "./CommentForm";
 import MessageForm from "./MessageForm";
 import VoteButtons from "./VoteButtons";
 
+//CSS imports
+import '../styles/IdeaList.css';
+
 function IdeaList() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -18,15 +21,15 @@ function IdeaList() {
   const handleAddMessage = (message: string) => {
     const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/messages";
     axios
-      .post(url, { mMessage: message, mTitle: "Title" })
+      .post(url, { mMessage: message, mTitle: "Title" , uId: 1})
       .then((response) => {
         const newMessageData: number = response.data.mMessage; //int id
         setMessages([
-          ...messages,
           {
             mMessage: message,
             mId: newMessageData,
             mLikes: 0,
+            mDislikes: 0,
             mTitle: "title",
           },
         ]);
@@ -43,7 +46,7 @@ function IdeaList() {
       .post(url, { cContent: comment, mId: messageId })
       .then((response) => {
         const newCommentData: Comment = response.data.mData;
-        setComments([...comments, newCommentData]);
+        setComments([newCommentData]);
       })
       .catch((error) => {
         console.error("Error when adding comment:", error);
@@ -104,16 +107,19 @@ function IdeaList() {
   }, []);
 
   return (
-    <div>
+    <div className="idea-list-container">
       <h2>Idea List</h2>
       <MessageForm onAddMessage={handleAddMessage} />
+      <div className="message-list">
       {isLoading ? (
         <p>Loading...</p>
       ) : (
         messages.map((message, index) => (
           <div key={index} className="message-container">
             <h2>{displayUsername(message.uId)}</h2>
+            <div className="message-box">
             <p>{message.mMessage}</p>
+            </div>
             <VoteButtons message={message} />
             <h3>Comments:</h3>
             <ul>{messageComments(message.mId)}</ul>
@@ -123,6 +129,7 @@ function IdeaList() {
           </div>
         ))
       )}
+      </div>
     </div>
   );
 
@@ -155,6 +162,7 @@ const mockMessages: Message[] = [
     mTitle: "Sample Idea 1",
     mMessage: "This is a sample idea.",
     mLikes: 5,
+    mDislikes: 2,
     uId: 1,
   },
   {
@@ -162,6 +170,7 @@ const mockMessages: Message[] = [
     mTitle: "Sample Idea 2",
     mMessage: "Another sample idea here.",
     mLikes: 3,
+    mDislikes: 0,
     uId: 2,
   },
   // Add more sample messages as needed

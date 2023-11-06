@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useEffect } from 'react';
+import { FaRegThumbsDown} from "react-icons/fa";
+import { FaRegThumbsUp} from "react-icons/fa";
 import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 //put likes --> /messages/id --> increment/decrements likes
 import { Message } from '../../entitites/Message';
@@ -9,24 +11,24 @@ let url = "https://team-margaritavillians.dokku.cse.lehigh.edu/messages/";
 
 function VoteButtons({ message }: { message: Message }){
   const [likes, setLikes] = useState(message.mLikes);
-  const [selectedVote, setSelectedVote] = useState<'upvote' | 'downvote' | null>(null);
+  const [dislikes, setDislikes] = useState(message.mDislikes);
+  const [upVoteStatus, setUpVoteStatus] = useState(false);
+  const [downVoteStatus, setDownVoteStatus] = useState(false);
   const handleUpVote = () => {
-    if (selectedVote === 'upvote') {
-      setSelectedVote(null);
-      axios.put(`${url}${message.mId}`, { mLikes: likes - 1 })
+    if (upVoteStatus == false) {
+      axios.put(`${url}${message.mId}`, {uId: 1})
         .then(() => {
           // Successfully updated on the server
-          setLikes(likes - 1);
+          setLikes(likes + 1);
         })
         .catch(error => {
           console.error('Error when downvoting:', error);
         });
     } else {
-      setSelectedVote('upvote');
-      axios.put(`${url}${message.mId}`, {mLikes: likes + 1})
-        .then(response => {
+      axios.put(`${url}${message.mId}`, {uId: 1})
+        .then(() => {
           console.log("successfully updated likes");
-          setLikes(likes + 1);
+          setLikes(likes - 1);
         })
         .catch(error => {
           console.error('Error when updating likes:', error);
@@ -35,9 +37,8 @@ function VoteButtons({ message }: { message: Message }){
     }
   }
   const handleDownVote = () => {
-    if(selectedVote === 'downvote'){
-      setSelectedVote(null);
-      axios.put(`${url}${message.mId}`, { mLikes: likes + 1 })
+    if(downVoteStatus == false){
+      axios.put(`${url}${message.mId}`,  {uId: 1})
         .then(() => {
           // Successfully updated on the server
           setLikes(likes - 1);
@@ -47,15 +48,14 @@ function VoteButtons({ message }: { message: Message }){
         });
     }
     else{
-      setSelectedVote('downvote')
-      axios.put(`${url}${message.mId}`, {mLikes: likes - 1})
+      axios.put(`${url}${message.mId}`, {uId: 1})
         .then(() => {
           console.log("successfully updated likes");
-          setLikes(likes - 1);
+          setLikes(likes + 1);
         })
         .catch(error => {
           console.error('Error when updating likes:', error);
-          setLikes(likes - 1);
+          setLikes(likes + 1);
         });
     }
   };
@@ -64,15 +64,13 @@ function VoteButtons({ message }: { message: Message }){
     <div>
       <button
         onClick={handleUpVote}
-        className={selectedVote === 'upvote' ? 'selected' : ''}
       >
-        <FontAwesomeIcon icon={faArrowUp} className='fa-2x' ></FontAwesomeIcon>
+        <FaRegThumbsUp/>
       </button>
       <button
         onClick={handleDownVote}
-        className={selectedVote === 'downvote' ? 'selected' : ''}
       >
-         <FontAwesomeIcon icon={faArrowDown} className="fa-2x"/>
+         <FaRegThumbsDown/>
       </button>
       <p>Likes: {likes}</p>
     </div>
