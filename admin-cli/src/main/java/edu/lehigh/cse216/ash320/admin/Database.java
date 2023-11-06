@@ -67,20 +67,24 @@ public class Database {
 
 
     /**
-     * msgData is like a struct in C: we use it to hold data, and we allow 
-     * direct access to its fields.  In the context of this Database, msgData 
+     * tblData is like a struct in C: we use it to hold data, and we allow 
+     * direct access to its fields.  In the context of this Database, tblData 
      * represents the data we'd see in a row.
      * 
-     * We make msgData a static class of Database because we don't really want
-     * to encourage users to think of msgData as being anything other than an
-     * abstract representation of a row of the database.  msgData and the 
+     * We make tblData a static class of Database because we don't really want
+     * to encourage users to think of tblData as being anything other than an
+     * abstract representation of a row of the database.  tblData and the 
      * Database are tightly coupled: if one changes, the other should too.
      */
-    public static class msgData {
+    public static class tblData {
         /**
          * The ID of this row of the database
         */
         int mId;
+        /**
+         * The ID of this row of the database
+        */
+        int uId;
         /**
          * The subject stored in this row
          */
@@ -96,10 +100,11 @@ public class Database {
         int mLikes;
 
         /**
-         * Construct a msgData object by providing values for its fields
+         * Construct a tblData object by providing values for its fields
          */
-        public msgData(int id, String subject, String message, int likes) {
+        public tblData(int id, int ud, String subject, String message, int likes) {
             mId = id;
+            uId = ud;
             mSubject = subject;
             if(message.length()<=2048){ //ensures correct length
                 mMessage = message;
@@ -108,7 +113,7 @@ public class Database {
                 mMessage = message.substring(0, Math.min(message.length(), 2048));
             }
             
-            mLikes=likes; //Set likes added to a msgData constructor
+            mLikes=likes; //Set likes added to a tblData constructor
         }
     }
 
@@ -284,10 +289,10 @@ public class Database {
             // creation/deletion, so multiple executions will cause an exception
             //MESSAGE DATA
             db.mCreateTable = db.mConnection.prepareStatement(
-            "CREATE TABLE msgData (id SERIAL PRIMARY KEY, subject VARCHAR(50) NOT NULL, message VARCHAR(2048) NOT NULL, likes int)"); //messages limited to 2048 characters and likes added as a table factor
-            db.mDropTable = db.mConnection.prepareStatement("DROP TABLE msgData");
+            "CREATE TABLE tblData (id SERIAL PRIMARY KEY, subject VARCHAR(50) NOT NULL, message VARCHAR(2048) NOT NULL, likes int)"); //messages limited to 2048 characters and likes added as a table factor
+            db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
             // Standard CRUD operations
-            db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM msgData WHERE id = ?");
+            db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
 
             //USER STUFF
             db.uCreateTable = db.mConnection.prepareStatement(
