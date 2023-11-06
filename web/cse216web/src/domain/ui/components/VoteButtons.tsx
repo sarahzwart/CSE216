@@ -11,44 +11,52 @@ let url = "https://team-margaritavillians.dokku.cse.lehigh.edu/messages/";
 
 function VoteButtons({ message }: { message: Message }){
   const [likes, setLikes] = useState(message.mLikes);
-  const [dislikes, setDislikes] = useState(message.mLikes);
   const [upVoteStatus, setUpVoteStatus] = useState(false);
   const [downVoteStatus, setDownVoteStatus] = useState(false);
+  const headers = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  };
+  // Handle UpVote Button Press
   const handleUpVote = () => {
     if (upVoteStatus == false) {
-      axios.put(`${url}${message.mId}/like`, {uId: 1})
+      setLikes(likes + 1);
+      setUpVoteStatus(true);
+      axios.put(`${url}${message.mId}/like`, {uId: 1}, {headers} )
         .then(() => {
-          // Successfully updated on the server
-          setLikes(likes + 1);
+          
         })
         .catch(error => {
-          console.error('Error when downvoting:', error);
+          console.error('Error when upVoting', error);
         });
     } else {
-      axios.put(`${url}${message.mId}`, {uId: 1})
+      setLikes(likes - 1);
+      setUpVoteStatus(false);
+      axios.put(`${url}${message.mId}/like`, {uId: 1}, {headers})
         .then(() => {
           console.log("successfully updated likes");
-          setLikes(likes - 1);
         })
         .catch(error => {
           console.error('Error when updating likes:', error);
-          setLikes(likes + 1);
         });
     }
   }
+
+  // Handle Downvote Data
   const handleDownVote = () => {
     if(downVoteStatus == false){
-      axios.put(`${url}${message.mId}/dislike`,  {uId: 1})
+      axios.put(`${url}${message.mId}/dislike`,  {uId: 1}, {headers})
         .then(() => {
           // Successfully updated on the server
           setLikes(likes - 1);
+          setDownVoteStatus(true);
         })
         .catch(error => {
           console.error('Error when downvoting:', error);
         });
     }
     else{
-      axios.put(`${url}${message.mId}`, {uId: 1})
+      axios.put(`${url}${message.mId}/dislike`, {uId: 1}, {headers})
         .then(() => {
           console.log("successfully updated likes");
           setLikes(likes + 1);

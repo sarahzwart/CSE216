@@ -10,9 +10,14 @@ function UserProfile(){
   const { userId } = useParams();
   const [user, setUserInfo] = useState<User>();
   const [isLoading, setIsLoading] = useState(true);
-
+  // JSON Headers
+  const headers = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
+  // Get the user using a get request
   useEffect(() =>{
-    axios.get(`${url}${userId}`)
+    axios.get(`${url}${userId}`, {headers})
     .then((response) => {
       setUserInfo(response.data.mData);
       setIsLoading(false);
@@ -23,10 +28,8 @@ function UserProfile(){
     });
   }, []);
 
-  //Testing
+  // Testing
   useEffect(() => {
-    // Simulate an API call to fetch user data based on userInfo
-    // For this example, we'll use a simple if statement to determine which user to display
     if (userId === '1') {
       setUserInfo(mockUser1);
     } else if (userId === '2') {
@@ -36,10 +39,10 @@ function UserProfile(){
     } else {
       setUserInfo(undefined); // Handle the case where userInfo doesn't match any user
     }
-
     setIsLoading(false);
   }, []);
 
+  // Put Requests for the user info
   return(
     <div>
       <h1>Profile</h1>

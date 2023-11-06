@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Component } from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import { Message } from "../../entitites/Message";
 import { Comment } from "../../entitites/Comment";
 import { User } from "../../entitites/User";
@@ -10,7 +10,7 @@ import MessageForm from "./MessageForm";
 import VoteButtons from "./VoteButtons";
 
 //CSS imports
-import '../styles/IdeaList.css';
+import "../styles/IdeaList.css";
 
 function IdeaList() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -18,14 +18,59 @@ function IdeaList() {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const headers = {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    "Content-Type": "application/json",
+    Accept: "application/json",
   };
+
+  // Gets all messages to display
+  useEffect(() => {
+    const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/messages";
+    axios
+      .get(url, { headers })
+      .then((response) => {
+        const messageData: Message[] = response.data.mData;
+        setMessages(messageData);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error when fetching message:", error);
+        setIsLoading(false);
+      });
+  }, []);
+
+  // Get comment info
+  useEffect(() => {
+    const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/comments";
+    axios
+      .get(url, { headers })
+      .then((response) => {
+        const commentData: Comment[] = response.data.mData;
+        setComments(commentData);
+      })
+      .catch((error) => {
+        console.error("Error when fetching message:", error);
+      });
+  }, []);
+
+  // get user info
+  useEffect(() => {
+    const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/users";
+    axios
+      .get(url, { headers })
+      .then((response) => {
+        const userData: User[] = response.data.mData;
+        setUsers(userData);
+      })
+      .catch((error) => {
+        console.error("Error when fetching message:", error);
+      });
+  }, []);
+
   const handleAddMessage = (message: string) => {
     const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/messages";
-    const data = {mTitle: 'Title', mMessage: message , uId: 1};
+    const data = { mTitle: "Title", mMessage: message, uId: 1 };
     axios
-      .post(url, data , {headers})
+      .post(url, data, { headers })
       .then((response) => {
         const newMessageData: number = response.data.mMessage; //int id
         setMessages([
@@ -44,10 +89,11 @@ function IdeaList() {
       });
   };
 
+  // Adds a comment to a Message(Idea)
   const handleAddComment = (userId: number, comment: string) => {
-    const url = `https://team-margaritavillians.dokku.cse.lehigh.edu/messages/${messageId}`;
+    const url = `https://team-margaritavillians.dokku.cse.lehigh.edu/messages/`;
     axios
-      .post(url, { cContent: comment, uId: userId })
+      .post(`{url}`, { cContent: comment, uId: userId }, { headers })
       .then((response) => {
         const newCommentData: Comment = response.data.mData;
         setComments([newCommentData]);
@@ -56,48 +102,8 @@ function IdeaList() {
         console.error("Error when adding comment:", error);
       });
   };
-  
-  useEffect(() => {
-    const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/messages";
-    axios
-      .get(url, {headers})
-      .then((response) => {
-        const messageData: Message[] = response.data.mData;
-        setMessages(messageData);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error when fetching message:", error);
-        setIsLoading(false);
-      });
-  }, []);
 
-  useEffect(() => {
-    const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/comments";
-    axios
-      .get(url, {headers})
-      .then((response) => {
-        const commentData: Comment[] = response.data.mData;
-        setComments(commentData);
-      })
-      .catch((error) => {
-        console.error("Error when fetching message:", error);
-      });
-  }, []);
-
-  useEffect(() => {
-    const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/users";
-    axios
-      .get(url, {headers})
-      .then((response) => {
-        const userData: User[] = response.data.mData;
-        setUsers(userData);
-      })
-      .catch((error) => {
-        console.error("Error when fetching message:", error);
-      });
-  }, []);
- 
+  // MOCK DATA IMPORT
   useEffect(() => {
     if (process.env.NODE_ENV === "development") {
       setMessages(mockMessages);
@@ -105,8 +111,6 @@ function IdeaList() {
       setUsers(mockUsers);
       setIsLoading(false);
     } else {
-      // Fetch your data from the backend
-      // You can make actual API requests here
     }
   }, []);
 
@@ -115,28 +119,34 @@ function IdeaList() {
       <h2>Idea List</h2>
       <MessageForm onAddMessage={handleAddMessage} />
       <div className="message-list">
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : (
-        messages.map((message, index) => (
-          <div key={index} className="message-container">
-            <h2>{displayUsername(message.uId)}</h2>
-            <div className="message-box">
-            <p>{message.mMessage}</p>
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : (
+          messages.map((message, index) => (
+            <div key={index} className="message-container">
+              <h2>{displayUsername(message.uId)}</h2>
+              <div className="message-box">
+                <p>{message.mMessage}</p>
+              </div>
+              <VoteButtons message={message} />
+              <h3>Comments:</h3>
+              <ul>{messageComments(message.mId)}</ul>
+              <div>
+                {" "}
+                <CommentForm
+                  onAddComment={(comment) =>
+                    handleAddComment(message.mId, comment)
+                  }
+                />
+              </div>
             </div>
-            <VoteButtons message={message} />
-            <h3>Comments:</h3>
-            <ul>{messageComments(message.mId)}</ul>
-            <div> <CommentForm
-              onAddComment={(comment) => handleAddComment(message.mId, comment)}
-            /></div>
-          </div>
-        ))
-      )}
+          ))
+        )}
       </div>
     </div>
   );
-
+  
+  // Puts a comment under a message based on messageID
   function messageComments(messageId: number) {
     const commentsForMessage = comments.filter(
       (comment) => comment.mId === messageId
@@ -146,6 +156,7 @@ function IdeaList() {
     ));
   }
 
+  // Displays username with a link to user profile
   function displayUsername(userId: number | undefined) {
     if (userId === undefined) {
       return "Unknown User";
