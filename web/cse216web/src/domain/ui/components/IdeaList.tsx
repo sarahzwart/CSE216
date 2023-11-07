@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Message } from "../../entitites/Message";
 import { Comment } from "../../entitites/Comment";
@@ -97,7 +97,8 @@ function IdeaList() {
 
   // Adds a comment to a Message(Idea)
   const handleAddComment = (userId: number, comment: string, mId: number) => {
-    const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/comments";
+    const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/comments/";
+    
     axios
       .post(`${url}`, { cContent: comment, uId: userId, mId: mId }, { headers })
       .then((response) => {
@@ -116,7 +117,7 @@ function IdeaList() {
     const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/comments/";
     axios
       .put(`${url}${cId}`, { cContent: cContent }, { headers })
-      .then((response) => {
+      .then(() => {
         // Update the comments state with the updated comment
         const updatedComments = comments.map((comment) =>
           comment.cId === cId ? { ...comment, cContent } : comment
@@ -141,6 +142,7 @@ function IdeaList() {
                 <p>{message.mMessage}</p>
               </div>
               <VoteButtons message={message} />
+              <p>Likes: {message.mLikes} </p>
               <h3>Comments:</h3>
               <p>{messageComments(message.mId)}</p>
               <h3>
@@ -221,6 +223,7 @@ export default IdeaList;
   */
 
 //Mock Data
+/*
 const mockMessages: Message[] = [
   {
     mId: 1,
@@ -273,3 +276,4 @@ const mockUsers: User[] = [
   },
   // Add more sample users as needed
 ];
+*/

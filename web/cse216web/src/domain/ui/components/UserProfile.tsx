@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {User} from '../../entitites/User';
-import {Message} from '../../entitites/Message';
-import {Comment} from '../../entitites/Comment';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
