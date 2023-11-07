@@ -7,6 +7,7 @@ import axios from "axios";
 import CommentForm from "./CommentForm";
 import MessageForm from "./MessageForm";
 import VoteButtons from "./VoteButtons";
+import EditCommentForm from "./EditCommentForm";
 
 //CSS imports
 import "../styles/IdeaList.css";
@@ -16,6 +17,10 @@ function IdeaList() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [editingComment, setEditingComment] = useState({
+    cId: 0,
+    cContent: " ",
+  });
   const headers = {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -96,10 +101,10 @@ function IdeaList() {
     axios
       .post(`${url}`, { cContent: comment, uId: userId, mId: mId }, { headers })
       .then((response) => {
-        const newCommentData: Comment = response.data.mData;
-        //setComments(
-          //[...comments,
-            //newCommentData]);
+        const newCommentData: number = response.data.mData;
+          setComments(
+          [...comments,
+          {cContent: comment, mId: mId, uId: userId, cId: newCommentData}]);
       })
       .catch((error) => {
         console.error("Error when adding comment:", error);
@@ -110,14 +115,18 @@ function IdeaList() {
   const handleEditComment = (cId: number, cContent: string) => {
     const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/comments/";
     axios
-      .put(`${url}${cId}`, {cContent: cContent}, { headers })
-      .then((response) =>{
-
+      .put(`${url}${cId}`, { cContent: cContent }, { headers })
+      .then((response) => {
+        // Update the comments state with the updated comment
+        const updatedComments = comments.map((comment) =>
+          comment.cId === cId ? { ...comment, cContent } : comment
+        );
+        setComments(updatedComments);
       })
       .catch((error) => {
         console.error("Error editing message", error);
-      })
-  }
+      });
+  };
 
   return (
     <div className="idea-list-container">
@@ -133,14 +142,14 @@ function IdeaList() {
               </div>
               <VoteButtons message={message} />
               <h3>Comments:</h3>
-              <ul>{messageComments(message.mId)}</ul>
-              <h2>
+              <p>{messageComments(message.mId)}</p>
+              <h3>
                 <CommentForm
                   onAddComment={(comment) =>
-                    handleAddComment(message.uId,comment,message.mId)
+                    handleAddComment(message.uId, comment, message.mId)
                   }
                 />
-              </h2>
+              </h3>
             </div>
           ))
         )}
@@ -148,14 +157,37 @@ function IdeaList() {
       <MessageForm onAddMessage={handleAddMessage} />
     </div>
   );
-  
+
   // Puts a comment under a message based on messageID
   function messageComments(messageId: number) {
     const commentsForMessage = comments.filter(
       (comment) => comment.mId === messageId
     );
     return commentsForMessage.map((comment) => (
-      <li key={comment.cId}>{comment.cContent}</li>
+      <div className="comment-list-container" key={comment.cId}>
+        {comment.cId === editingComment.cId ? (
+          <EditCommentForm
+          onEditComment={(editedComment) =>
+            handleEditComment(comment.cId, editedComment)
+          }
+          comment={comment.cContent as string} // Include the 'comment' prop here
+        />
+        ) : (
+          <div>
+            {comment.cContent}
+            <button
+              className="edit-button"
+              onClick={() =>
+                setEditingComment({
+                  cId: comment.cId,
+                  cContent: comment.cContent as string,
+                })
+              }>
+              {editingComment.cId === comment.cId ? "Cancel" : "Edit"}
+            </button>
+          </div>
+        )}
+      </div>
     ));
   }
 
@@ -175,10 +207,8 @@ function IdeaList() {
 
 export default IdeaList;
 
-
-
 //Mock Tests
-  /*
+/*
   useEffect(() => {
     if (process.env.NODE_ENV === "development") {
       setMessages(mockMessages);
@@ -190,7 +220,7 @@ export default IdeaList;
   }, []);
   */
 
-  //Mock Data
+//Mock Data
 const mockMessages: Message[] = [
   {
     mId: 1,
