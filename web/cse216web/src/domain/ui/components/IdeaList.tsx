@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Message } from "../../entitites/Message";
 import { Comment } from "../../entitites/Comment";
@@ -97,8 +97,7 @@ function IdeaList() {
 
   // Adds a comment to a Message(Idea)
   const handleAddComment = (userId: number, comment: string, mId: number) => {
-    const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/comments/";
-    
+    const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/comments";
     axios
       .post(`${url}`, { cContent: comment, uId: userId, mId: mId }, { headers })
       .then((response) => {
@@ -137,6 +136,7 @@ function IdeaList() {
         ) : (
           messages.map((message, index) => (
             <div key={index} className="message-container">
+              <p>{message.mId}</p>
               <h2>{displayUsername(message.uId)}</h2>
               <div className="message-box">
                 <p>{message.mMessage}</p>
