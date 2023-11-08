@@ -25,6 +25,7 @@ function UserProfile(){
       setIsLoading(false);
     });
   }, []);
+  
   const mockUser1 = {
     uName: "JimmyBuffet",
     uEmail: "jimmyBuff@emargarita.com",
