@@ -26,7 +26,7 @@ function VoteButtons({ message }: { message: Message }){
         });
     } else {
       setUpVoteStatus(false);
-      axios.put(`${url}${message.mId}`, {uId: 0, isLike: 1}, {headers})
+      axios.put(`${url}${message.mId}`, {uId: 1, isLike: 1}, {headers})
         .then(() => {
           console.log("successfully updated likes");
         })
