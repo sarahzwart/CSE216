@@ -25,7 +25,30 @@ function UserProfile(){
       setIsLoading(false);
     });
   }, []);
-
+  const mockUser1 = {
+    uName: "JimmyBuffet",
+    uEmail: "jimmyBuff@emargarita.com",
+    uSO: "Heterosexual",
+    uGO: "Male",
+    uNote: "Jimmy Buffett is best known for his music, which often portrays an 'island escapism' lifestyle.",
+    uId: 1,
+  }
+  const mockUser2 = {
+    uName: "TaylorSwift",
+    uEmail: "taylorswift@margarita.com",
+    uSO: "Heterosexual",
+    uGO: "Female",
+    uNote: "Taylors Swift's cat's net worth is $97 million",
+    uId: 2,
+  }
+  const mockUser3 = {
+    uName: "Pitbull",
+      uEmail: "pitbull@margarita.com",
+      uSO: "Heterosexual",
+      uGO: "Male",
+      uNote: "This for everybody going through tough times \n Believe me: been there, done that \n But everyday above ground is a great day, remember that",
+      uId: 3,
+  }
   // Testing
   useEffect(() => {
     if (userId === '1') {
@@ -39,7 +62,6 @@ function UserProfile(){
     }
     setIsLoading(false);
   }, []);
-
   // Put Requests for the user info
   return(
     <div>
@@ -62,31 +84,6 @@ function UserProfile(){
 }
 
 //Testing
-const mockUser1 = {
-  uName: "User1",
-  uEmail: "user1@example.com",
-  uSO: "Heterosexual",
-  uGO: "Male",
-  uNote: "Some note about User1",
-  uId: 1,
-};
 
-const mockUser2 = {
-  uName: "User2",
-  uEmail: "user2@example.com",
-  uSO: "Heterosexual",
-  uGO: "Female",
-  uNote: "Some note about User2",
-  uId: 2,
-};
-
-const mockUser3 = {
-  uName: "User3",
-  uEmail: "user3@example.com",
-  uSO: "Bisexual",
-  uGO: "Non-binary",
-  uNote: "Some note about User3",
-  uId: 3,
-};
 
 export default UserProfile;

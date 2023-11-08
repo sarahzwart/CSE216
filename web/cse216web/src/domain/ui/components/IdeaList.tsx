@@ -25,8 +25,79 @@ function IdeaList() {
     "Content-Type": "application/json",
     Accept: "application/json",
   };
+  //Mock users
+  
+const mockMessages: Message[] = [
+  {
+    mId: 1,
+    mTitle: "Sample Idea 1",
+    mMessage: "This is a sample idea.",
+    mLikes: 5,
+    uId: 1,
+  },
+  {
+    mId: 2,
+    mTitle: "Sample Idea 2",
+    mMessage: "Another sample idea here.",
+    mLikes: 3,
+    uId: 2,
+  },
+  // Add more sample messages as needed
+];
 
+const mockComments: Comment[] = [
+  {
+    cId: 1,
+    mId: 1,
+    uId: 1,
+    cContent: "Nice idea!",
+  },
+  {
+    cId: 2,
+    mId: 2,
+    uId: 2,
+    cContent: "I agree with this!",
+  },
+];
+
+const mockUsers: User[] = [
+  {
+    uName: "JimmyBuffet",
+    uEmail: "jimmyBuff@emargarita.com",
+    uSO: "Heterosexual",
+    uGO: "Male",
+    uNote: "Jimmy Buffett is best known for his music, which often portrays an 'island escapism' lifestyle.",
+    uId: 1,
+  },
+  {
+    uName: "TaylorSwift",
+    uEmail: "taylorswift@margarita.com",
+    uSO: "Heterosexual",
+    uGO: "Female",
+    uNote: "Taylors Swift's cat's net worth is $97 million",
+    uId: 2,
+  },
+  {
+    uName: "Pitbull",
+    uEmail: "pitbull@margarita.com",
+    uSO: "Heterosexual",
+    uGO: "Male",
+    uNote: "This for everybody going through tough times \n Believe me: been there, done that \n But everyday above ground is a great day, remember that",
+    uId: 3,
+  },
+  // Add more sample users as needed
+];
   // Gets all messages to display
+  useEffect(() => {
+    if (process.env.NODE_ENV === "development") {
+      setMessages([...messages ,...mockMessages]);
+      setComments([...comments, ...mockComments]);
+      setUsers([...users,...mockUsers]);
+      setIsLoading(false);
+    } else {
+    }
+  }, []);
+
   useEffect(() => {
     const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/messages";
     axios
@@ -73,7 +144,7 @@ function IdeaList() {
   // ADD a Message
   const handleAddMessage = (message: string) => {
     const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/messages";
-    const data = { mTitle: "Title", mMessage: message, uId: 1 };
+    const data = { mTitle: "Title", mMessage: message, uId: 2};
     axios
       .post(url, data, { headers })
       .then((response) => {
@@ -83,7 +154,7 @@ function IdeaList() {
           {
             mMessage: message,
             mId: newMessageData,
-            uId: 0,
+            uId: 2,
             mLikes: 0,
             mTitle: "title",
           },
@@ -148,7 +219,7 @@ function IdeaList() {
               <h3>
                 <CommentForm
                   onAddComment={(comment) =>
-                    handleAddComment(message.uId, comment, message.mId)
+                    handleAddComment(1, comment, message.mId)
                   }
                 />
               </h3>
@@ -167,6 +238,7 @@ function IdeaList() {
     );
     return commentsForMessage.map((comment) => (
       <div className="comment-list-container" key={comment.cId}>
+        <p style={{color: 'blue'}}>{displayUsername(comment.uId)}</p>
         {comment.cId === editingComment.cId ? (
           <EditCommentForm
           onEditComment={(editedComment) =>
@@ -209,71 +281,3 @@ function IdeaList() {
 
 export default IdeaList;
 
-//Mock Tests
-/*
-  useEffect(() => {
-    if (process.env.NODE_ENV === "development") {
-      setMessages(mockMessages);
-      setComments(mockComments);
-      setUsers(mockUsers);
-      setIsLoading(false);
-    } else {
-    }
-  }, []);
-  */
-
-//Mock Data
-/*
-const mockMessages: Message[] = [
-  {
-    mId: 1,
-    mTitle: "Sample Idea 1",
-    mMessage: "This is a sample idea.",
-    mLikes: 5,
-    uId: 1,
-  },
-  {
-    mId: 2,
-    mTitle: "Sample Idea 2",
-    mMessage: "Another sample idea here.",
-    mLikes: 3,
-    uId: 2,
-  },
-  // Add more sample messages as needed
-];
-
-const mockComments: Comment[] = [
-  {
-    cId: 1,
-    mId: 1,
-    uId: 1,
-    cContent: "Nice idea!",
-  },
-  {
-    cId: 2,
-    mId: 2,
-    uId: 2,
-    cContent: "I agree with this!",
-  },
-];
-
-const mockUsers: User[] = [
-  {
-    uName: "User1",
-    uEmail: "user1@example.com",
-    uSO: "Heterosexual",
-    uGO: "Male",
-    uNote: "Some note about User1",
-    uId: 1,
-  },
-  {
-    uName: "User2",
-    uEmail: "user2@example.com",
-    uSO: "Heterosexual",
-    uGO: "Female",
-    uNote: "Some note about User2",
-    uId: 2,
-  },
-  // Add more sample users as needed
-];
-*/

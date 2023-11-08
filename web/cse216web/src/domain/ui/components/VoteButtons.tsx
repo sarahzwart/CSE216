@@ -17,7 +17,7 @@ function VoteButtons({ message }: { message: Message }){
   const handleUpVote = () => {
     if (upVoteStatus == false) {
       setUpVoteStatus(true);
-      axios.put(`${url}${message.mId}`, {uId: 1, isLike: true}, {headers} )
+      axios.put(`${url}${message.mId}`, {uId: 1, isLike: 1}, {headers} )
         .then(() => {
           
         })
@@ -26,7 +26,7 @@ function VoteButtons({ message }: { message: Message }){
         });
     } else {
       setUpVoteStatus(false);
-      axios.put(`${url}${message.mId}`, {uId: 0, isLike: true}, {headers})
+      axios.put(`${url}${message.mId}`, {uId: 0, isLike: 1}, {headers})
         .then(() => {
           console.log("successfully updated likes");
         })
@@ -40,7 +40,7 @@ function VoteButtons({ message }: { message: Message }){
   const handleDownVote = () => {
     if(downVoteStatus == false){
       setDownVoteStatus(true);
-      axios.put(`${url}${message.mId}`,  {uId: 1, isLike: false}, {headers})
+      axios.put(`${url}${message.mId}`,  {uId: 1, isLike: 0}, {headers})
         .then(() => {
           console.log("successfully updated dislikes")
         })
@@ -50,7 +50,7 @@ function VoteButtons({ message }: { message: Message }){
     }
     else{
       setDownVoteStatus(false);
-      axios.put(`${url}${message.mId}`, {uId: 1, isLike: false}, {headers})
+      axios.put(`${url}${message.mId}`, {uId: 1, isLike: 0}, {headers})
         .then(() => {
           console.log("successfully updated dislikes");
         })
