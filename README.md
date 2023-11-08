@@ -27,7 +27,7 @@
 
 # Description of Functionality
 
-The app will allow an admin to create and delete tables and delete other's posts and comments. Admin also has access to all of the user's information that is collected when an account is created. Anonymous users (all marked with the same user ID for tracking purposes) will then be able to comment on them. Along with this, a mobile app will allow for the same functionalities, but on the emulator used in the tutorials. Likes are also set up in the backend
+The app will allow an admin to create and delete tables and delete other's posts and comments. Admin also has access to all of the user's information that is collected when an account is created. Anonymous users (all marked with the same user ID for tracking purposes) will then be able to comment on them. Along with this, a mobile app will allow for the same functionalities, but on the emulator used in the tutorials. Likes are also set up and works in the backend and tables, but only shows the change in votes on the frontend upon reloading screen
 
 # Missing Functionality
 
