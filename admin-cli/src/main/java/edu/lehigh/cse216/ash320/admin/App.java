@@ -16,8 +16,11 @@ public class App {
      */
     static void menu() {
         System.out.println("Main Menu");
-        System.out.println("  [T] Create tblData");
-        System.out.println("  [D] Drop tblData");
+        System.out.println("  [M] Create msgData");
+        System.out.println("  [U] Create usrData");
+        System.out.println("  [C] Create comData");
+        System.out.println("  [L] Create likData");
+        System.out.println("  [D] Drop Table Data");
         System.out.println("  [-] Delete a row");
         System.out.println("  [q] Quit Program");
         System.out.println("  [?] Help (this message)");
@@ -126,20 +129,70 @@ public class App {
                 menu();
             } else if (action == 'q') { //Quit app
                 break;
-            } else if (action == 'T') {//Create a table
-                db.createTable();
+            } else if (action == 'M') {//Create a table
+                db.createMsgTable();
+            } else if (action == 'U') {//Create a table
+                db.createUsrTable();
+            } else if (action == 'C') {//Create a table
+                db.createComTable();
+            } else if (action == 'L') {//Create a table
+                db.createLikeTable();
             } else if (action == 'D') {//Drop a table
-                db.dropTable();
+                System.out.print("Drop which table (M, U, C, L): ");
+                char option = prompt(in);
+                if (option == 'M'){
+                    db.dropMsgTable();
+                } else if (option == 'R') {//Drop a table
+                    db.dropUsrTable();
+                } else if (option == 'O') {//Drop a table
+                    db.dropComTable();
+                } else if (option == 'P') {//Drop a table
+                    db.dropLikeTable();
+                }
             } else if (action == '-') { //Deletes a post based on its ID
-                int id = getInt(in, "Enter the row ID");
-                if (id == -1)
-                    continue;
-                int res = db.deleteRow(id);
-                if (res == -1){
-                    System.out.println("No such index exists");
-                    continue;
-                } 
-                System.out.println("  " + res + " rows deleted");
+                System.out.print("Delete from which table (M, U, C, L): ");
+                char option = prompt(in);
+                if (option == 'M') { //Deletes a post based on its ID
+                    int id = getInt(in, "Enter the row ID");
+                    if (id == -1)
+                        continue;
+                    int res = db.deleteMsgRow(id);
+                    if (res == -1){
+                        System.out.println("No such index exists");
+                        continue;
+                    } 
+                    System.out.println("  " + res + " rows deleted");
+                } else if (option == 'U') { //Deletes a post based on its ID
+                    int id = getInt(in, "Enter the row ID");
+                    if (id == -1)
+                        continue;
+                    int res = db.deleteUsrRow(id);
+                    if (res == -1){
+                        System.out.println("No such index exists");
+                        continue;
+                    } 
+                    System.out.println("  " + res + " rows deleted");
+                } else if (option == 'C') { //Deletes a post based on its ID
+                    int id = getInt(in, "Enter the row ID");
+                    if (id == -1)
+                        continue;
+                    int res = db.deleteUsrRow(id);
+                    if (res == -1){
+                        System.out.println("No such index exists");
+                        continue;
+                    } 
+                    System.out.println("  " + res + " rows deleted");
+                } else if (option == 'L') { //Deletes a post based on its ID
+                    int id = getInt(in, "Enter the row ID");
+                    if (id == -1)
+                        continue;
+                    int res = db.deleteLikeRow(id);
+                    if (res == -1){
+                        System.out.println("No such index exists");
+                        continue;
+                    } 
+                    System.out.println("  " + res + " rows deleted");
+                }
             }
         }
         // Always remember to disconnect from the database when the program 
