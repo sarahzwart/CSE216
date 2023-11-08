@@ -31,7 +31,7 @@ The app will allow an admin to create and delete tables and delete other's posts
 
 # Missing Functionality
 
-OAuth account creation and access isn't functional, so as of now only anonymous users are able to post, vote, and comment. Upvotes and downvotes are not currently functional in the web and mobile frontends. Also, comments are not functional in the mobile branch
+OAuth account creation and access isn't functional, so as of now only anonymous users are able to post, vote, and comment. Upvotes, downvotes, and comments are not functional in the mobile branch
 
 # Instructions on Running Locally
 
