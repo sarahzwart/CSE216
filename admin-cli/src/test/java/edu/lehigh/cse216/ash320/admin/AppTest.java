@@ -44,7 +44,7 @@ public class AppTest
         int id = 1; //the first element added should have id=1
         int likes = 0; //all posts start at 0 likes
         //Create the row example
-        Database.msgData test = new Database.msgData(id, subject, message, likes);
+        Database.tblData test = new Database.tblData(id, subject, message, likes);
         //ensures the row was correctly created
         assertFalse(test==null); //ensures it was created at all
         assertTrue(test.mSubject.equals(subject));
