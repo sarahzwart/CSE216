@@ -1,0 +1,80 @@
+.idea-list-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-color: #aeb6ff; /* Light gray background */
+    min-height: 100vh;
+  }
+  
+  .message-list {
+    flex-grow: 1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px; /* Adjust the gap as needed */
+  }
+  
+  .message-container {
+/* Allow the message container to expand */
+    max-width: 100%; /* Ensure the message container doesn't exceed the viewport width */
+    width: 300px; /* Adjust the width as needed, or use a percentage */
+    padding: 20px;
+    border: 2px solid #000000; /* Dark green outline */
+    border-radius: 10px;
+    background-color: #b3eeff; /* Mint green background */
+    margin: 10px;
+  }
+  
+  .message-box {
+    padding: 10px;
+    margin: 10px;
+  }
+  
+  .smaller-edit-button {
+    font-size: 12px; 
+    padding: 5px 10px; 
+  }
+
+  .comment-list {
+    flex-grow: 1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px; 
+  }
+  .comment-list-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-color: #ffffff; /* Light gray background */
+    min-height: 7vh;
+    min-width: 20vh;
+    border: 1px solid #000000;
+    margin: 2px;
+  }
+
+  .message-box{
+    background-color: #ffffff;
+    min-height: 7vh;
+    min-width: 20vh;
+    border: 1px solid #000000;
+    margin: 10px;
+  }
+  .comment-list-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px; /* Add margin to separate comment containers */
+  }
+  
+  .comment-list-container input {
+    flex: 0; /* The input takes available space */
+  }
+  
+  .comment-list-container button {
+    margin-left: 60px; /* Add space between comment and button */
+    /* Other button styles as needed */
+  }
