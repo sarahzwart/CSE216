@@ -27,8 +27,13 @@
 
 # Description of Functionality
 
-The app will allow an admin to post new messages to the forum. Anonymous users will then be able to like these messages. Along with this, a mobile app will allow for the same functionalities, but on the emulator used in the tutorials.
+The app will allow an admin to create and delete tables and delete other's posts and comments. Admin also has access to all of the user's information that is collected when an account is created. Anonymous users (all marked with the same user ID for tracking purposes) will then be able to upvote and downvote these messages as well as comment on them. Along with this, a mobile app will allow for the same functionalities, but on the emulator used in the tutorials.
+
+# Missing Functionality
+
+OAuth account creation and access isn't functional, so as of now only anonymous users are able to post, vote, and comment. 
 
 # Instructions on Running Locally
 
 Start dokku server using instructions in dokku.md in backend folder. To start web, run the deploy.sh file in the web folder. For mobile, launch mobile emulator in VS Code and then start debugging on main.dart in VS Code.
+
