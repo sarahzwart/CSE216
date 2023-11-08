@@ -39,6 +39,9 @@ public class DataRow {
      */
     public final Date mCreated;
 
+    //id of user who created the message
+    public final int uId;
+
     /**
      * Create a new DataRow with the provided id and title/content, and a 
      * creation date based on the system clock at the time the constructor was
@@ -51,11 +54,12 @@ public class DataRow {
      * 
      * @param message The message string for this row of data
      */
-    DataRow(int id, String title, String message) {
+    DataRow(int id, String title, String message, int userId, int likes) {
         mId = id;
         mTitle = title;
         mMessage = message;
-        mLikes = 0;
+        mLikes = likes;
+        uId = userId;
         mCreated = new Date();
     }
 
@@ -68,6 +72,7 @@ public class DataRow {
         mTitle = data.mTitle;
         mMessage = data.mMessage;
         mLikes = data.mLikes;
+        uId = data.uId;
         mCreated = data.mCreated;
     }
 }
