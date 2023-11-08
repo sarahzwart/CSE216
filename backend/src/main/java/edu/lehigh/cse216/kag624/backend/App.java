@@ -9,6 +9,14 @@ import com.google.gson.*;
 
 import java.util.Map;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
+import java.util.Hashtable;
+import java.util.Random;
+
 /**
  * For now, our app creates an HTTP server that can only get and add data.
  */
@@ -29,8 +37,11 @@ public class App {
         // NB: every time we shut down the server, we will lose all data, and 
         //     every time we start the server, we'll have an empty dataStore,
         //     with IDs starting over from 0.
-        final DataStore dataStore = new DataStore();
+        //final DataStore dataStore = new DataStore();
         final Database db = getDatabaseConnection();
+
+        //Hashtable<Integer, GoogleIdToken> users = new Hashtable<>();
+        //Random rand = new Random();
 
         // Set the port on which to listen for requests from the environment
         Spark.port(getIntFromEnv("PORT", DEFAULT_PORT_SPARK));
@@ -103,7 +114,7 @@ public class App {
             response.status(200);
             response.type("application/json");
             // NB: createEntry checks for null title and message
-            int newId = db.insertRow(req.mTitle, req.mMessage);
+            int newId = db.insertRow(req.uId, req.mTitle, req.mMessage);
             if (newId == -1) {
                 return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
             } else {
@@ -111,7 +122,7 @@ public class App {
             }
         });
 
-        //  PUT route for updating the likes on a message. Will read JOSN from the 
+        //  PUT route for updating the likes on a message. Will read JSON from the 
         //  body of the request, turn it into a SimpleRequest object, extract the id
         //  from the request and the likes and update the message with the given id
         //  to the new passed value of likes
@@ -119,15 +130,42 @@ public class App {
             // If we can't get an ID or can't parse the JSON, Spark will send
             // a status 500
             int idx = Integer.parseInt(request.params("id"));
-            SimpleRequest req = gson.fromJson(request.body(), SimpleRequest.class);
+            LikeRequest req = gson.fromJson(request.body(), LikeRequest.class);
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
             // NB: updateLikes checks for null ids
-            int result = db.updateLike(idx, req.mLikes);
-            if (result == -1) {
+
+            int result = -1;
+
+            if(req.isLike == 1){
+                if(db.isLiked(idx, req.uId) == 1){  //if message is already liked, remove the like
+                    result = db.removeLike(idx, req.uId);
+                }
+                else if(db.isLiked(idx, req.uId) == 2){ //if message is disliked,
+                    db.removeDislike(idx, req.uId);         //remove dislike,
+                    result = db.addLike(idx, req.uId);  //then like the message
+                }
+                else if(db.isLiked(idx, req.uId) == 0){ //if message is not liked or disliked,
+                    result = db.addLike(idx, req.uId);  //add a like
+                }
+            }
+            else if(req.isLike == 0){
+                if(db.isLiked(idx, req.uId) == 1){  //if message is currently liked
+                    db.removeLike(idx, req.uId);        //remove the like in DB
+                    result = db.addDislike(idx, req.uId);   //then add the dislike to the DB
+                }
+                else if(db.isLiked(idx, req.uId) == 2){ //if message is currently disliked
+                    result = db.removeDislike(idx, req.uId);    //remove dislike from DB
+                }
+                else if(db.isLiked(idx, req.uId) == 0){ //if message is not liked or disliked
+                    result = db.addDislike(idx, req.uId);   //add dislike to DB
+                }
+            }
+
+            if (result == -1) {     //if requests worked send ok response, else send error response
                 return gson.toJson(new StructuredResponse("error", "unable to update row " + idx, null));
-            } else {
+            } else {    
                 return gson.toJson(new StructuredResponse("ok", null, result));
             }
         });
@@ -149,6 +187,90 @@ public class App {
                 return gson.toJson(new StructuredResponse("ok", null, null));
             }
         });
+
+        //Get route to get all comments on a message
+        Spark.get("/comments/:mId", (request, response) -> {
+            int idx = Integer.parseInt(request.params("mId"));   //get message id from route
+            response.status(200);
+            response.type("application/json");
+            return gson.toJson(new StructuredResponse("ok", null, db.selectAllComments(idx)));
+        });
+
+        //get route for all comments currently in comment DB
+        Spark.get("/comments", (request, response) -> {
+            response.status(200);
+            response.type("application/json");      //return the result of db.getallcomments which gets all comments
+            return gson.toJson(new StructuredResponse("ok", null, db.getAllComments()));
+        });
+
+        //Put route to edit comment
+        Spark.put("/comments/:commentId", (request, response) -> {
+            int idx = Integer.parseInt(request.params("commentId"));    //get comment id from route
+            response.status(200);
+            response.type("application/json");
+            CommentRequest req = gson.fromJson(request.body(), CommentRequest.class);   //get new comment content from json
+
+            int result = db.updateComment(idx, req.cContent);   //update the comment in DB
+            if(result == -1){
+                return gson.toJson(new StructuredResponse("error", "unable to update comment " + idx, null));
+            }           //if update comment worked send ok response, else send error response
+            else{
+                return gson.toJson(new StructuredResponse("ok", null, result));
+            }
+        });
+
+        //Post route to add new comment to specified message
+        Spark.post("/comments", (request, response) -> {
+            CommentRequest req = gson.fromJson(request.body(), CommentRequest.class);   //get request json data
+            response.status(200);
+            response.type("application/json");
+            int newId = db.insertComment(req.mId, req.cContent, req.uId);  //add comment in DB
+            if(newId == -1){
+                return gson.toJson(new StructuredResponse("error", "unable to add comment", null));
+            }           //if add comment worked send ok response, else send error response
+            else{
+                return gson.toJson(new StructuredResponse("ok", "" + newId, null));
+            }
+        });
+
+        /* 
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory()).setAudience(Collections.singletonList("797357831545-l17deqglq3col68qffmofhr3kbgv09fk.apps.googleusercontent.com")).build();
+
+        Spark.post("/users", (request, response) -> {
+            UserRequest req = gson.fromJson(request.body(), UserRequest.class);
+            response.status(200);
+            response.type("application/json");
+            String idTokenString = request.params("idToken");
+            //String GI = request.params("uGI");
+            //String SO = request.params("uSO");
+            //String note = request.params("uNote");
+
+            GoogleIdToken idToken = verifier.verify(idTokenString);
+            if(idToken != null){
+                Payload payload = idToken.getPayload();
+    
+                String userId = payload.getSubject();
+                System.out.println("User Id: " + userId);
+    
+                String email = payload.getEmail();
+                //boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
+                String name = (String) payload.get("name");
+                //String pictureUrl = (String) payload.get("picture");
+                //String locale = (String) payload.get("locale");
+                //String familyName = (String) payload.get("family_name");
+                //String givenName = (String) payload.get("given_name");
+     
+                int newID = db.insertUser(name, email, GI, SO, note);
+                users.add(Integer.valueOf(rand.nextInt(128)), idToken);
+                return gson.toJson(new StructuredResponse("ok", "" + newId, null));
+            }
+            else{
+                System.out.println("Invalid ID token");
+                return gson.toJson(new StructuredResponse("error", "could not create new user", null));
+            }
+        });
+
+        */
 
     }
 
