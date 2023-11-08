@@ -2,7 +2,9 @@ import '../models/Message.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as developer;
 import 'dart:convert';
-String backendURL = 'https://team-margaritavillians.dokku.cse.lehigh.edu/messages';
+
+String backendURL =
+    'https://team-margaritavillians.dokku.cse.lehigh.edu/messages';
 //https://stackoverflow.com/questions/55331782/flutter-send-json-body-for-http-get-request
 Future<List<Message>> getWebData() async {
   developer.log("Making Web Request");
@@ -17,11 +19,15 @@ Future<List<Message>> getWebData() async {
       List<Message> returnData = [];
       final jsonData = jsonDecode(response.body);
       if (jsonData['mData'] is List) {
-          returnData = (jsonData['mData'] as List).map((data) => Message.fromJson(data)).toList();
+        returnData = (jsonData['mData'] as List)
+            .map((data) => Message.fromJson(data))
+            .toList();
       } else if (jsonData['mData'] is Map) {
-          returnData = <Message>[Message.fromJson(jsonData['mData'] as Map<String, dynamic>)];
+        returnData = <Message>[
+          Message.fromJson(jsonData['mData'] as Map<String, dynamic>)
+        ];
       } else {
-         developer.log(
+        developer.log(
             'ERROR: Unexpected json response type (was not a List or Map).');
       }
       return returnData;
@@ -72,8 +78,12 @@ Future<void> addLikes(Message updatedMessage) async {
   // Make a PUT request to update the message on the server
   //if the message of the frontend matches the message of the backend, give the ID
   final List<Message> messageList = await getWebData();
-  Message matchingMessage =
-      Message(mId: 0, mTitle: " ", mMessage: " ", mLikes: 0); //Initializing a message
+  Message matchingMessage = Message(
+      uId: 0,
+      mId: 0,
+      mTitle: " ",
+      mMessage: " ",
+      mLikes: 0); //Initializing a message
   for (var m in messageList) {
     if (m.mMessage == updatedMessage.mMessage) {
       matchingMessage = m;
@@ -84,7 +94,8 @@ Future<void> addLikes(Message updatedMessage) async {
     'mLikes': updatedMessage.mLikes,
   };
   final response = await http.put(
-    Uri.parse("https://team-margaritavillians.dokku.cse.lehigh.edu/messages/${matchingMessage.mId}"),
+    Uri.parse(
+        "https://team-margaritavillians.dokku.cse.lehigh.edu/messages/${matchingMessage.mId}"),
     headers: {
       "content-type": "application/json",
       "accept": "application/json",

@@ -10,20 +10,22 @@ import 'package:my_tutorial_app/models/Message.dart';
 import 'package:uuid/uuid.dart';
 
 void main() {
-  test('Like value should be incremented', (){
+  test('Like value should be incremented', () {
     //Create a message with 1 like
-    final Message message = Message(mMessage: 'Test Message', mLikes: 0, mTitle: ' none', mId: 0);
+    final Message message = Message(
+        mMessage: 'Test Message', mLikes: 0, mTitle: ' none', mId: 0, uId: 0);
     //Increment the Likes
-    message.mLikes = message. mLikes + 1;
+    message.mLikes = message.mLikes + 1;
     //Expect that the likes are equal to 1
-    expect(message. mLikes, 1);
+    expect(message.mLikes, 1);
   });
   test('Like value should be decremented', () {
     //Create a message with 1 like
-    final Message message = Message(mMessage: 'Test Message', mLikes: 1, mTitle: ' none', mId: 0);
+    final Message message = Message(
+        mMessage: 'Test Message', mLikes: 1, mTitle: ' none', mId: 0, uId: 0);
     //Decrement the like count
     message.mLikes = message.mLikes - 1;
     //Expect that the likes have been decremented
-    expect(message. mLikes, 0);
+    expect(message.mLikes, 0);
   });
 }

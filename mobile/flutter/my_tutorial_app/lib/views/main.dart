@@ -104,6 +104,8 @@ class MessageAppState extends State<MyApp> {
                   mMessage: messageText,
                   mLikes: 0,
                   mId: 0,
+                  uId: 0,
+                  //needs to pass the id of the current user, dependent on Oauth
                 );
                 setState(() {
                   messages.add(newMessage);
@@ -128,15 +130,25 @@ class MessageTile extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.all(8.0),
       child: ListTile(
-        title: Text(message.mMessage),
-        subtitle: Text('Likes: ${message.mLikes}'),
-        trailing: IconButton(
-            icon: const Icon(Icons.sports_bar_rounded,
-                color: Color.fromARGB(255, 255, 196, 0), size: 30.0),
-            onPressed: () {
-              onLike(message);
-            }),
-      ),
+          //leading: add icon widget with user image
+          title: Text(message.mMessage),
+          subtitle: Text('Likes: ${message.mLikes}'),
+          trailing: Wrap(spacing: 10, children: <Widget>[
+            IconButton(
+                icon: const Icon(Icons.sports_bar_rounded,
+                    color: Color.fromARGB(255, 255, 196, 0), size: 30.0),
+                onPressed: () {
+                  onLike(message);
+                }),
+            IconButton(
+              icon: const Icon(
+                Icons.chat_bubble_outline_rounded,
+              ),
+              onPressed: () {
+                //view comments as well as add comment button
+              },
+            )
+          ])),
     );
   }
 }
