@@ -16,12 +16,14 @@ public class App {
      */
     static void menu() {
         System.out.println("Main Menu");
-        System.out.println("  [M] Create msgData");
-        System.out.println("  [U] Create usrData");
-        System.out.println("  [C] Create comData");
-        System.out.println("  [L] Create likData");
+        System.out.println("  [M] Create Idea Data");
+        System.out.println("  [U] Create User Data");
+        System.out.println("  [C] Create Comment Data");
+        System.out.println("  [L] Create Like Data");
         System.out.println("  [D] Drop Table Data");
         System.out.println("  [-] Delete a row");
+        System.out.println("  [V] Validate");
+        System.out.println("  [I] Invalidate");
         System.out.println("  [q] Quit Program");
         System.out.println("  [?] Help (this message)");
     }

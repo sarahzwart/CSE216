@@ -25,6 +25,16 @@ public class Database {
      * A prepared statement for dropping the table in our database
      */
     private PreparedStatement mDropTable;
+    /**
+     * Prepared statements to validate and invalidate a user
+     */
+    private PreparedStatement mValidate;
+    private PreparedStatement mInvalidate;
+    /**
+     * A prepared statement for inserting an idea into the database
+     */
+    private PreparedStatement mInsertOne;
+
     //USER STATEMENTS
     /**
      * A prepared statement for deleting a row from the database
@@ -38,6 +48,15 @@ public class Database {
      * A prepared statement for dropping the table in our database
      */
     private PreparedStatement uDropTable;
+    /**
+     * Prepared statements to validate and invalidate a user
+     */
+    private PreparedStatement uValidate;
+    private PreparedStatement uInvalidate;
+    /**
+     * A prepared statement for inserting an idea into the database
+     */
+    private PreparedStatement uInsertOne;
     //COMMENT STATEMENTS
     /**
      * A prepared statement for deleting a row from the database
@@ -88,24 +107,27 @@ public class Database {
         /**
          * The subject stored in this row
          */
-        String mSubject;
+        String mTitle;
         /**
          * The message stored in this row
          */
         String mMessage;
-
         /**
          * Stores number of likes a post has
          */
         int mLikes;
+        /**
+         *Record if idea is valid
+         */
+        boolean invalid = false;
 
         /**
          * Construct a tblData object by providing values for its fields
          */
-        public tblData(int id, int ud, String subject, String message, int likes) {
+        public tblData(int id, String subject, String message, int ud, int likes) {
             mId = id;
             uId = ud;
-            mSubject = subject;
+            mTitle = subject;
             if(message.length()<=2048){ //ensures correct length
                 mMessage = message;
             }
@@ -142,6 +164,11 @@ public class Database {
          * Stores Notes about users
         */
         String uNote;
+        /**
+         * Record if the user is valid
+        */
+        boolean invalid = false;
+
         /**
          * Construct a usrData object by providing values for its fields
          */
@@ -225,7 +252,7 @@ public class Database {
         /**
          * The unique ID of the comment
          */
-        int upVote;
+        int like;
         /**
          * The unique ID of the comment
          */
@@ -237,7 +264,7 @@ public class Database {
         public likeData(int id, int l, int up) {
             mId = id;
             lId = l;
-            upVote = up;
+            like = up;
             //downVote = down;
         }
     }
@@ -289,29 +316,36 @@ public class Database {
             // creation/deletion, so multiple executions will cause an exception
             //MESSAGE DATA
             db.mCreateTable = db.mConnection.prepareStatement(
-            "CREATE TABLE tblData (id SERIAL PRIMARY KEY, uid SERIAL KEY, subject VARCHAR(50) NOT NULL, message VARCHAR(2048) NOT NULL, likes int)"); //messages limited to 2048 characters and likes added as a table factor
+            "CREATE TABLE tblData (id SERIAL, title VARCHAR(50) NOT NULL, message VARCHAR(2048) NOT NULL, uid int, likes int, invalid boolean)"); //messages limited to 2048 characters and likes added as a table factor
             db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
+            //Insert a message
+            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData VALUES (?, ?, ?, ?, ?, ?)");
 
             //USER STUFF
             db.uCreateTable = db.mConnection.prepareStatement(
-            "CREATE TABLE usrData (uid SERIAL PRIMARY KEY, uName VARCHAR(50) NOT NULL, uEmail VARCHAR(50) NOT NULL, uGI VARCHAR(50) NOT NULL, uSO VARCHAR(50) NOT NULL, uSO VARCHAR(2048) NOT NULL)");
+            "CREATE TABLE usrData (uid SERIAL, uName VARCHAR(50) NOT NULL, uEmail VARCHAR(50) NOT NULL, uGI VARCHAR(50) NOT NULL, uSO VARCHAR(50) NOT NULL, uSO VARCHAR(2048) NOT NULL, invalid boolean)");
             db.uDropTable = db.mConnection.prepareStatement("DROP TABLE usrData");
             // Standard CRUD operations
             db.uDeleteOne = db.mConnection.prepareStatement("DELETE FROM usrData WHERE id = ?");
+            //Insert a user
+            db.uInsertOne = db.mConnection.prepareStatement("INSERT INTO usrData VALUES (?, ?, ?, ?, ?, ?, ?)");
+            //
+            db.uValidate = db.mConnection.prepareStatement("PUT FROM usrData WHERE id = ?");
 
             //COMMENT STUFF
             db.cCreateTable = db.mConnection.prepareStatement(
-            "CREATE TABLE comData (mid SERIAL KEY, cid SERIAL PRIMARY KEY, uid PRIMARY KEY, subject VARCHAR(2048) NOT NULL)"); //messages limited to 2048 characters and likes added as a table factor    
-            db.cDropTable = db.mConnection.prepareStatement("DROP TABLE comData");
-            db.cDeleteOne = db.mConnection.prepareStatement("DELETE FROM comData WHERE id = ?");
+            "CREATE TABLE commentData (id SERIAL, conent VARCHAR(2048) NOT NULL, cid SERIAL PRIMARY KEY, mid int, uid int)"); //messages limited to 2048 characters and likes added as a table factor    
+            db.cDropTable = db.mConnection.prepareStatement("DROP TABLE commentData");
+            db.cDeleteOne = db.mConnection.prepareStatement("DELETE FROM commentData WHERE id = ?");
 
             //LIKE STUFF         public likeData(int id, int l, int up) {
             db.lCreateTable = db.mConnection.prepareStatement(
-            "CREATE TABLE likeData (mid SERIAL FOREIGN KEY, lid SERIAL PRIMARY KEY, upVote SERIAL FOREIGN KEY"); //messages limited to 2048 characters and likes added as a table factor    
+            "CREATE TABLE likeData (id SERIAL, mid int, uid int, like int"); //messages limited to 2048 characters and likes added as a table factor    
             db.lDropTable = db.mConnection.prepareStatement("DROP TABLE likeData");
             db.lDeleteOne = db.mConnection.prepareStatement("DELETE FROM likeData WHERE id = ?");
+            
             //IMPLIMENT IN BACKEND
             /*db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData (id, subject, message, likes) VALUES (DEFAULT, ?, ?, ?)"); //prepared statement altered to inclues likes
             db.mSelectAll = db.mConnection.prepareStatement("SELECT * FROM tblData");
@@ -506,4 +540,50 @@ public class Database {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Validate an Idea
+     * an error.
+     */
+    void validateIdea() {
+        try {
+            mValidate.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * Validate a User
+     * an error.
+     */
+    void validateUser() {
+        try {
+            uValidate.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * Invalidate a User
+     * an error.
+     */
+    void invalidateIdea() {
+        try {
+            mInvalidate.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * Invalidate a User
+     * an error.
+     */
+    void invalidateUser() {
+        try {
+            uInvalidate.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
