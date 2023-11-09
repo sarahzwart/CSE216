@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'; // Assuming you're using React Router
-import {User} from '../../entitites/User';
+import {User} from '../../../entitites/User';
 // get /users/id -->
 function ProfileButton(user: User){
   return(

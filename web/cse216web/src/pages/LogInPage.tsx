@@ -1,14 +1,39 @@
 import { useEffect, useState } from "react";
 import {jwtDecode} from 'jwt-decode';
-
+import {useNavigate} from "react-router-dom";
+import axios from "axios";
+const url = 'https://team-margaritavillians.dokku.cse.lehigh.edu/users/';
+const headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+};
 function LogInPage() {
   const [ user, setUser ] = useState({});
+  const navigate = useNavigate();
   function handleCallbackResponse(response: { credential: string }){
     console.log("Encoded JWT ID token: " + response.credential);
     const userObject = jwtDecode(response.credential);
     console.log(userObject);
     setUser(userObject);
+    sessionStorage.setItem("user", JSON.stringify(userObject));
+    handleUserInfo(userObject);
+
+    navigate("/list");
   }
+  
+  function handleUserInfo(userObject: any){
+    axios
+    .post(url, {userObject}, {headers})
+    .then((response) => {
+      const userData = response.data.mData; //int id
+      setUser(userData);
+      console.log(userData)
+    })
+    .catch((error) => {
+      console.error("Error when fetching message:", error);
+    });
+  }
+  
   
   useEffect(() => {
     /* global google */ 
@@ -27,6 +52,7 @@ function LogInPage() {
     <div className= "App">
       <div id="signInDiv"></div>
     </div>  
+    
   );
 }
   

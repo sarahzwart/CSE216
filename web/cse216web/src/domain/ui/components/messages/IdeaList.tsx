@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Message } from "../../entitites/Message";
-import { Comment } from "../../entitites/Comment";
-import { User } from "../../entitites/User";
+import { Message } from "../../../entitites/Message";
+import { Comment } from "../../../entitites/Comment";
+import { User } from "../../../entitites/User";
 import axios from "axios";
-import CommentForm from "./CommentForm";
+import CommentForm from "../comments/CommentForm";
 import MessageForm from "./MessageForm";
 import VoteButtons from "./VoteButtons";
-import EditCommentForm from "./EditCommentForm";
+import EditCommentForm from "../comments/EditCommentForm";
 
 //CSS imports
-import "../styles/IdeaList.css";
+import "../../styles/IdeaList.css";
 
 function IdeaList() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -25,79 +25,8 @@ function IdeaList() {
     "Content-Type": "application/json",
     Accept: "application/json",
   };
-  //Mock users
   
-const mockMessages: Message[] = [
-  {
-    mId: 1,
-    mTitle: "Sample Idea 1",
-    mMessage: "This is a sample idea.",
-    mLikes: 5,
-    uId: 1,
-  },
-  {
-    mId: 2,
-    mTitle: "Sample Idea 2",
-    mMessage: "Another sample idea here.",
-    mLikes: 3,
-    uId: 2,
-  },
-  // Add more sample messages as needed
-];
-
-const mockComments: Comment[] = [
-  {
-    cId: 1,
-    mId: 1,
-    uId: 1,
-    cContent: "Nice idea!",
-  },
-  {
-    cId: 2,
-    mId: 2,
-    uId: 2,
-    cContent: "I agree with this!",
-  },
-];
-
-const mockUsers: User[] = [
-  {
-    uName: "JimmyBuffet",
-    uEmail: "jimmyBuff@emargarita.com",
-    uSO: "Heterosexual",
-    uGO: "Male",
-    uNote: "Jimmy Buffett is best known for his music, which often portrays an 'island escapism' lifestyle.",
-    uId: 1,
-  },
-  {
-    uName: "TaylorSwift",
-    uEmail: "taylorswift@margarita.com",
-    uSO: "Heterosexual",
-    uGO: "Female",
-    uNote: "Taylors Swift's cat's net worth is $97 million",
-    uId: 2,
-  },
-  {
-    uName: "Pitbull",
-    uEmail: "pitbull@margarita.com",
-    uSO: "Heterosexual",
-    uGO: "Male",
-    uNote: "This for everybody going through tough times \n Believe me: been there, done that \n But everyday above ground is a great day, remember that",
-    uId: 3,
-  },
-  // Add more sample users as needed
-];
   // Gets all messages to display
-  useEffect(() => {
-    if (process.env.NODE_ENV === "development") {
-      setMessages([...messages ,...mockMessages]);
-      setComments([...comments, ...mockComments]);
-      setUsers([...users,...mockUsers]);
-      setIsLoading(false);
-    } else {
-    }
-  }, []);
-
   useEffect(() => {
     const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/messages";
     axios
@@ -144,7 +73,7 @@ const mockUsers: User[] = [
   // ADD a Message
   const handleAddMessage = (message: string) => {
     const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/messages";
-    const data = { mTitle: "Title", mMessage: message, uId: 2};
+    const data = { mTitle: "Title", mMessage: message, uId: 2 };
     axios
       .post(url, data, { headers })
       .then((response) => {
@@ -173,9 +102,10 @@ const mockUsers: User[] = [
       .post(`${url}`, { cContent: comment, uId: userId, mId: mId }, { headers })
       .then((response) => {
         const newCommentData: number = response.data.mData;
-          setComments(
-          [...comments,
-          {cContent: comment, mId: mId, uId: userId, cId: newCommentData}]);
+        setComments([
+          ...comments,
+          { cContent: comment, mId: mId, uId: userId, cId: newCommentData },
+        ]);
       })
       .catch((error) => {
         console.error("Error when adding comment:", error);
@@ -238,14 +168,14 @@ const mockUsers: User[] = [
     );
     return commentsForMessage.map((comment) => (
       <div className="comment-list-container" key={comment.cId}>
-        <p style={{color: 'blue'}}>{displayUsername(comment.uId)}</p>
+        <p style={{ color: "blue" }}>{displayUsername(comment.uId)}</p>
         {comment.cId === editingComment.cId ? (
           <EditCommentForm
-          onEditComment={(editedComment) =>
-            handleEditComment(comment.cId, editedComment)
-          }
-          comment={comment.cContent as string} // Include the 'comment' prop here
-        />
+            onEditComment={(editedComment) =>
+              handleEditComment(comment.cId, editedComment)
+            }
+            comment={comment.cContent as string} // Include the 'comment' prop here
+          />
         ) : (
           <div>
             {comment.cContent}
@@ -280,4 +210,3 @@ const mockUsers: User[] = [
 }
 
 export default IdeaList;
-
