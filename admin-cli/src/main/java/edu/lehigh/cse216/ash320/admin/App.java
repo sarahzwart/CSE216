@@ -21,6 +21,7 @@ public class App {
         System.out.println("  [C] Create Comment Data");
         System.out.println("  [L] Create Like Data");
         System.out.println("  [D] Drop Table Data");
+        System.out.println("  [+] Add a Row");
         System.out.println("  [-] Delete a row");
         System.out.println("  [V] Validate");
         System.out.println("  [I] Invalidate");
@@ -194,6 +195,74 @@ public class App {
                         continue;
                     } 
                     System.out.println("  " + res + " rows deleted");
+                }
+            } else if (action == 'I') { //Deletes a post based on its ID
+                System.out.print("Delete from which table (M, U): ");
+                char option = prompt(in);
+                if (option == 'M') { //Deletes a post based on its ID
+                    int id = getInt(in, "Enter the row ID");
+                    if (id == -1)
+                        continue;
+                    int res = db.invalidateIdea(id);
+                    if (res == -1){
+                        System.out.println("No such index exists");
+                        continue;
+                    } 
+                    System.out.println("  " + res + " rows deleted");
+                } else if (option == 'U') { //Deletes a post based on its ID
+                    int id = getInt(in, "Enter the row ID");
+                    if (id == -1)
+                        continue;
+                    int res = db.invalidateUser(id);
+                    if (res == -1){
+                        System.out.println("No such index exists");
+                        continue;
+                    } 
+                    System.out.println("  " + res + " rows deleted");
+                }
+            } else if (action == 'V') { //Deletes a post based on its ID
+                System.out.print("Delete from which table (M, U): ");
+                char option = prompt(in);
+                if (option == 'M') { //Deletes a post based on its ID
+                    int id = getInt(in, "Enter the row ID");
+                    if (id == -1)
+                        continue;
+                    int res = db.validateIdea(id);
+                    if (res == -1){
+                        System.out.println("No such index exists");
+                        continue;
+                    } 
+                    System.out.println("  " + res + " rows deleted");
+                } else if (option == 'U') { //Deletes a post based on its ID
+                    int id = getInt(in, "Enter the row ID");
+                    if (id == -1)
+                        continue;
+                    int res = db.validateUser(id);
+                    if (res == -1){
+                        System.out.println("No such index exists");
+                        continue;
+                    } 
+                    System.out.println("  " + res + " rows deleted");
+                }
+            } else if (action == '+') {
+                System.out.print("Add to which table (M, U): ");
+                char option = prompt(in);
+                if (option == 'U') { //Deletes a post based on its ID
+                    String uName = getString(in, "Enter the name");
+                    String uEmail = getString(in, "Enter the email");
+                    String uGI = getString(in, "Enter the gender");
+                    String uSO = getString(in, "Enter the shitting");
+                    if (uName.equals("") || uEmail.equals("") || uGI.equals("") || uSO.equals(""))
+                        continue;
+                    int res = db.postUser(uName, uEmail, uGI, uSO);
+                    System.out.println(res + " rows added");
+                } else if (option == 'M') { //Deletes a post based on its ID
+                    String title = getString(in, "Enter the name");
+                    String message = getString(in, "Enter the email");
+                    if (title.equals("") || message.equals(""))
+                        continue;
+                    int res = db.postIdea(title, message);
+                    System.out.println(res + " rows added");
                 }
             }
         }

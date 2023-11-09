@@ -321,7 +321,10 @@ public class Database {
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
             //Insert a message
-            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData VALUES (?, ?, ?, ?, ?, ?)");
+            db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData VALUES (default, ?, ?, ?, ?, ?)");
+            //Validate a comment
+            db.uValidate = db.mConnection.prepareStatement("PUT FROM tblData WHERE id = ?");
+            db.uInvalidate = db.mConnection.prepareStatement("PUT FROM tblData WHERE id = ?");
 
             //USER STUFF
             db.uCreateTable = db.mConnection.prepareStatement(
@@ -330,9 +333,10 @@ public class Database {
             // Standard CRUD operations
             db.uDeleteOne = db.mConnection.prepareStatement("DELETE FROM usrData WHERE id = ?");
             //Insert a user
-            db.uInsertOne = db.mConnection.prepareStatement("INSERT INTO usrData VALUES (?, ?, ?, ?, ?, ?, ?)");
-            //
+            db.uInsertOne = db.mConnection.prepareStatement("INSERT INTO usrData VALUES (default, ?, ?, ?, ?, ?, ?)");
+            //Validate a user
             db.uValidate = db.mConnection.prepareStatement("PUT FROM usrData WHERE id = ?");
+            db.uInvalidate = db.mConnection.prepareStatement("PUT FROM usrData WHERE id = ?");
 
             //COMMENT STUFF
             db.cCreateTable = db.mConnection.prepareStatement(
@@ -545,45 +549,88 @@ public class Database {
      * Validate an Idea
      * an error.
      */
-    void validateIdea() {
+    int validateIdea(int id) {
+        int count = 0;
         try {
-            mValidate.execute();
+            mValidate.setInt(1, id);
+            count += mValidate.executeUpdate();          
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return count;
     }
     /**
      * Validate a User
      * an error.
      */
-    void validateUser() {
+    int validateUser(int id) {
+        int count = 0;
         try {
-            uValidate.execute();
+            uValidate.setInt(1, id);
+            count += uValidate.executeUpdate();    
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return count;
     }
     /**
      * Invalidate a User
      * an error.
      */
-    void invalidateIdea() {
+    int invalidateIdea(int id) {
+        int count = 0;
         try {
-            mInvalidate.execute();
+            mInvalidate.setInt(1, id);
+            count += mInvalidate.executeUpdate();        
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return count;
     }
     /**
      * Invalidate a User
      * an error.
      */
-    void invalidateUser() {
+    int invalidateUser(int id) {
+        int count = 0;
         try {
-            uInvalidate.execute();
+            uInvalidate.setInt(1, id);
+            count += uInvalidate.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return count;
     }
-
+    /**
+     * Post a Idea
+     * an error.
+     */
+    int postIdea(String title, String message) {
+        int count = 0;
+        try { //"CREATE TABLE tblData (id SERIAL, title VARCHAR(50) NOT NULL, message VARCHAR(2048) NOT NULL, uid int, likes int, invalid boolean)"); //messages limited to 2048 characters and likes added as a table factor
+            mInsertOne.setString(1, title);
+            mInsertOne.setString(2, message);
+            count += mInsertOne.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+    /**
+     * Post a User
+     * an error.
+     */
+    int postUser(String uName, String uEmail, String uGI, String uSO) {
+        int count = 0;
+        try { //"CREATE TABLE usrData (uid SERIAL, uName VARCHAR(50) NOT NULL, uEmail VARCHAR(50) NOT NULL, uGI VARCHAR(50) NOT NULL, uSO VARCHAR(50) NOT NULL, uSO VARCHAR(2048) NOT NULL, invalid boolean)");
+            uInsertOne.setString(1, uName);
+            uInsertOne.setString(2, uEmail);
+            uInsertOne.setString(3, uGI);
+            uInsertOne.setString(4, uSO);
+            count += uInsertOne.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
 }
