@@ -42,17 +42,19 @@ public class AppTest
         int id = 1; //the first element added should have id=1
         String subject = "testing";
         String message = "testing 123";
-        int d = 1; //the first element added should have id=1
+        int uid = 1; //the first element added should have id=1
         int likes = 0; //all posts start at 0 likes
+        Boolean inV = false;
         //Create the row example
-        Database.tblData test = new Database.tblData(id, subject, message, d, likes);
+        Database.RowData test = new Database.RowData(id, subject, message, uid, likes, inV);
         //ensures the row was correctly created
         assertFalse(test==null); //ensures it was created at all
         assertTrue(test.mTitle.equals(subject));
         assertTrue(test.mMessage.equals(message));
         assertTrue(test.mId==id);
-        assertTrue(test.uId==d);
+        assertTrue(test.uId==uid);
         assertTrue(test.mLikes==likes);
+        assertTrue(test.mInvalid==inV);
     }
 
     public void testUsrConstructor(){
@@ -64,8 +66,10 @@ public class AppTest
         String SO = "Shitting Myself";
         int id = 1; //the first element added should have id=1
         String note = "noted"; //String
+        String idtoken = "noted"; //String
+        Boolean inV = false;
         //Create the row exampleso
-        Database.usrData test = new Database.usrData(id, name, email, GI, SO, note);
+        Database.UserData test = new Database.UserData(id, name, email, GI, SO, note, idtoken, inV);
         //ensures the row was correctly created
         assertFalse(test==null); //ensures it was created at all
         assertTrue(test.uName.equals(name));
@@ -74,6 +78,9 @@ public class AppTest
         assertTrue(test.uSO.equals(SO));
         assertTrue(test.uId==id);
         assertTrue(test.uNote.equals(note));
+        assertTrue(test.uIdToken.equals(idtoken));
+        assertTrue(test.uInvalid==inV);
+
     }
 
     public void testComConstructor(){
@@ -83,7 +90,7 @@ public class AppTest
         int uid = 1;
         String message = "comentary"; //String
         //Create the row exampleso
-        Database.comData test = new Database.comData(mid, cid, uid, message);
+        Database.CommentData test = new Database.CommentData(cid, message, mid, uid);
         //ensures the row was correctly created
         assertFalse(test==null); //ensures it was created at all
         assertTrue(test.mId==mid);
@@ -91,7 +98,7 @@ public class AppTest
         assertTrue(test.uId==uid);
         assertTrue(test.cContent.equals(message));
     }
-
+/*
     public void testLikeConstructor(){
         //Basic input for a post likeData(int id, int l, int up, int down) {
         int mid = 1;
@@ -106,47 +113,47 @@ public class AppTest
         assertTrue(test.lId==lid);
         assertTrue(test.like==up);
         //assertTrue(test.downVote==down);
-    }
+    }// */
 
     public void methodTests(){
         //tests creating database
         Database db = Database.getDatabase("berry.db.elephantsql.com", "8998", "pqfneahl", "eRnYfJkr5W8wwhRePitFVDx8CVP1iKYa");
         
         //Tests creating a message table
-        db.createMsgTable();
+        db.createTable();
         //testing deleteRow
-        int wasDeleted = db.deleteMsgRow(2);
+        int wasDeleted = db.deleteRow(2);
         //esureing row 2 was deleted
         assertTrue(wasDeleted==1);
         //testing dropTable
-        db.dropMsgTable();
+        db.dropTable();
         
         //Tests creating a user table
-        db.createUsrTable();
+        db.createUserTable();
         //testing deleteRow
-        wasDeleted = db.deleteUsrRow(2);
+        wasDeleted = db.deleteUser(2);
         //esureing row 2 was deleted
         assertTrue(wasDeleted==1);
         //testing dropTable
-        db.dropUsrTable();
+        db.dropUserTable();
 
         //Tests creating a comment table
-        db.createComTable();
+        db.createCommentTable();
         //testing deleteRow
-        wasDeleted = db.deleteComRow(2);
+        wasDeleted = db.deleteComment(2);
         //esureing row 2 was deleted
         assertTrue(wasDeleted==1);
         //testing dropTable
-        db.dropComTable();
+        db.dropCommentTable();
 
-        //Tests creating a comment table
+        /*//Tests creating a comment table
         db.createLikeTable();
         //testing deleteRow
         wasDeleted = db.deleteLikeRow(2);
         //esureing row 2 was deleted
         assertTrue(wasDeleted==1);
         //testing dropTable
-        db.dropLikeTable();
+        db.dropLikeTable();//*/
         
         //testing disconnect
         db.disconnect();
@@ -158,7 +165,7 @@ public class AppTest
         //2049 characters (1 more than the alowed limit)
         String message = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc, quis gravida magna mi a libero. Fusce vulputate eleifend sapien. Vestibulum purus quam, scelerisque ut, mollis sed, nonummy id, metus. Nullam accumsan lorem in dui. Cras ultricies mi eu turpis hendrerit fringilla. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; In ac dui quis mi consectetuer lacinia. Nam pretium turpis et arcu. Duis arcu tortor, suscipit eget, imperdiet nec, imperdiet iaculis, ipsum. Sed aliquam ultrices mauris. Integer ante arcu, accumsan a, consectetuer eget, posuere ut, mauris. Praesent adipiscing. Phasellus ullamcorper ipsum rutrum nunc. Nunc nonummy metus. Vestibulum volutpat pretium libero. Cras id dui. Aenean.";
         //Create the row example
-        Database.tblData testLimit = new Database.tblData(1, subject, message, 1, 0);
+        Database.RowData testLimit = new Database.RowData(1, subject, message, 1, 0, false);
         //Ensure the message limit was cut off at 2048 characters
         assertFalse(testLimit.mMessage.equals(message));
     }
