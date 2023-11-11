@@ -7,6 +7,7 @@ const headers = {
   'Content-Type': 'application/json',
   'Accept': 'application/json',
 };
+//https://stackoverflow.com/questions/40399873/initializing-and-using-sessionstorage-in-react
 function LogInPage() {
   const [ user, setUser ] = useState({});
   const navigate = useNavigate();
@@ -17,8 +18,8 @@ function LogInPage() {
     setUser(userObject);
     sessionStorage.setItem("user", JSON.stringify(userObject));
     handleUserInfo(userObject);
-
-    navigate("/list");
+    // Navigates to idealist page 
+    navigate("/ideas");
   }
   
   function handleUserInfo(userObject: any){

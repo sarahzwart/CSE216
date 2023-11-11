@@ -1,13 +1,22 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+// Interfaces
 import { Message } from "../../../entitites/Message";
 import { Comment } from "../../../entitites/Comment";
 import { User } from "../../../entitites/User";
-import axios from "axios";
+//Parts of Comments/Messages
 import CommentForm from "../comments/CommentForm";
 import MessageForm from "./MessageForm";
 import VoteButtons from "./VoteButtons";
+
 import EditCommentForm from "../comments/EditCommentForm";
+import { fetchUsers, 
+        fetchComments, 
+        fetchMessages, 
+        addComment, 
+        addMessage, 
+        editComment} 
+from "../../../../api/api";
 
 //CSS imports
 import "../../styles/IdeaList.css";
@@ -16,150 +25,33 @@ function IdeaList() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  // Variable contains information of use logged in
+  const currentUser = window.sessionStorage.getItem("user");
   const [isLoading, setIsLoading] = useState(true);
   const [editingComment, setEditingComment] = useState({
     cId: 0,
     cContent: " ",
   });
-  const headers = {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  };
-  
-  // Gets all messages to display
+
+
+  // Fetched all messages/comments/users
   useEffect(() => {
-    const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/messages";
-    axios
-      .get(url, { headers })
-      .then((response) => {
-        const messageData: Message[] = response.data.mData;
+    const fetchData = async () => {
+      try {
+        const messageData = await fetchMessages();
+        const commentData = await fetchComments();
+        const userData = await fetchUsers();
         setMessages(messageData);
-        setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error when fetching message:", error);
-        setIsLoading(false);
-      });
-  }, []);
-
-  // Get comment info
-  useEffect(() => {
-    const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/comments";
-    axios
-      .get(url, { headers })
-      .then((response) => {
-        const commentData: Comment[] = response.data.mData;
         setComments(commentData);
-      })
-      .catch((error) => {
-        console.error("Error when fetching message:", error);
-      });
-  }, []);
-
-  // Get user info
-  useEffect(() => {
-    const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/users";
-    axios
-      .get(url, { headers })
-      .then((response) => {
-        const userData: User[] = response.data.mData;
         setUsers(userData);
-      })
-      .catch((error) => {
-        console.error("Error when fetching message:", error);
-      });
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error when fetching data:', error);
+        setIsLoading(false);
+      }
+    };
+    fetchData();
   }, []);
-
-  // ADD a Message
-  const handleAddMessage = (message: string) => {
-    const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/messages";
-    const data = { mTitle: "Title", mMessage: message, uId: 2 };
-    axios
-      .post(url, data, { headers })
-      .then((response) => {
-        const newMessageData: number = response.data.mMessage; //int id
-        setMessages([
-          ...messages,
-          {
-            mMessage: message,
-            mId: newMessageData,
-            uId: 2,
-            mLikes: 0,
-            mTitle: "title",
-          },
-        ]);
-        console.log(newMessageData);
-      })
-      .catch((error) => {
-        console.error("Error when adding a message:", error);
-      });
-  };
-
-  // Adds a comment to a Message(Idea)
-  const handleAddComment = (userId: number, comment: string, mId: number) => {
-    const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/comments";
-    axios
-      .post(`${url}`, { cContent: comment, uId: userId, mId: mId }, { headers })
-      .then((response) => {
-        const newCommentData: number = response.data.mData;
-        setComments([
-          ...comments,
-          { cContent: comment, mId: mId, uId: userId, cId: newCommentData },
-        ]);
-      })
-      .catch((error) => {
-        console.error("Error when adding comment:", error);
-      });
-  };
-
-  //Edit Comment with Put request
-  const handleEditComment = (cId: number, cContent: string) => {
-    const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/comments/";
-    axios
-      .put(`${url}${cId}`, { cContent: cContent }, { headers })
-      .then(() => {
-        // Update the comments state with the updated comment
-        const updatedComments = comments.map((comment) =>
-          comment.cId === cId ? { ...comment, cContent } : comment
-        );
-        setComments(updatedComments);
-      })
-      .catch((error) => {
-        console.error("Error editing message", error);
-      });
-  };
-
-  return (
-    <div className="idea-list-container">
-      <div className="message-list">
-        {isLoading ? (
-          <p>Loading...</p>
-        ) : (
-          messages.map((message, index) => (
-            <div key={index} className="message-container">
-              <p>{message.mId}</p>
-              <h2>{displayUsername(message.uId)}</h2>
-              <div className="message-box">
-                <p>{message.mMessage}</p>
-              </div>
-              <VoteButtons message={message} />
-              <p>Likes: {message.mLikes} </p>
-              <h3>Comments:</h3>
-              <p>{messageComments(message.mId)}</p>
-              <h3>
-                <CommentForm
-                  onAddComment={(comment) =>
-                    handleAddComment(1, comment, message.mId)
-                  }
-                />
-              </h3>
-            </div>
-          ))
-        )}
-      </div>
-      <MessageForm onAddMessage={handleAddMessage} />
-    </div>
-  );
 
   // Puts a comment under a message based on messageID
   function messageComments(messageId: number) {
@@ -174,11 +66,12 @@ function IdeaList() {
             onEditComment={(editedComment) =>
               handleEditComment(comment.cId, editedComment)
             }
-            comment={comment.cContent as string} // Include the 'comment' prop here
+            comment={comment.cContent as string} 
           />
         ) : (
           <div>
             {comment.cContent}
+            {/* add an if statement for user session */}
             <button
               className="edit-button"
               onClick={() =>
@@ -207,6 +100,81 @@ function IdeaList() {
       "Unknown User"
     );
   }
+
+  
+
+  // adds a Message (POST)
+  async function handleAddMessage(message: string, uId: number){
+    try{
+      const newMessageData: Promise<number> = addMessage(message, uId);
+      const data = {mMessage: message, uId: uId, mTitle: "Title", mId: newMessageData, mLikes: 0};
+      const resolvedmId = await newMessageData;
+      setMessages([...messages, {...data, mId: resolvedmId}])
+    } catch (error) {
+      console.error("Error when adding a message:", error);
+    }
+  };
+
+  // Adds a comment to a Message(Idea)
+  async function handleAddComment(userId: number, comment: string, mId: number){
+    try {
+      const newCommentData: Promise<number> = addComment(userId, comment, mId);
+      const data = { cContent: comment, uId: userId, mId: mId, cId: newCommentData };
+      const resolvedcId = await newCommentData;
+      setComments([...comments, { ...data, cId: resolvedcId }]);
+    } catch (error){
+      console.error("Error when adding comment:", error);
+    }
+  };
+
+  // Edit Comment with Put request
+  const handleEditComment = (cId: number, cContent: string) => {
+    try{
+      editComment(cId,cContent);
+      const updatedComments = comments.map((comment) =>
+          comment.cId === cId ? { ...comment, cContent } : comment
+      );
+      setComments(updatedComments);
+    } catch (error){
+      console.error("Error editing comment: ", error);
+    }
+  };
+
+
+  // The actual user Interface
+  return (
+    <div className="idea-list-container">
+      <div className="message-list">
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : (
+          messages.map((message, index) => (
+            <div key={index} className="message-container">
+              <p>{message.mId}</p>
+              <h2>{displayUsername(message.uId)}</h2>
+              <div className="message-box">
+                <p>{message.mMessage}</p>
+              </div>
+              <VoteButtons message={message} />
+              <p>Likes: {message.mLikes} </p>
+              <h3>Comments:</h3>
+              <p>{messageComments(message.mId)}</p>
+              <h3>
+                <CommentForm
+                  onAddComment={(comment) =>
+                    handleAddComment(1, comment, message.mId)
+                  }
+                />
+              </h3>
+            </div>
+          ))
+        )}
+      </div>
+      <MessageForm onAddMessage={(message) => handleAddMessage(message, 1)}
+      />
+    </div>
+  );
+
 }
 
 export default IdeaList;

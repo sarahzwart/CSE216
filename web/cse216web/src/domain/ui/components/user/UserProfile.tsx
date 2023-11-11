@@ -24,15 +24,27 @@ function UserProfile() {
 
   // Put Sexual Orientation Edits
   function handleEditSO(sexualOrientation: string) {
-    axios.put(`${url}${userId}`, { uSO: sexualOrientation }, { headers });
+    try{
+
+    } catch (error) {
+
+    }
   }
   // Put Gender Orientation Edits
   function handleGO(genderOrientatio: string) {
-    axios.put(`${url}${userId}`, { uGO: genderOrientation }, { headers });
+    try{
+
+    } catch (error) {
+
+    }
   }
   // Put Note Edits
   function handleNote(note: string) {
-    axios.put(`${url}${userId}`, { uNote: note }, { headers });
+    try{
+
+    } catch (error) {
+
+    }
   }
 
   // Get the user using a get request
@@ -48,48 +60,6 @@ function UserProfile() {
         setIsLoading(false);
       });
   }, []);
-  /*
-  const mockUser1 = {
-    uName: "JimmyBuffet",
-    uEmail: "jimmyBuff@emargarita.com",
-    uSO: "Heterosexual",
-    uGO: "Male",
-    uNote: "Jimmy Buffett is best known for his music, which often portrays an 'island escapism' lifestyle.",
-    uId: 1,
-  }
-  const mockUser2 = {
-    uName: "TaylorSwift",
-    uEmail: "taylorswift@margarita.com",
-    uSO: "Heterosexual",
-    uGO: "Female",
-    uNote: "Taylors Swift's cat's net worth is $97 million",
-    uId: 2,
-  }
-  const mockUser3 = {
-    uName: "Pitbull",
-      uEmail: "pitbull@margarita.com",
-      uSO: "Heterosexual",
-      uGO: "Male",
-      uNote: "This for everybody going through tough times \n Believe me: been there, done that \n But everyday above ground is a great day, remember that",
-      uId: 3,
-  }
-  */
-  // Testing
-  /*
-  useEffect(() => {
-    if (userId === '1') {
-      setUserInfo(mockUser1);
-    } else if (userId === '2') {
-      setUserInfo(mockUser2);
-    } else if (userId === '3') {
-      setUserInfo(mockUser3);
-    } else {
-      setUserInfo(undefined); // Handle the case where userInfo doesn't match any user
-    }
-    setIsLoading(false);
-  }, []);
-  */
-  // Put Requests for the user info
   return (
     <div>
       <h1>Profile</h1>
