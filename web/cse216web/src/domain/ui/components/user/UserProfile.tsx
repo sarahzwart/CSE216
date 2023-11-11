@@ -2,12 +2,22 @@ import { useState, useEffect } from "react";
 import { User } from "../../../entitites/User";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-
+import { editSO, editGO, editNote, fetchUser } from "../../../../api/api";
+import EditProfileForm from "./EditUserInfo";
 const url = "https://team-margaritavillians.dokku.cse.lehigh.edu/users/";
 
 function UserProfile() {
+  // userId of profile clicked on
   const { userId } = useParams();
+  // Need to switch to number
+  const userIdNum = Number(userId);
+
+  // Current User that is logged in
+  // We have this so we can keep track of if the information is edittable
+  const currentUser = window.sessionStorage.getItem("user");
+
   const [user, setUserInfo] = useState<User>();
+
   const [isLoading, setIsLoading] = useState(true);
   //Sexual Orientation
   const [sexualOrientation, setSexualOrientation] = useState<string>();
@@ -23,43 +33,39 @@ function UserProfile() {
   };
 
   // Put Sexual Orientation Edits
-  function handleEditSO(sexualOrientation: string) {
-    try{
-
-    } catch (error) {
-
-    }
+  function handleEditSO(uId: number, sexualOrientation: string) {
+    try {
+      editSO(uId, sexualOrientation);
+    } catch (error) {}
   }
   // Put Gender Orientation Edits
-  function handleGO(genderOrientatio: string) {
-    try{
-
-    } catch (error) {
-
-    }
+  function handleEditGO(uId: number, genderOrientation: string) {
+    try {
+      editGO(uId, genderOrientation);
+    } catch (error) {}
   }
   // Put Note Edits
-  function handleNote(note: string) {
-    try{
-
-    } catch (error) {
-
-    }
+  function handleEditNote(uId: number, note: string) {
+    try {
+      editNote(uId, note);
+    } catch (error) {}
   }
 
   // Get the user using a get request
   useEffect(() => {
-    axios
-      .get(`${url}${userId}`, { headers })
-      .then((response) => {
-        setUserInfo(response.data.mData);
+    async function fetchData() {
+      try {
+        const userData = await fetchUser(userIdNum);
+        setUserInfo(userData);
+      } catch (error) {
+        console.error("Error when specific user data:", error);
+      } finally {
         setIsLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error when fetching user information:", error);
-        setIsLoading(false);
-      });
+      }
+    }
+    fetchData();
   }, []);
+
   return (
     <div>
       <h1>Profile</h1>
@@ -69,20 +75,34 @@ function UserProfile() {
         <div>
           <p>User: {user.uName}</p>
           <p>Email: {user.uEmail}</p>
-          <p>
-            Sexual Orientation: {user.uSO} <button></button>
-          </p>
-          <p>
-            Gender Orientation: {user.uGO}
-            <button></button>
-          </p>
-          <p>
-            Note: {user.uNote}
-            <button></button>
-          </p>
+          {currentUser === userId && (
+            <div>
+              <p>
+                Sexual Orientation: {sexualOrientation}{" "}
+                <EditProfileForm
+                  onEditInfo={(newSO) => handleEditSO(user.uId, newSO)}
+                  info={sexualOrientation || ""}
+                />
+              </p>
+              <p>
+                Gender Orientation: {genderOrientation}{" "}
+                <EditProfileForm
+                  onEditInfo={(newGO) => handleEditGO(user.uId, newGO)}
+                  info={genderOrientation || ""}
+                />
+              </p>
+              <p>
+                Note: {note}{" "}
+                <EditProfileForm
+                  onEditInfo={(newNote) => handleEditNote(user.uId, newNote)}
+                  info={note || ""}
+                />
+              </p>
+            </div>
+          )}
         </div>
       ) : (
-        <p>No user data Available</p>
+        <p>No user data available</p>
       )}
     </div>
   );

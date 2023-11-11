@@ -10,13 +10,14 @@ import MessageForm from "./MessageForm";
 import VoteButtons from "./VoteButtons";
 
 import EditCommentForm from "../comments/EditCommentForm";
-import { fetchUsers, 
-        fetchComments, 
-        fetchMessages, 
-        addComment, 
-        addMessage, 
-        editComment} 
-from "../../../../api/api";
+import {
+  fetchUsers,
+  fetchComments,
+  fetchMessages,
+  addComment,
+  addMessage,
+  editComment,
+} from "../../../../api/api";
 
 //CSS imports
 import "../../styles/IdeaList.css";
@@ -33,10 +34,9 @@ function IdeaList() {
     cContent: " ",
   });
 
-
   // Fetched all messages/comments/users
   useEffect(() => {
-    const fetchData = async () => {
+    async function fetchData() {
       try {
         const messageData = await fetchMessages();
         const commentData = await fetchComments();
@@ -46,10 +46,10 @@ function IdeaList() {
         setUsers(userData);
         setIsLoading(false);
       } catch (error) {
-        console.error('Error when fetching data:', error);
+        console.error("Error when fetching data:", error);
         setIsLoading(false);
       }
-    };
+    }
     fetchData();
   }, []);
 
@@ -66,7 +66,7 @@ function IdeaList() {
             onEditComment={(editedComment) =>
               handleEditComment(comment.cId, editedComment)
             }
-            comment={comment.cContent as string} 
+            comment={comment.cContent as string}
           />
         ) : (
           <div>
@@ -101,45 +101,57 @@ function IdeaList() {
     );
   }
 
-  
-
   // adds a Message (POST)
-  async function handleAddMessage(message: string, uId: number){
-    try{
+  async function handleAddMessage(message: string, uId: number) {
+    try {
       const newMessageData: Promise<number> = addMessage(message, uId);
-      const data = {mMessage: message, uId: uId, mTitle: "Title", mId: newMessageData, mLikes: 0};
+      const data = {
+        mMessage: message,
+        uId: uId,
+        mTitle: "Title",
+        mId: newMessageData,
+        mLikes: 0,
+      };
       const resolvedmId = await newMessageData;
-      setMessages([...messages, {...data, mId: resolvedmId}])
+      setMessages([...messages, { ...data, mId: resolvedmId }]);
     } catch (error) {
       console.error("Error when adding a message:", error);
     }
-  };
+  }
 
   // Adds a comment to a Message(Idea)
-  async function handleAddComment(userId: number, comment: string, mId: number){
+  async function handleAddComment(
+    userId: number,
+    comment: string,
+    mId: number
+  ) {
     try {
       const newCommentData: Promise<number> = addComment(userId, comment, mId);
-      const data = { cContent: comment, uId: userId, mId: mId, cId: newCommentData };
+      const data = {
+        cContent: comment,
+        uId: userId,
+        mId: mId,
+        cId: newCommentData,
+      };
       const resolvedcId = await newCommentData;
       setComments([...comments, { ...data, cId: resolvedcId }]);
-    } catch (error){
+    } catch (error) {
       console.error("Error when adding comment:", error);
     }
-  };
+  }
 
   // Edit Comment with Put request
   const handleEditComment = (cId: number, cContent: string) => {
-    try{
-      editComment(cId,cContent);
+    try {
+      editComment(cId, cContent);
       const updatedComments = comments.map((comment) =>
-          comment.cId === cId ? { ...comment, cContent } : comment
+        comment.cId === cId ? { ...comment, cContent } : comment
       );
       setComments(updatedComments);
-    } catch (error){
+    } catch (error) {
       console.error("Error editing comment: ", error);
     }
   };
-
 
   // The actual user Interface
   return (
@@ -170,11 +182,9 @@ function IdeaList() {
           ))
         )}
       </div>
-      <MessageForm onAddMessage={(message) => handleAddMessage(message, 1)}
-      />
+      <MessageForm onAddMessage={(message) => handleAddMessage(message, 1)} />
     </div>
   );
-
 }
 
 export default IdeaList;

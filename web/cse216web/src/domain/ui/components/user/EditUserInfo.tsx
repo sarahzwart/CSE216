@@ -1,24 +1,24 @@
 import React, {useState} from "react";
 
-interface EditCommentProps {
-  onEditComment: (comment: string) => void;
-  comment: string;
+interface EditProfileProps {
+  onEditInfo: (info: string) => void;
+  info: string;
 }
 
-function EditCommentForm({ onEditComment, comment }: EditCommentProps) {
-  const [formData, setFormData] = useState({ comment });
+function EditProfileForm({ onEditInfo, info }: EditProfileProps) {
+  const [formData, setFormData] = useState({ info });
   const [isEditing, setIsEditing] = useState(false);
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setFormData({
-      comment: e.target.value,
+      info: e.target.value,
     });
   };
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isEditing) {
-      onEditComment(formData.comment);
+      onEditInfo(formData.info);
       setIsEditing(false);
     } else {
       setIsEditing(true);
@@ -30,11 +30,11 @@ function EditCommentForm({ onEditComment, comment }: EditCommentProps) {
       {isEditing ? (
         <textarea
           placeholder=" "
-          value={formData.comment}
+          value={formData.info}
           onChange={onChange}
         />
       ) : (
-        <div>{formData.comment}</div>
+        <div>{formData.info}</div>
       )}
       <div></div>
       <button type="submit">
@@ -44,4 +44,4 @@ function EditCommentForm({ onEditComment, comment }: EditCommentProps) {
   );
 }
 
-export default EditCommentForm;
+export default EditProfileForm;

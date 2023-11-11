@@ -95,6 +95,20 @@ export async function editComment(cId: number, cContent: string){
 
 //USERS
 
+// Information of specific User (GET)
+export async function fetchUser(uId: number){
+  try {
+    const response = await axios.post(
+      `https://team-margaritavillians.dokku.cse.lehigh.edu/user/${uId}`,
+      {headers}
+    );
+    return response.data.mData; // Change
+  } catch (error) {
+    console.error('Error fetching User Data: ', error)
+    throw error;
+  }
+}
+
 // Edit Sexual Orientation (PUT)
 export async function editSO(uId: number, uSO: string){
   try {
