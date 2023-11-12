@@ -74,10 +74,6 @@ public class Database {
     private PreparedStatement cDropTable;
     //LIKE STUFF
     /**
-     * A prepared statement for deleting a row from the database
-     */
-    private PreparedStatement lDeleteOne;
-    /**
      * A prepared statement for inserting into the database
      */
     private PreparedStatement lInsertOne;
@@ -89,6 +85,10 @@ public class Database {
      * A prepared statement for dropping the table in our database
      */
     private PreparedStatement lDropTable;
+    /**
+     * A prepared statement for deleting the table in our database
+     */
+    private PreparedStatement lDeleteOne;
 
     /**
      * RowData is like a struct in C: we use it to hold data, and we allow 
@@ -231,27 +231,26 @@ public class Database {
             uId = userId;
         }
     }
-
-    public static class CommentData {
-        //id of the comment
-        public final int cId;
-        //content of the comment
-        public String cContent;
-        //id of the message that the comment is posted on
+    /* //Prepared Statements for likes
+     db.lInsertOne = db.mConnection.prepareStatement("INSERT INTO likeData VALUES (default, ?, ?, ?)");
+     db.lRemoveOne = db.mConnection.prepareStatement("DELETE FROM likeData WHERE mId = ? and uId = ?");
+     db.lSelectOne = db.mConnection.prepareStatement("Select * FROM likeData WHERE mId = ? AND uId = ?");
+    */
+    public static class LikeData {
+        //id of the like
+        public final int lId;
+        //id of the message that liked
         public int mId;
-        //if of the user who posted the comment
+        //id of the user that liked
         public int uId;
+        //number of likes
+        public int isLike;
 
-        public CommentData(int id, String message, int messageId, int userId){
-            cId = id;
-            mId = messageId;
-            if(message.length()<=2048){ //ensures correct length
-                cContent = message;
-            }
-            else{ //shortens message if it is too large
-                cContent = message.substring(0, Math.min(message.length(), 2048));
-            }            
-            uId = userId;
+        public LikeData(int lid, int mid, int uid, int islike){
+            lId = lid;
+            mId = mid;          
+            uId = uid;
+            isLike = islike;
         }
     }
 
@@ -327,6 +326,14 @@ public class Database {
             // Standard CRUD operations
             db.cDeleteOne = db.mConnection.prepareStatement("DELETE FROM commentData WHERE cid = ?");
             db.cInsertOne = db.mConnection.prepareStatement("INSERT INTO commentData VALUES (default, ?, ?, ?)");
+
+            // creation/deletion, so multiple executions will cause an exception
+            // LiketData(default, ?, ?, ?)
+            db.lCreateTable = db.mConnection.prepareStatement(
+            "CREATE TABLE likeData (lid SERIAL PRIMARY KEY, mid int, uid int, islike int)");
+            db.lInsertOne = db.mConnection.prepareStatement("INSERT INTO likeData VALUES (default, ?, ?, ?)");
+            db.lDropTable = db.mConnection.prepareStatement("DROP TABLE likeData");
+            db.lDeleteOne = db.mConnection.prepareStatement("DELETE FROM likeData WHERE mId = ? and uId = ?");
 
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
@@ -556,7 +563,7 @@ public class Database {
             e.printStackTrace();
         }
     }
-/**
+    /**
      * Insert a row into the database
      * @param content The subject for this new row
      * @param messageId The message body for this new row
@@ -616,5 +623,62 @@ public class Database {
             e.printStackTrace();
         }
         return res;
+    }
+    /**
+     * Insert a row into the database
+     * @param mid The message id for this new row
+     * @param uid The user id for this new row
+     * @param islike number of likes for this new row
+     * 
+     * @return The number of rows that were inserted
+     */
+    // LikeData(int id, String content, int messageId, int userId)
+    int insertLike(int mid, int uid, int islike) {
+        int count = 0;        
+        try{
+            lInsertOne.setInt(1, mid);
+            lInsertOne.setInt(2, uid);     //set all the user's info into prepared statement
+            lInsertOne.setInt(3, islike);
+            count += lInsertOne.executeUpdate();    
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+        return count;    //return that user's id
+    }
+    /**
+     * Create likeData.  If it already exists, this will print an error
+     */
+    void createLikeTable() {
+        try {
+            lCreateTable.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * Remove likeData from the database.  If it does not exist, this will print
+     * an error.
+     */
+    void dropLikeTable() {
+        try {
+            lDropTable.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    /**
+     * Remove likeData from the database.  If it does not exist, this will print
+     * an error.             
+     * db.lDeleteOne = db.mConnection.prepareStatement("DELETE FROM likeData WHERE mId = ? and uId = ?");
+     */
+    void dropLikeTable(int mid, int uid) {
+        try {
+            lDeleteOne.setInt(1, mid);
+            lDeleteOne.setInt(2, uid);
+            lDeleteOne.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
