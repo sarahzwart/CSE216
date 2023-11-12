@@ -146,6 +146,15 @@ public class AppTest
         //testing dropTable
         db.dropCommentTable();
 
+        //Tests creating a comment table
+        db.createLikeTable();
+        //testing deleteRow
+        wasDeleted = db.deleteLike(2);
+        //esureing row 2 was deleted
+        assertTrue(wasDeleted==1);
+        //testing dropTable
+        db.dropLikeTable();
+
         /*//Tests creating a comment table
         db.createLikeTable();
         //testing deleteRow

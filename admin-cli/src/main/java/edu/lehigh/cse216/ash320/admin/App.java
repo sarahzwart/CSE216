@@ -157,7 +157,7 @@ public class App {
             } else if (action == 'q') {
                 break;
             } else if (action == 'T') {
-                char option = getChar(in, "Create which table (M, U, C)");
+                char option = getChar(in, "Create which table (M, U, C, L)");
                 if (option == 'M'){
                     db.createTable();
                 } else if (option == 'U'){
@@ -169,7 +169,7 @@ public class App {
                 }
             } else if (action == 'D') {
                 System.out.println(action);
-                char option = getChar(in, "Drop which table (M, U, C)");
+                char option = getChar(in, "Drop which table (M, U, C, L)");
                 if (option == 'M'){
                     db.dropTable();
                 } else if (option == 'U'){
@@ -180,10 +180,10 @@ public class App {
                     db.dropLikeTable();
                 }
             } else if (action == '+') {
-                char option = (getChar(in, "Add which table (M, U, C)"));
+                char option = (getChar(in, "Add which table (M, U, C, L)"));
                 if (option == 'M'){
                     int use = getInt(in, "Enter the User Id");
-                    String subject = getString(in, "Enter the subject");
+                    String subject = getString(in, "Enter the title");
                     String message = getString(in, "Enter the message");
                     if (subject.equals("") || message.equals(""))
                         continue;
