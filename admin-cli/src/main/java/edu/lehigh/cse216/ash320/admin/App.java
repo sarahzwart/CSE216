@@ -22,6 +22,7 @@ public class App {
         System.out.println("  [D] Drop Data Table");
         System.out.println("  [-] Delete a row");
         System.out.println("  [+] Insert a new row");
+        System.out.println("  [V] Validation");
         System.out.println("  [q] Quit Program");
         System.out.println("  [?] Help (this message)");
     }
@@ -36,6 +37,7 @@ public class App {
     static char prompt(BufferedReader in) {
         // The valid actions:
         String actions = "TD1*-+~q?";
+        //[TD1*-+~q?] :>
 
         // We repeat until a valid single-character option is selected        
         while (true) {
@@ -43,12 +45,15 @@ public class App {
             String action = "";
             try {
                 action = in.readLine();
+                System.out.println(action);
             } catch (IOException e) {
                 e.printStackTrace();
                 continue;
             }
-            if (action.length() != 1)
+            if (action.length() != 1){
+                System.out.println(action.length());
                 continue;
+            }
             if (actions.contains(action)) {
                 return action.charAt(0);
             }
@@ -84,16 +89,16 @@ public class App {
      * 
      * @return The string that the user provided.  May be "".
      */
-    static String getChar(BufferedReader in, String message) {
+    static char getChar(BufferedReader in, String message) {
         String s;
         try {
             System.out.print(message + " :> ");
             s = in.readLine();
         } catch (IOException e) {
             e.printStackTrace();
-            return "";
+            return "0".charAt(0);
         }
-        return s;
+        return s.charAt(0);
     }
 
     /**
@@ -146,13 +151,13 @@ public class App {
             //
             // NB: for better testability, each action should be a separate
             //     function call
-            char action = prompt(in);
+            char action = getChar(in, "[TD1*-+~q?]");
             if (action == '?') {
                 menu();
             } else if (action == 'q') {
                 break;
             } else if (action == 'T') {
-                char option = (getChar(in, "Create which table (M, U, C)")).charAt(0);
+                char option = getChar(in, "Create which table (M, U, C)");
                 if (option == 'M'){
                     db.createTable();
                 } else if (option == 'U'){
@@ -161,7 +166,8 @@ public class App {
                     db.createCommentTable();
                 }
             } else if (action == 'D') {
-                char option = (getChar(in, "Drop which table (M, U, C)")).charAt(0);
+                System.out.println(action);
+                char option = getChar(in, "Drop which table (M, U, C)");
                 if (option == 'M'){
                     db.dropTable();
                 } else if (option == 'U'){
@@ -169,34 +175,8 @@ public class App {
                 }  else if (option == 'C'){
                     db.dropCommentTable();
                 }
-            } else if (action == '-') {
-                int res = 0;
-                char option = (getChar(in, "Remove which row type (M, U, C)")).charAt(0);
-                if (option == 'M'){
-                    int id = getInt(in, "Enter the row ID");
-                    if (id == -1)
-                        continue;
-                    res = db.deleteRow(id);
-                    if (res == -1)
-                        continue;
-                } else if (option == 'U'){
-                    int id = getInt(in, "Enter the row ID");
-                    if (id == -1)
-                        continue;
-                    res = db.deleteUser(id);
-                    if (res == -1)
-                        continue;
-                } else if (option == 'C'){
-                    int id = getInt(in, "Enter the row ID");
-                    if (id == -1)
-                        continue;
-                    res = db.deleteComment(id);
-                    if (res == -1)
-                        continue;
-                    }                
-                System.out.println("  " + res + " rows deleted");
             } else if (action == '+') {
-                char option = (getChar(in, "Add which table (M, U, C)")).charAt(0);
+                char option = (getChar(in, "Add which table (M, U, C)"));
                 if (option == 'M'){
                     int use = getInt(in, "Enter the User Id");
                     String subject = getString(in, "Enter the subject");
@@ -225,8 +205,59 @@ public class App {
                         continue;
                     int res = db.insertComment(content, mId, uId);
                     System.out.println(res + " rows added");
+                }  
+            } else if (action == '-') {
+                int res = 0;
+                char option = (getChar(in, "Remove which row type (M, U, C)"));
+                if (option == 'M'){
+                    int id = getInt(in, "Enter the row ID");
+                    if (id == -1)
+                        continue;
+                    res = db.deleteRow(id);
+                    if (res == -1)
+                        continue;
+                } else if (option == 'U'){
+                    int id = getInt(in, "Enter the row ID");
+                    if (id == -1)
+                        continue;
+                    res = db.deleteUser(id);
+                    if (res == -1)
+                        continue;
+                } else if (option == 'C'){
+                    int id = getInt(in, "Enter the row ID");
+                    if (id == -1)
+                        continue;
+                    res = db.deleteComment(id);
+                    if (res == -1)
+                        continue;
+                } 
+                System.out.println("  " + res + " rows deleted");
+            } else if (action == 'V') {
+                action = getChar(in, "Validate or Invalidate (V, I)");
+                if (action == 'V'){
+                    action = (getChar(in, "Which Table (M, U)"));
+                    int id = 0;
+                    if (action == 'M'){
+                        id = getInt(in, "Enter the User Id");
+                        db.ideaValidate(id);
+                    } else if (action == 'U'){
+                        id = getInt(in, "Enter the User Id");
+                        db.userValidate(id);
+                    }
+                    System.out.println("Updated " + id + " validated");
+                } else if (action == 'I'){
+                    action = (getChar(in, "Which Table (M, U)"));
+                    int id = 0;
+                    if (action == 'M'){
+                        id = getInt(in, "Enter the User Id");
+                        db.ideaInvalidate(id);
+                    } else if (action == 'U'){
+                        id = getInt(in, "Enter the User Id");
+                        db.userInvalidate(id);
+                    }
+                    System.out.println("Row " + id + " invalidated");
                 }
-            } 
+            }          
         }
         // Always remember to disconnect from the database when the program 
         // exits

@@ -30,6 +30,10 @@ public class Database {
      * A prepared statement for dropping the table in our database
      */
     private PreparedStatement mDropTable;
+    /**
+     * A prepared statement for validating/invalidating a user
+     */
+    private PreparedStatement mValidate;
     //USER STUFF
     /**
      * A prepared statement for deleting a row from the database
@@ -47,6 +51,10 @@ public class Database {
      * A prepared statement for dropping the table in our database
      */
     private PreparedStatement uDropTable;
+    /**
+     * A prepared statement for validating/invalidating a user
+     */
+    private PreparedStatement uValidate;
     //COMMENT STUFF
     /**
      * A prepared statement for deleting a row from the database
@@ -64,6 +72,23 @@ public class Database {
      * A prepared statement for dropping the table in our database
      */
     private PreparedStatement cDropTable;
+    //LIKE STUFF
+    /**
+     * A prepared statement for deleting a row from the database
+     */
+    private PreparedStatement lDeleteOne;
+    /**
+     * A prepared statement for inserting into the database
+     */
+    private PreparedStatement lInsertOne;
+    /**
+     * A prepared statement for creating the table in our database
+     */
+    private PreparedStatement lCreateTable;
+    /**
+     * A prepared statement for dropping the table in our database
+     */
+    private PreparedStatement lDropTable;
 
     /**
      * RowData is like a struct in C: we use it to hold data, and we allow 
@@ -114,6 +139,16 @@ public class Database {
             mInvalid = invalid;
         }
     }
+    /**
+     * RowData is like a struct in C: we use it to hold data, and we allow 
+     * direct access to its fields.  In the context of this Database, RowData 
+     * represents the data we'd see in a row.
+     * 
+     * We make RowData a static class of Database because we don't really want
+     * to encourage users to think of RowData as being anything other than an
+     * abstract representation of a row of the database.  RowData and the 
+     * Database are tightly coupled: if one changes, the other should too.
+     */
     public static class UserData {
         //id of the user
         public final int uId;
@@ -173,6 +208,30 @@ public class Database {
             uInvalid = invalid;
         }
     }
+
+    public static class CommentData {
+        //id of the comment
+        public final int cId;
+        //content of the comment
+        public String cContent;
+        //id of the message that the comment is posted on
+        public int mId;
+        //if of the user who posted the comment
+        public int uId;
+
+        public CommentData(int id, String message, int messageId, int userId){
+            cId = id;
+            mId = messageId;
+            if(message.length()<=2048){ //ensures correct length
+                cContent = message;
+            }
+            else{ //shortens message if it is too large
+                cContent = message.substring(0, Math.min(message.length(), 2048));
+            }            
+            uId = userId;
+        }
+    }
+
     public static class CommentData {
         //id of the comment
         public final int cId;
@@ -248,6 +307,7 @@ public class Database {
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
             db.mInsertOne = db.mConnection.prepareStatement("INSERT INTO tblData VALUES (default, ?, ?, ?, 0, false)");
+            db.mValidate = db.mConnection.prepareStatement("UPDATE tblData SET invalid = ? WHERE id = ?");
 
             // creation/deletion, so multiple executions will cause an exception
             // public UserData(int id, String name, String email, String GI, String SO, String note, String idToken){
@@ -257,6 +317,7 @@ public class Database {
             // Standard CRUD operations
             db.uDeleteOne = db.mConnection.prepareStatement("DELETE FROM usrData WHERE uid = ?");
             db.uInsertOne = db.mConnection.prepareStatement("INSERT INTO usrData VALUES (default, ?, ?, ?, ?, ?, ?, false)");
+            db.uValidate = db.mConnection.prepareStatement("UPDATE usrData SET invalid = ? WHERE id = ?");
 
             // creation/deletion, so multiple executions will cause an exception
             // CommentData(int id, String content, int messageId, int userId)
@@ -369,6 +430,37 @@ public class Database {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Validate a message
+     * an error.
+     * db.mValidation = db.mConnection.prepareStatement("UPDATE tblData SET invalid = ? WHERE id = ?");
+     */
+    void ideaValidate(int id) {
+        try {
+            mValidate.setBoolean(1, false);
+            mValidate.setInt(2, id);
+            mValidate.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Invalidate a message
+     * an error.
+     * db.mValidation = db.mConnection.prepareStatement("UPDATE tblData SET invalid = ? WHERE id = ?");
+     */
+    void ideaInvalidate(int id) {
+        try {
+            mValidate.setBoolean(1, true);
+            mValidate.setInt(2, id);
+            mValidate.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Insert a row into the database
      * 
@@ -435,6 +527,35 @@ public class Database {
         }
         return res;
     }
+    /**
+     * Validate a message
+     * an error.
+     * db.mValidation = db.mConnection.prepareStatement("UPDATE tblData SET invalid = ? WHERE id = ?");
+     */
+    void userValidate(int id) {
+        try {
+            uValidate.setBoolean(1, false);
+            uValidate.setInt(2, id);
+            uValidate.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Invalidate a message
+     * an error.
+     * db.mValidation = db.mConnection.prepareStatement("UPDATE tblData SET invalid = ? WHERE id = ?");
+     */
+    void userInvalidate(int id) {
+        try {
+            uValidate.setBoolean(1, true);
+            uValidate.setInt(2, id);
+            uValidate.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 /**
      * Insert a row into the database
      * @param content The subject for this new row
@@ -445,7 +566,7 @@ public class Database {
      */
     //inserts a new user into the user DB
     // CommentData(int id, String content, int messageId, int userId)
-    int insertComment(String content, int messageId, int userId){
+    int insertComment(String content, int messageId, int userId) {
         int count = 0;        
         try{
             cInsertOne.setString(1, content);
