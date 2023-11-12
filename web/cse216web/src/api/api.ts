@@ -1,10 +1,13 @@
 import axios from 'axios';
+import { JwtPayload } from 'jwt-decode';
+import { User } from '../domain/entitites/User';
 
 const headers = {
   'Content-Type': 'application/json',
   Accept: 'application/json',
 };
 
+const sessionKey = sessionStorage.getItem("sessionKey");
 // Get request for all messages
 export async function fetchMessages() {
   try {
@@ -46,16 +49,17 @@ export async function fetchUsers(){
     throw error;
   }
 };
+///messages?sessionKey=<insert session key>
 // MESSAGES
 // Post request for message
-export async function addMessage(message: string, userId: number): Promise<number> {
+export async function addMessage(message: string): Promise<{mId: number, uId:number}> {
   try {
     const response = await axios.post(
-      'https://team-margaritavillians.dokku.cse.lehigh.edu/messages',
-      { mTitle: 'Title', mMessage: message, uId: userId },
+      `https://team-margaritavillians.dokku.cse.lehigh.edu/messages?sessionKey=${sessionKey}`,
+      { mTitle: 'Title', mMessage: message},
       { headers }
     );
-    return response.data.mMessage;
+    return response.data.mData
   } catch (error) {
     console.error('Error when adding a message:', error);
     throw error;
@@ -65,11 +69,11 @@ export async function addMessage(message: string, userId: number): Promise<numbe
 
 // COMMENTS
 // Post request to comments
-export async function addComment(userId: number, comment: string, mId: number): Promise<number> {
+export async function addComment(comment: string, mId: number): Promise<number>  {
   try {
     const response = await axios.post(
-      'https://team-margaritavillians.dokku.cse.lehigh.edu/comments',
-      { cContent: comment, uId: userId, mId: mId },
+      `https://team-margaritavillians.dokku.cse.lehigh.edu/comments?sessionKey=${sessionKey}`,
+      { cContent: comment, mId: mId },
       { headers }
     );
     return response.data.mData;
@@ -83,8 +87,8 @@ export async function addComment(userId: number, comment: string, mId: number): 
 export async function editComment(cId: number, cContent: string){
   try {
     await axios.put(
-      `https://team-margaritavillians.dokku.cse.lehigh.edu/comments/${cId}`,
-      { cContent },
+      `https://team-margaritavillians.dokku.cse.lehigh.edu/comments/${cId}?sessionKey=${sessionKey}`,
+      { cContent: cContent },
       { headers }
     );
   } catch (error) {
@@ -98,8 +102,8 @@ export async function editComment(cId: number, cContent: string){
 // Information of specific User (GET)
 export async function fetchUser(uId: number){
   try {
-    const response = await axios.post(
-      `https://team-margaritavillians.dokku.cse.lehigh.edu/user/${uId}`,
+    const response = await axios.get(
+      `https://team-margaritavillians.dokku.cse.lehigh.edu/users/`,
       {headers}
     );
     return response.data.mData; // Change
@@ -110,11 +114,11 @@ export async function fetchUser(uId: number){
 }
 
 // Edit Sexual Orientation (PUT)
-export async function editSO(uId: number, uSO: string){
+export async function editUserInfo(user: User){
   try {
     await axios.put(
-      `https://team-margaritavillians.dokku.cse.lehigh.edu/user/${uId}`,
-      { uSO: uSO },
+      `https://team-margaritavillians.dokku.cse.lehigh.edu/users/${uId}?sessionKey=${sessionKey}`,
+      { user },
       {headers}
     );
   } catch (error) {
@@ -123,33 +127,21 @@ export async function editSO(uId: number, uSO: string){
   }
 };
 
-// Edit Gender Orientation (PUT)
-export async function editGO(uId: number, uGO: string){
-  try {
-    await axios.put(
-      `https://team-margaritavillians.dokku.cse.lehigh.edu/user/${uId}`,
-      { uGO: uGO },
+
+export async function addSessionKey(userJWT: JwtPayload): Promise<string> {
+  try{
+    const response = await axios.post(
+      `https://team-margaritavillians.dokku.cse.lehigh.edu/users/`,
+      {userJWT},
       {headers}
     );
+    const sessionKey = response.data.mData; // int id
+    console.log(sessionKey);
+    return sessionKey;
   } catch (error) {
-    console.error('Error editing user GO:', error);
-    throw error;
+    console.error('Error when fetching user token:', error);
+    throw error; // Re-throw the error if you want to propagate it
   }
-};
-
-// Edit Note (PUT)
-export async function editNote(uId: number, uNote: string){
-  try {
-    await axios.put(
-      `https://team-margaritavillians.dokku.cse.lehigh.edu/user/${uId}`,
-      { uNote: uNote },
-      {headers}
-    );
-  } catch (error) {
-    console.error('Error editing user Note:', error);
-    throw error;
-  }
-};
-
+}
 
 

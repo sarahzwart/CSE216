@@ -3,7 +3,8 @@ export interface User{
     uName: string;
     uEmail: string;
     uSO: string;
-    uGO: string;
+    uGI: string;
     uNote: string;
-    uId: number;
+    uId?: number;
+    uIdToken: string;
 }

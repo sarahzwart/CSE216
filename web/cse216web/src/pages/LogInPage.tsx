@@ -1,38 +1,41 @@
 import { useEffect, useState } from "react";
-import {jwtDecode} from 'jwt-decode';
+import {JwtPayload, jwtDecode} from 'jwt-decode';
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
+import { addSessionKey } from "../api/api";
 const url = 'https://team-margaritavillians.dokku.cse.lehigh.edu/users/';
 const headers = {
   'Content-Type': 'application/json',
   'Accept': 'application/json',
 };
+
 //https://stackoverflow.com/questions/40399873/initializing-and-using-sessionstorage-in-react
 function LogInPage() {
   const [ user, setUser ] = useState({});
   const navigate = useNavigate();
-  function handleCallbackResponse(response: { credential: string }){
+  async function handleCallbackResponse(response: { credential: string }){
     console.log("Encoded JWT ID token: " + response.credential);
     const userObject = jwtDecode(response.credential);
-    console.log(userObject);
-    setUser(userObject);
-    sessionStorage.setItem("user", JSON.stringify(userObject));
-    handleUserInfo(userObject);
-    // Navigates to idealist page 
-    navigate("/ideas");
+    try {
+      const sessionKey = await handleUserInfo(userObject);
+      sessionStorage.setItem("sessionKey", sessionKey);
+      // Navigates to idealist page
+      navigate("/list");
+    } catch (error) {
+      console.error("Error in handleCallbackResponse:", error);
+      // Handle the error, maybe log it or perform some other action
+    }
   }
   
-  function handleUserInfo(userObject: any){
-    axios
-    .post(url, {userObject}, {headers})
-    .then((response) => {
-      const userData = response.data.mData; //int id
-      setUser(userData);
-      console.log(userData)
-    })
-    .catch((error) => {
-      console.error("Error when fetching message:", error);
-    });
+  
+  async function handleUserInfo(userObject: JwtPayload){
+    try {
+      const sessionKey = await addSessionKey(userObject);
+      return sessionKey;
+    } catch (error) {
+      console.error("Error in handleUserInfo:", error);
+      throw error;
+    }
   }
   
   

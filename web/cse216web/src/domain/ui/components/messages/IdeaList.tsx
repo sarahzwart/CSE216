@@ -27,7 +27,6 @@ function IdeaList() {
   const [comments, setComments] = useState<Comment[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   // Variable contains information of use logged in
-  const currentUser = window.sessionStorage.getItem("user");
   const [isLoading, setIsLoading] = useState(true);
   const [editingComment, setEditingComment] = useState({
     cId: 0,
@@ -58,6 +57,7 @@ function IdeaList() {
     const commentsForMessage = comments.filter(
       (comment) => comment.mId === messageId
     );
+  
     return commentsForMessage.map((comment) => (
       <div className="comment-list-container" key={comment.cId}>
         <p style={{ color: "blue" }}>{displayUsername(comment.uId)}</p>
@@ -71,7 +71,6 @@ function IdeaList() {
         ) : (
           <div>
             {comment.cContent}
-            {/* add an if statement for user session */}
             <button
               className="edit-button"
               onClick={() =>
@@ -79,7 +78,8 @@ function IdeaList() {
                   cId: comment.cId,
                   cContent: comment.cContent as string,
                 })
-              }>
+              }
+            >
               {editingComment.cId === comment.cId ? "Cancel" : "Edit"}
             </button>
           </div>
@@ -102,31 +102,28 @@ function IdeaList() {
   }
 
   // adds a Message (POST)
-  async function handleAddMessage(message: string, uId: number) {
+  async function handleAddMessage(message: string) {
     try {
-      const newMessageData: Promise<number> = addMessage(message, uId);
+      const newMessageData: Promise<{mId:number,uId:number}> = addMessage(message);
       const data = {
         mMessage: message,
-        uId: uId,
         mTitle: "Title",
-        mId: newMessageData,
+        mId: 0,
         mLikes: 0,
+        uId: 0,
       };
-      const resolvedmId = await newMessageData;
-      setMessages([...messages, { ...data, mId: resolvedmId }]);
+      const resolvedmId = (await newMessageData).mId;
+      const resolveduId = (await newMessageData).uId;
+      setMessages([...messages, { ...data, mId: resolvedmId, uId: resolveduId }]);
     } catch (error) {
       console.error("Error when adding a message:", error);
     }
   }
 
   // Adds a comment to a Message(Idea)
-  async function handleAddComment(
-    userId: number,
-    comment: string,
-    mId: number
-  ) {
+  async function handleAddComment(userId: number, comment: string, mId: number) {
     try {
-      const newCommentData: Promise<number> = addComment(userId, comment, mId);
+      const newCommentData: Promise<number> = addComment(comment, mId);
       const data = {
         cContent: comment,
         uId: userId,
@@ -182,7 +179,7 @@ function IdeaList() {
           ))
         )}
       </div>
-      <MessageForm onAddMessage={(message) => handleAddMessage(message, 1)} />
+      <MessageForm onAddMessage={(message) => handleAddMessage(message)} />
     </div>
   );
 }
