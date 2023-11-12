@@ -301,7 +301,7 @@ public class Database {
             // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table 
             // creation/deletion, so multiple executions will cause an exception
             db.mCreateTable = db.mConnection.prepareStatement(
-            "CREATE TABLE tblData (id SERIAL, subject VARCHAR(50) NOT NULL, message VARCHAR(500) NOT NULL, user_Id int, likes int, invalid Boolean)");
+            "CREATE TABLE tblData (id SERIAL, title VARCHAR(50) NOT NULL, message VARCHAR(500) NOT NULL, user_Id int, likes int, invalid Boolean)");
             db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
@@ -376,11 +376,11 @@ public class Database {
      * 
      * @return The number of rows that were inserted
      */
-    int insertRow(int use, String subject, String message) {
+    int insertRow(int use, String title, String message) {
         int count = 0;        
         //PreparedStatement getRecentId;
         try {
-            mInsertOne.setString(1, subject);
+            mInsertOne.setString(1, title);
             mInsertOne.setString(2, message);
             mInsertOne.setInt(3, use);
             count += mInsertOne.executeUpdate();            
