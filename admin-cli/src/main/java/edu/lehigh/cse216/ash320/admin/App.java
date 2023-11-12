@@ -164,6 +164,8 @@ public class App {
                     db.createUserTable();
                 } else if (option == 'C'){
                     db.createCommentTable();
+                } else if (option == 'L'){
+                    db.createLikeTable();
                 }
             } else if (action == 'D') {
                 System.out.println(action);
@@ -174,6 +176,8 @@ public class App {
                     db.dropUserTable();
                 }  else if (option == 'C'){
                     db.dropCommentTable();
+                }  else if (option == 'L'){
+                    db.dropLikeTable();
                 }
             } else if (action == '+') {
                 char option = (getChar(in, "Add which table (M, U, C)"));

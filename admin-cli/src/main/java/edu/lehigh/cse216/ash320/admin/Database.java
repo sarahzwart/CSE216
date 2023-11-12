@@ -301,7 +301,7 @@ public class Database {
             // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table 
             // creation/deletion, so multiple executions will cause an exception
             db.mCreateTable = db.mConnection.prepareStatement(
-            "CREATE TABLE tblData (id SERIAL PRIMARY KEY, subject VARCHAR(50) NOT NULL, message VARCHAR(500) NOT NULL, user_Id int, likes int, invalid Boolean)");
+            "CREATE TABLE tblData (id SERIAL, subject VARCHAR(50) NOT NULL, message VARCHAR(500) NOT NULL, user_Id int, likes int, invalid Boolean)");
             db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
             // Standard CRUD operations
             db.mDeleteOne = db.mConnection.prepareStatement("DELETE FROM tblData WHERE id = ?");
@@ -311,7 +311,7 @@ public class Database {
             // creation/deletion, so multiple executions will cause an exception
             // public UserData(int id, String name, String email, String GI, String SO, String note, String idToken){
             db.uCreateTable = db.mConnection.prepareStatement(
-            "CREATE TABLE usrData (uid SERIAL PRIMARY KEY, name VARCHAR(50) NOT NULL, email VARCHAR(50) NOT NULL, GI VARCHAR(50) NOT NULL, SO VARCHAR(50) NOT NULL, note VARCHAR(50) NOT NULL, idToken VARCHAR(50) NOT NULL, invalid Boolean)");
+            "CREATE TABLE usrData (uid SERIAL, name VARCHAR(50) NOT NULL, email VARCHAR(50) NOT NULL, GI VARCHAR(50) NOT NULL, SO VARCHAR(50) NOT NULL, note VARCHAR(50) NOT NULL, idToken VARCHAR(50) NOT NULL, invalid Boolean)");
             db.uDropTable = db.mConnection.prepareStatement("DROP TABLE usrData");
             // Standard CRUD operations
             db.uDeleteOne = db.mConnection.prepareStatement("DELETE FROM usrData WHERE uid = ?");
@@ -321,7 +321,7 @@ public class Database {
             // creation/deletion, so multiple executions will cause an exception
             // CommentData(int id, String content, int messageId, int userId)
             db.cCreateTable = db.mConnection.prepareStatement(
-            "CREATE TABLE commentData (cid SERIAL PRIMARY KEY, content VARCHAR(50) NOT NULL, mid int, uid int)");
+            "CREATE TABLE commentData (cid SERIAL, content VARCHAR(50) NOT NULL, mid int, uid int)");
             db.cDropTable = db.mConnection.prepareStatement("DROP TABLE commentData");
             // Standard CRUD operations
             db.cDeleteOne = db.mConnection.prepareStatement("DELETE FROM commentData WHERE cid = ?");
@@ -330,7 +330,7 @@ public class Database {
             // creation/deletion, so multiple executions will cause an exception
             // LiketData(default, ?, ?, ?)
             db.lCreateTable = db.mConnection.prepareStatement(
-            "CREATE TABLE likeData (lid SERIAL PRIMARY KEY, mid int, uid int, islike int)");
+            "CREATE TABLE likeData (lid SERIAL, mid int, uid int, islike int)");
             db.lInsertOne = db.mConnection.prepareStatement("INSERT INTO likeData VALUES (default, ?, ?, ?)");
             db.lDropTable = db.mConnection.prepareStatement("DROP TABLE likeData");
             db.lDeleteOne = db.mConnection.prepareStatement("DELETE FROM likeData WHERE mId = ? and uId = ?");
