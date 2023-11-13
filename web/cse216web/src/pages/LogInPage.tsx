@@ -16,7 +16,7 @@ function LogInPage() {
     console.log("Encoded JWT ID token: " + response.credential);
     const userObject = jwtDecode(response.credential);
     try {
-      const userSessionAndID = await handleUserInfo(userObject);
+      const userSessionAndID = await handleUserInfo(response.credential);
       sessionStorage.setItem("sessionKey", userSessionAndID.sessionKey);
       sessionStorage.setItem("userId", String(userSessionAndID.uId));
       // Navigates to idealist page
@@ -26,10 +26,10 @@ function LogInPage() {
       // Handle the error, maybe log it or perform some other action
     }
   }
-  
-  async function handleUserInfo(userObject: JwtPayload){
+  // Uses axios method from api.ts
+  async function handleUserInfo(jwtToken: String){
     try {
-      const sessionKey = await addSessionKey(userObject);
+      const sessionKey = await addSessionKey(jwtToken);
       return sessionKey;
     } catch (error) {
       console.error("Error in handleUserInfo:", error);

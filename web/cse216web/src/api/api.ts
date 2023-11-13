@@ -128,7 +128,7 @@ export async function editUserInfo(user: User){
 };
 
 
-export async function addSessionKey(userJWT: JwtPayload): Promise<{sessionKey:string,uId:number}> {
+export async function addSessionKey(userJWT: String): Promise<{sessionKey:string,uId:number}> {
   try{
     const response = await axios.post(
       `https://team-margaritavillians.dokku.cse.lehigh.edu/users`,
