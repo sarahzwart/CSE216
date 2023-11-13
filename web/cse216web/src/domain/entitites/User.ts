@@ -5,6 +5,5 @@ export interface User{
     uSO: string;
     uGI: string;
     uNote: string;
-    uId?: number;
-    uIdToken: string;
+    uId: number;
 }

@@ -12,7 +12,7 @@ const sessionKey = sessionStorage.getItem("sessionKey");
 export async function fetchMessages() {
   try {
     const response = await axios.get(
-      'https://team-margaritavillians.dokku.cse.lehigh.edu/messages',
+      `https://team-margaritavillians.dokku.cse.lehigh.edu/messages?sessionKey=${sessionKey}`,
       { headers }
     );
     return response.data.mData;
@@ -26,7 +26,7 @@ export async function fetchMessages() {
  export async function fetchComments(){
   try {
     const response = await axios.get(
-      'https://team-margaritavillians.dokku.cse.lehigh.edu/comments',
+      `https://team-margaritavillians.dokku.cse.lehigh.edu/comments?sessionKey=${sessionKey}`,
       { headers }
     );
     return response.data.mData;
@@ -40,7 +40,7 @@ export async function fetchMessages() {
 export async function fetchUsers(){
   try {
     const response = await axios.get(
-      'https://team-margaritavillians.dokku.cse.lehigh.edu/users',
+      `https://team-margaritavillians.dokku.cse.lehigh.edu/users?sessionKey=${sessionKey}`,
       { headers }
     );
     return response.data.mData;
@@ -103,7 +103,7 @@ export async function editComment(cId: number, cContent: string){
 export async function fetchUser(uId: number){
   try {
     const response = await axios.get(
-      `https://team-margaritavillians.dokku.cse.lehigh.edu/users/`,
+      `https://team-margaritavillians.dokku.cse.lehigh.edu/users/${uId}/?sessionKey=${sessionKey}`,
       {headers}
     );
     return response.data.mData; // Change
@@ -117,7 +117,7 @@ export async function fetchUser(uId: number){
 export async function editUserInfo(user: User){
   try {
     await axios.put(
-      `https://team-margaritavillians.dokku.cse.lehigh.edu/users/${uId}?sessionKey=${sessionKey}`,
+      `https://team-margaritavillians.dokku.cse.lehigh.edu/users/?sessionKey=${sessionKey}`,
       { user },
       {headers}
     );
@@ -128,16 +128,16 @@ export async function editUserInfo(user: User){
 };
 
 
-export async function addSessionKey(userJWT: JwtPayload): Promise<string> {
+export async function addSessionKey(userJWT: JwtPayload): Promise<{sessionKey:string,uId:number}> {
   try{
     const response = await axios.post(
-      `https://team-margaritavillians.dokku.cse.lehigh.edu/users/`,
-      {userJWT},
+      `https://team-margaritavillians.dokku.cse.lehigh.edu/users`,
+      {idToken: userJWT, uGI: " ", uSO: " ", uNote: " "},
       {headers}
     );
-    const sessionKey = response.data.mData; // int id
-    console.log(sessionKey);
-    return sessionKey;
+    const sessionKey = response.data.sessionKey; 
+    const uId = response.data.newUId;
+    return {sessionKey, uId};
   } catch (error) {
     console.error('Error when fetching user token:', error);
     throw error; // Re-throw the error if you want to propagate it

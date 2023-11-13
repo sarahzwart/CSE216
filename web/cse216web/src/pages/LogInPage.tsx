@@ -11,14 +11,14 @@ const headers = {
 
 //https://stackoverflow.com/questions/40399873/initializing-and-using-sessionstorage-in-react
 function LogInPage() {
-  const [ user, setUser ] = useState({});
   const navigate = useNavigate();
   async function handleCallbackResponse(response: { credential: string }){
     console.log("Encoded JWT ID token: " + response.credential);
     const userObject = jwtDecode(response.credential);
     try {
-      const sessionKey = await handleUserInfo(userObject);
-      sessionStorage.setItem("sessionKey", sessionKey);
+      const userSessionAndID = await handleUserInfo(userObject);
+      sessionStorage.setItem("sessionKey", userSessionAndID.sessionKey);
+      sessionStorage.setItem("userId", String(userSessionAndID.uId));
       // Navigates to idealist page
       navigate("/list");
     } catch (error) {
@@ -26,7 +26,6 @@ function LogInPage() {
       // Handle the error, maybe log it or perform some other action
     }
   }
-  
   
   async function handleUserInfo(userObject: JwtPayload){
     try {

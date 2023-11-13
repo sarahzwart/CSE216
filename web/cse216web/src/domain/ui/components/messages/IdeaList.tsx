@@ -18,7 +18,7 @@ import {
   addMessage,
   editComment,
 } from "../../../../api/api";
-
+console.log(sessionStorage.getItem("sessionKey"))
 //CSS imports
 import "../../styles/IdeaList.css";
 

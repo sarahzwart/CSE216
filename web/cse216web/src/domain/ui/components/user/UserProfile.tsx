@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useImperativeHandle } from "react";
 import { User } from "../../../entitites/User";
 import { useParams } from "react-router-dom";
 import { fetchUser, editUserInfo } from "../../../../api/api";
@@ -7,6 +7,8 @@ import EditProfileForm from "./EditUserInfo";
 function UserProfile() {
   // userId of profile clicked on
   const { userId } = useParams();
+  const uIdString = sessionStorage.getItem("uId");
+  const uId = Number(uIdString);
   // Need to switch to number
 
   // Current User that is logged in
@@ -28,13 +30,50 @@ function UserProfile() {
   };
 
   // Put Sexual Orientation Edits
-  function handleEditUser() {
+  function handleEditSO(user: User, uSO: string ) {
+    const editedUserSO: User = {
+      uId: uId,
+      uName: user.uName,
+      uEmail: user.uEmail,
+      uGI: user.uGI,
+      uSO: uSO,
+      uNote: user.uNote,
+    }
+    setSexualOrientation(uSO);
     try {
-      editUserInfo({
-        uIdToken: userIdToken
-        
+      editUserInfo(editedUserSO);
+    } catch (error) {
 
-      });
+    }
+  }
+  function handleEditGI(user: User, uGI: string) {
+    const editedUserGI: User = {
+      uId: uId,
+      uName: user.uName,
+      uEmail: user.uEmail,
+      uGI: uGI,
+      uSO: user.uSO,
+      uNote: user.uNote,
+    }
+    setGenderIdentity(uGI);
+    try {
+      editUserInfo(editedUserGI);
+    } catch (error) {
+
+    }
+  }
+  function handleEditNote(user: User, uNote: string ) {
+    const editedUserNote: User = {
+      uId: uId,
+      uName: user.uName,
+      uEmail: user.uEmail,
+      uGI: user.uGI,
+      uSO: user.uSO,
+      uNote: uNote,
+    };
+    setNote(uNote);
+    try {
+      editUserInfo(editedUserNote);
     } catch (error) {
 
     }
@@ -44,7 +83,7 @@ function UserProfile() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const userData = await fetchUser(userIdNum);
+        const userData = await fetchUser(uId);
         setUserInfo(userData);
       } catch (error) {
         console.error("Error when specific user data:", error);
@@ -68,21 +107,21 @@ function UserProfile() {
             <p>
               Sexual Orientation: {sexualOrientation}{" "}
               <EditProfileForm
-                onEditInfo={(newSO) => handleEditUser()}
+                onEditInfo={(newSO) => handleEditSO(user, newSO)}
                 info={sexualOrientation || ""}
               />
             </p>
             <p>
               Gender Orientation: {genderIdentity}{" "}
               <EditProfileForm
-                onEditInfo={(newGO) => handleEditUser()}
+                onEditInfo={(newGI) => handleEditGI(user, newGI)}
                 info={genderIdentity || ""}
               />
             </p>
             <p>
               Note: {note}{" "}
               <EditProfileForm
-                onEditInfo={(newNote) => handleEditUser()}
+                onEditInfo={(newNote) => handleEditNote(user, newNote)}
                 info={note || ""}
               />
             </p>

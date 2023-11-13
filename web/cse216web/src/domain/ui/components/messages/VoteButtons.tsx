@@ -14,7 +14,6 @@ function VoteButtons({ message }: { message: Message }) {
     Accept: "application/json",
   };
   //get user info/ id
-  const currentUser = window.sessionStorage.getItem("user");
   // Handle UpVote Button Press
   const handleUpVote = () => {
     if (upVoteStatus == false) {
