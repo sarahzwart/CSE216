@@ -4,7 +4,8 @@ import { FaRegThumbsDown } from "react-icons/fa";
 import { FaRegThumbsUp } from "react-icons/fa";
 //put likes --> /messages/id --> increment/decrements likes
 import { Message } from "../../../entitites/Message";
-let url = "https://team-margaritavillians.dokku.cse.lehigh.edu/messages/";
+const sessionKey = sessionStorage.getItem("sessionKey");
+let url = `https://team-margaritavillians.dokku.cse.lehigh.edu/messages?sessionKey=${sessionKey}`;
 
 function VoteButtons({ message }: { message: Message }) {
   const [upVoteStatus, setUpVoteStatus] = useState(false);

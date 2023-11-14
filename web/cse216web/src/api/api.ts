@@ -15,6 +15,8 @@ export async function fetchMessages() {
       `https://team-margaritavillians.dokku.cse.lehigh.edu/messages?sessionKey=${sessionKey}`,
       { headers }
     );
+    console.log("Message Status: " + response.data.mStatus);
+    console.log("messages: " + response.data.mData);
     return response.data.mData;
   } catch (error) {
     console.error('Error when fetching messages:', error);
@@ -29,6 +31,8 @@ export async function fetchMessages() {
       `https://team-margaritavillians.dokku.cse.lehigh.edu/comments?sessionKey=${sessionKey}`,
       { headers }
     );
+    console.log("Comment Status: " + response.data.mStatus);
+    console.log("Comments: " + response.data.mData);
     return response.data.mData;
   } catch (error) {
     console.error('Error when fetching comments:', error);
@@ -49,10 +53,11 @@ export async function fetchUsers(){
     throw error;
   }
 };
+
 ///messages?sessionKey=<insert session key>
 // MESSAGES
 // Post request for message
-export async function addMessage(message: string): Promise<{mId: number, uId:number}> {
+export async function addMessage(message: string): Promise<number> {
   try {
     const response = await axios.post(
       `https://team-margaritavillians.dokku.cse.lehigh.edu/messages?sessionKey=${sessionKey}`,
@@ -113,12 +118,26 @@ export async function fetchUser(uId: number){
   }
 }
 
+export async function fetchUserName(uId: number): Promise<string> {
+  try {
+    const response = await axios.get(
+      `https://team-margaritavillians.dokku.cse.lehigh.edu/users/${uId}/?sessionKey=${sessionKey}`,
+      {headers}
+    );
+    console.log(response.data.mData.uName);
+    return response.data.mData.uName; // Change
+  } catch (error) {
+    console.error('Error fetching User Data: ', error)
+    throw error;
+  }
+}
+
 // Edit Sexual Orientation (PUT)
 export async function editUserInfo(user: User){
   try {
     await axios.put(
       `https://team-margaritavillians.dokku.cse.lehigh.edu/users/?sessionKey=${sessionKey}`,
-      { user },
+      { user }, 
       {headers}
     );
   } catch (error) {
@@ -128,11 +147,11 @@ export async function editUserInfo(user: User){
 };
 
 
-export async function addSessionKey(userJWT: String): Promise<{sessionKey:string,uId:number}> {
+export async function addSessionKey(userJWT: string): Promise<{sessionKey:string, uId:number}> {
   try{
     const response = await axios.post(
       `https://team-margaritavillians.dokku.cse.lehigh.edu/users`,
-      {idToken: userJWT, uGI: " ", uSO: " ", uNote: " "},
+      {idToken: userJWT, uGI: '', uSO: '', uNote: ''},
       {headers}
     );
     const sessionKey = response.data.sessionKey; 

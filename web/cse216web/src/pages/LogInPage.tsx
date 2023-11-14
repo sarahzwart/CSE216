@@ -14,7 +14,6 @@ function LogInPage() {
   const navigate = useNavigate();
   async function handleCallbackResponse(response: { credential: string }){
     console.log("Encoded JWT ID token: " + response.credential);
-    const userObject = jwtDecode(response.credential);
     try {
       const userSessionAndID = await handleUserInfo(response.credential);
       sessionStorage.setItem("sessionKey", userSessionAndID.sessionKey);
@@ -26,9 +25,11 @@ function LogInPage() {
       // Handle the error, maybe log it or perform some other action
     }
   }
+
   // Uses axios method from api.ts
-  async function handleUserInfo(jwtToken: String){
+  async function handleUserInfo(jwtToken: string){
     try {
+      //makes a post request to users
       const sessionKey = await addSessionKey(jwtToken);
       return sessionKey;
     } catch (error) {

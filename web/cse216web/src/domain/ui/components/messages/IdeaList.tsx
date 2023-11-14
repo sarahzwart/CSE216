@@ -3,20 +3,23 @@ import { Link } from "react-router-dom";
 // Interfaces
 import { Message } from "../../../entitites/Message";
 import { Comment } from "../../../entitites/Comment";
-import { User } from "../../../entitites/User";
 //Parts of Comments/Messages
 import CommentForm from "../comments/CommentForm";
 import MessageForm from "./MessageForm";
 import VoteButtons from "./VoteButtons";
 
 import EditCommentForm from "../comments/EditCommentForm";
+
+const userId = sessionStorage.getItem("userId");
+const uId = Number(userId);
+
 import {
-  fetchUsers,
   fetchComments,
   fetchMessages,
   addComment,
   addMessage,
   editComment,
+  fetchUserName,
 } from "../../../../api/api";
 console.log(sessionStorage.getItem("sessionKey"))
 //CSS imports
@@ -25,8 +28,9 @@ import "../../styles/IdeaList.css";
 function IdeaList() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
   // Variable contains information of use logged in
+  const [messageUsernames, setMessageUsernames] = useState<{ [key: number]: string }>({});
+  const [commentUsernames, setCommentUsernames] = useState<{ [key: number]: string }>({});
   const [isLoading, setIsLoading] = useState(true);
   const [editingComment, setEditingComment] = useState({
     cId: 0,
@@ -39,10 +43,8 @@ function IdeaList() {
       try {
         const messageData = await fetchMessages();
         const commentData = await fetchComments();
-        const userData = await fetchUsers();
         setMessages(messageData);
         setComments(commentData);
-        setUsers(userData);
         setIsLoading(false);
       } catch (error) {
         console.error("Error when fetching data:", error);
@@ -52,15 +54,46 @@ function IdeaList() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    // Fetch usernames for each message's author
+    messages.forEach(async (message) => {
+      try {
+        const userName = await fetchUserName(message.uId);
+        setMessageUsernames((prevUsernames) => ({
+          ...prevUsernames,
+          [message.uId]: userName,
+        }));
+      } catch (error) {
+        console.error('Error fetching username:', error);
+      }
+    });
+  }, [messages]);
+
+  useEffect(() => {
+    // Fetch usernames for each comment's author
+    comments.forEach(async (comment) => {
+      try {
+        const userName = await fetchUserName(comment.uId);
+        setCommentUsernames((prevUsernames) => ({
+          ...prevUsernames,
+          [comment.uId]: userName,
+        }));
+      } catch (error) {
+        console.error('Error fetching username:', error);
+      }
+    });
+  }, [comments]);
+
+
   // Puts a comment under a message based on messageID
   function messageComments(messageId: number) {
     const commentsForMessage = comments.filter(
       (comment) => comment.mId === messageId
     );
-  
+
     return commentsForMessage.map((comment) => (
       <div className="comment-list-container" key={comment.cId}>
-        <p style={{ color: "blue" }}>{displayUsername(comment.uId)}</p>
+        <p style={{ color: "blue" }}><Link to={`/profile/${userId}`}>{commentUsernames[comment.uId]}</Link></p>
         {comment.cId === editingComment.cId ? (
           <EditCommentForm
             onEditComment={(editedComment) =>
@@ -89,32 +122,23 @@ function IdeaList() {
   }
 
   // Displays username with a link to user profile
-  function displayUsername(userId: number | undefined) {
-    if (userId === undefined) {
-      return "Unknown User";
-    }
-    const user = users.find((user) => user.uId === userId);
-    return user ? (
-      <Link to={`/profile/${user.uId}`}>{user.uName}</Link>
-    ) : (
-      "Unknown User"
-    );
-  }
+
+
+
 
   // adds a Message (POST)
   async function handleAddMessage(message: string) {
     try {
-      const newMessageData: Promise<{mId:number,uId:number}> = addMessage(message);
+      const newMessageData: Promise<number> = addMessage(message);
       const data = {
         mMessage: message,
         mTitle: "Title",
         mId: 0,
         mLikes: 0,
-        uId: 0,
+        uId: uId, 
       };
-      const resolvedmId = (await newMessageData).mId;
-      const resolveduId = (await newMessageData).uId;
-      setMessages([...messages, { ...data, mId: resolvedmId, uId: resolveduId }]);
+      const resolvedmId = await newMessageData;
+      setMessages([...messages, { ...data, mId: resolvedmId}]);
     } catch (error) {
       console.error("Error when adding a message:", error);
     }
@@ -149,7 +173,7 @@ function IdeaList() {
       console.error("Error editing comment: ", error);
     }
   };
-
+  console.log("comments:" + comments);
   // The actual user Interface
   return (
     <div className="idea-list-container">
@@ -160,8 +184,8 @@ function IdeaList() {
           messages.map((message, index) => (
             <div key={index} className="message-container">
               <p>{message.mId}</p>
-              <h2>{displayUsername(message.uId)}</h2>
-              <div className="message-box">
+              <h2><Link to={`/profile/${userId}`}>{messageUsernames[message.uId]}</Link></h2>
+              <div className="message-box"> 
                 <p>{message.mMessage}</p>
               </div>
               <VoteButtons message={message} />

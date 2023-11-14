@@ -23,12 +23,6 @@ function UserProfile() {
   //Note
   const [note, setNote] = useState<string>();
 
-  // JSON Headers
-  const headers = {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  };
-
   // Put Sexual Orientation Edits
   function handleEditSO(user: User, uSO: string ) {
     const editedUserSO: User = {
@@ -84,6 +78,7 @@ function UserProfile() {
     async function fetchData() {
       try {
         const userData = await fetchUser(uId);
+        console.log(userData);
         setUserInfo(userData);
       } catch (error) {
         console.error("Error when specific user data:", error);
