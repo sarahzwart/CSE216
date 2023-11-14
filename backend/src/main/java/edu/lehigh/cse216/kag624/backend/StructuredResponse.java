@@ -25,17 +25,42 @@ public class StructuredResponse {
      */
     public Object mData;
 
+    //
     /**
-     * Construct a StructuredResponse by providing a status, message, and data.
-     * If the status is not provided, set it to "invalid".
+     * session key returned when user is posted
+     */
+    public String sessionKey;
+
+    //
+    /**
+     * user id also returned when user is posted
+     */
+    public Object newUId;
+
+    /**
      * 
-     * @param status The status of the response, typically "ok" or "error"
-     * @param message The message to go along with an error status
-     * @param object An object with additional data to send to the client
+     * @param status
+     * @param message
+     * @param data
      */
     public StructuredResponse(String status, String message, Object data) {
         mStatus = (status != null) ? status : "invalid";
         mMessage = message;
         mData = data;
+    }
+
+    //
+    /**
+     * another constructor created specifically for returning a session key and user id when a user is created
+     * @param status
+     * @param message
+     * @param data1
+     * @param data2
+     */
+    public StructuredResponse(String status, String message, String data1, Object data2){
+        mStatus = (status != null) ? status: "invalid";
+        mMessage = message;
+        sessionKey = data1;
+        newUId = data2;
     }
 }

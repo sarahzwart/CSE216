@@ -23,6 +23,9 @@ public class SimpleRequest {
      */
     public int mLikes;
 
-    //user id of user posting the message
+    //
+    /**
+     * user id of user posting the message
+     */
     public int uId;
 }
