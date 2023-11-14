@@ -1,13 +1,6 @@
-import { useEffect, useState } from "react";
-import {JwtPayload, jwtDecode} from 'jwt-decode';
+import { useEffect } from "react";
 import {useNavigate} from "react-router-dom";
-import axios from "axios";
 import { addSessionKey } from "../api/api";
-const url = 'https://team-margaritavillians.dokku.cse.lehigh.edu/users/';
-const headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json',
-};
 
 //https://stackoverflow.com/questions/40399873/initializing-and-using-sessionstorage-in-react
 function LogInPage() {

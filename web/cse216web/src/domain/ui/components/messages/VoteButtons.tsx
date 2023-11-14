@@ -5,7 +5,7 @@ import { FaRegThumbsUp } from "react-icons/fa";
 //put likes --> /messages/id --> increment/decrements likes
 import { Message } from "../../../entitites/Message";
 const sessionKey = sessionStorage.getItem("sessionKey");
-let url = `https://team-margaritavillians.dokku.cse.lehigh.edu/messages?sessionKey=${sessionKey}`;
+let url = `https://team-margaritavillians.dokku.cse.lehigh.edu/messages/`;
 
 function VoteButtons({ message }: { message: Message }) {
   const [upVoteStatus, setUpVoteStatus] = useState(false);
@@ -20,7 +20,7 @@ function VoteButtons({ message }: { message: Message }) {
     if (upVoteStatus == false) {
       setUpVoteStatus(true);
       axios
-        .put(`${url}${message.mId}`, { uId: 1, isLike: 1 }, { headers })
+        .put(`${url}${message.mId}/?sessionKey=${sessionKey}`, { isLike: 1 }, { headers })
         .then(() => {})
         .catch((error) => {
           console.error("Error when upVoting", error);
@@ -28,7 +28,7 @@ function VoteButtons({ message }: { message: Message }) {
     } else {
       setUpVoteStatus(false);
       axios
-        .put(`${url}${message.mId}`, { uId: 1, isLike: 1 }, { headers })
+        .put(`${url}${message.mId}/?sessionKey=${sessionKey}`, { isLike: 1 }, { headers })
         .then(() => {
           console.log("successfully updated likes");
         })
@@ -43,7 +43,7 @@ function VoteButtons({ message }: { message: Message }) {
     if (downVoteStatus == false) {
       setDownVoteStatus(true);
       axios
-        .put(`${url}${message.mId}`, { uId: 1, isLike: 0 }, { headers })
+        .put(`${url}${message.mId}/?sessionKey=${sessionKey}`, { isLike: 0 }, { headers })
         .then(() => {
           console.log("successfully updated dislikes");
         })
@@ -53,7 +53,7 @@ function VoteButtons({ message }: { message: Message }) {
     } else {
       setDownVoteStatus(false);
       axios
-        .put(`${url}${message.mId}`, { uId: 1, isLike: 0 }, { headers })
+        .put(`${url}${message.mId}/?sessionKey=${sessionKey}`, {isLike: 0 }, { headers })
         .then(() => {
           console.log("successfully updated dislikes");
         })

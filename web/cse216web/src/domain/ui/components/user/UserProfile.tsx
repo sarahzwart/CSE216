@@ -85,42 +85,50 @@ function UserProfile() {
 
   return (
     <div>
-      <h1>Profile</h1>
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : user ? (
-        <p>
-          <p>User: {user.uName}</p>
-          <p>Email: {user.uEmail}</p>
-          <p>
-            <p>
-              Sexual Orientation: {sexualOrientation}{" "}
-              <EditProfileForm
-                onEditInfo={(newSO) => handleEditSO(user, newSO)}
-                info={sexualOrientation || ""}
-              />
-            </p>
-            <p>
-              Gender Orientation: {genderIdentity}{" "}
-              <EditProfileForm
-                onEditInfo={(newGI) => handleEditGI(user, newGI)}
-                info={genderIdentity || ""}
-              />
-            </p>
-            <p>
-              Note: {note}{" "}
-              <EditProfileForm
-                onEditInfo={(newNote) => handleEditNote(user, newNote)}
-                info={note || ""}
-              />
-            </p>
-          </p>
-        </p>
-      ) : (
-        <p>No user data available</p>
-      )}
-    </div>
-  );
+    <h1>Profile</h1>
+    {isLoading ? (
+      <p>Loading...</p>
+    ) : user ? (
+      <div>
+        <h2>User: {user.uName}</h2>
+        <p>Email: {user.uEmail}</p>
+        <div>
+          <h3>
+            <div>
+              <h4>
+                Sexual Orientation: {sexualOrientation}{" "}
+                <EditProfileForm
+                  onEditInfo={(newSO) => handleEditSO(user, newSO)}
+                  info={sexualOrientation || ""}
+                />
+              </h4>
+            </div>
+            <div>
+              <h4>
+                Gender Orientation: {genderIdentity}{" "}
+                <EditProfileForm
+                  onEditInfo={(newGI) => handleEditGI(user, newGI)}
+                  info={genderIdentity || ""}
+                />
+              </h4>
+            </div>
+            <div>
+              <h4>
+                Note: {note}{" "}
+                <EditProfileForm
+                  onEditInfo={(newNote) => handleEditNote(user, newNote)}
+                  info={note || ""}
+                />
+              </h4>
+            </div>
+          </h3>
+        </div>
+      </div>
+    ) : (
+      <p>No user data available</p>
+    )}
+  </div>
+);
 }
 
 export default UserProfile;
