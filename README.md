@@ -3,11 +3,11 @@
 
 Members:
 
-* Aidan Astle (apa225) - Backend
-* Kamil Gjondla (kag624) - Project Manager
-* Ashley Hirst (ash320) - Admin
-* Nick Madaio (nmm224) - Web
-* Sarah Zwart (scz225) - Mobile
+* Aidan Astle (apa225) - Mobile
+* Kamil Gjondla (kag624) - Backend
+* Ashley Hirst (ash320) - Project Manager
+* Nick Madaio (nmm224) - Admin
+* Sarah Zwart (scz225) - Web
 
 # URLs
 
