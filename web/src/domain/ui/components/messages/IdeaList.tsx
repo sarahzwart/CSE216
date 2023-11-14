@@ -194,7 +194,7 @@ function IdeaList() {
               <h3>
                 <CommentForm
                   onAddComment={(comment) =>
-                    handleAddComment(1, comment, message.mId)
+                    handleAddComment(uId, comment, message.mId)
                   }
                 />
               </h3>

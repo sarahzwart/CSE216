@@ -11,6 +11,7 @@ function LogInPage() {
       const userSessionAndID = await handleUserInfo(response.credential);
       sessionStorage.setItem("sessionKey", userSessionAndID.sessionKey);
       sessionStorage.setItem("userId", String(userSessionAndID.uId));
+      console.log(userSessionAndID.sessionKey);
       // Navigates to idealist page
       navigate("/list");
     } catch (error) {
