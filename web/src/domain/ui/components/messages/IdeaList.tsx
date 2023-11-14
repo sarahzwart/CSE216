@@ -121,7 +121,6 @@ function IdeaList() {
     ));
   }
 
-  // Displays username with a link to user profile
 
 
 
