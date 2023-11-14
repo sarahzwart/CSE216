@@ -8,6 +8,9 @@ import java.sql.SQLException;
 
 import java.util.ArrayList;
 
+/**
+ * THE DATABASE
+ */
 public class Database {
     /**
      * The connection to the database.  When there is no connection, it should
@@ -121,10 +124,18 @@ public class Database {
          * The Like count for this Idea
          */
         int mLikes;
-        //is the user invalid?
+        /**
+         * The message is valid?
+         */
         public Boolean mInvalid;
         /**
-         * Construct a RowData object by providing values for its fields
+         * 
+         * @param id message id
+         * @param subject message title
+         * @param message message content
+         * @param userId  user id
+         * @param likes message likes
+         * @param invalid  message valid
          */
         public RowData(int id, String subject, String message, int userId, int likes, Boolean invalid) {
             mId = id;
@@ -150,23 +161,49 @@ public class Database {
      * Database are tightly coupled: if one changes, the other should too.
      */
     public static class UserData {
-        //id of the user
+        /**
+         * The user Id for this user
+         */        
         public final int uId;
-        //user's name
+        /**
+         * The user name for this user
+         */
         public String uName;
-        //user's email
+        /**
+         * The user email for this user
+         */
         public String uEmail;
-        //user's gender identity
+        /**
+         * The user GI for this user
+         */       
         public String uGI;
-        //user's sexual orientation
+        /**
+         * The user SO for this user
+         */        
         public String uSO;
-        //user's note
+        /**
+         * The user note for this user
+         */        
         public String uNote;
-        //user's id token
+        /**
+         * The user token for this user
+         */        
         public String uIdToken;
-        //is the user invalid?
+        /**
+         * Test table creation
+         */
         public Boolean uInvalid;
-    
+        /**
+         * 
+         * @param id user id
+         * @param u user name
+         * @param c user email
+         * @param g user gender
+         * @param so user so
+         * @param n user note
+         * @param i user token
+         * @param invalid user invalid
+         */
         public UserData(int id, String u, String c, String g, String so, String n, String i, Boolean invalid){
             uId = id;
             if(u.length()<=50){ //ensures correct length
@@ -208,17 +245,32 @@ public class Database {
             uInvalid = invalid;
         }
     }
-
+    /**
+     * Comment Data Table
+     */
     public static class CommentData {
-        //id of the comment
+        /**
+         * The comment id for this comment
+         */        
         public final int cId;
-        //content of the comment
+        /**
+         * The comment content for this comment
+         */          
         public String cContent;
-        //id of the message that the comment is posted on
+        /**
+         * The message id for this comment
+         */           
         public int mId;
-        //if of the user who posted the comment
+        /**
+         * The user id for this comment
+         */           
         public int uId;
-
+        /**
+         * @param id comment id
+         * @param message message
+         * @param messageId message id
+         * @param userId user id
+         */
         public CommentData(int id, String message, int messageId, int userId){
             cId = id;
             mId = messageId;
@@ -231,21 +283,34 @@ public class Database {
             uId = userId;
         }
     }
-    /* //Prepared Statements for likes
-     db.lInsertOne = db.mConnection.prepareStatement("INSERT INTO likeData VALUES (default, ?, ?, ?)");
-     db.lRemoveOne = db.mConnection.prepareStatement("DELETE FROM likeData WHERE mId = ? and uId = ?");
-     db.lSelectOne = db.mConnection.prepareStatement("Select * FROM likeData WHERE mId = ? AND uId = ?");
+    /**
+     * Get a fully-configured table of likes
     */
     public static class LikeData {
-        //id of the like
-        public final int lId;
-        //id of the message that liked
+        /**
+         * The like id for this like
+         */          
+         public final int lId;
+        /**
+         * The message id for this like
+         */                
         public int mId;
-        //id of the user that liked
-        public int uId;
-        //number of likes
+        /**
+         * The user id for this like
+         */                
+         public int uId;
+        /**
+         * The like value for this like
+         */                
         public int isLike;
-
+        /**
+         * Get a fully-configured connection to the database
+         * 
+         * @param lid   The IP address of the database server
+         * @param mid The port on the database server to which connection requests
+         * @param uid The user ID to use when connecting
+         * @param islike The password to use when connecting     
+        */    
         public LikeData(int lid, int mid, int uid, int islike){
             lId = lid;
             mId = mid;          
@@ -369,12 +434,10 @@ public class Database {
         return true;
     }
     /**
-     * Insert a row into the database
-     * 
-     * @param subject The subject for this new row
-     * @param message The message body for this new row
-     * 
-     * @return The number of rows that were inserted
+     * @param use user id
+     * @param title title of the message
+     * @param message the content of the message
+     * @return it returns
      */
     int insertRow(int use, String title, String message) {
         int count = 0;        
@@ -439,9 +502,8 @@ public class Database {
     }
 
     /**
-     * Validate a message
-     * an error.
-     * db.mValidation = db.mConnection.prepareStatement("UPDATE tblData SET invalid = ? WHERE id = ?");
+     * 
+     * @param id id of the idea
      */
     void ideaValidate(int id) {
         try {
@@ -454,9 +516,8 @@ public class Database {
     }
 
     /**
-     * Invalidate a message
-     * an error.
-     * db.mValidation = db.mConnection.prepareStatement("UPDATE tblData SET invalid = ? WHERE id = ?");
+     * 
+     * @param id id of the idea
      */
     void ideaInvalidate(int id) {
         try {
@@ -476,7 +537,7 @@ public class Database {
      * @param GI The subject for this new row
      * @param SO The message body for this new row
      * @param note The message body for this new row
-     * @param idtoken The message body for this new row
+     * @param idToken The message body for this new row
      * @return The number of rows that were inserted
      */
     //inserts a new user into the user DB
@@ -535,9 +596,7 @@ public class Database {
         return res;
     }
     /**
-     * Validate a message
-     * an error.
-     * db.mValidation = db.mConnection.prepareStatement("UPDATE tblData SET invalid = ? WHERE id = ?");
+     * @param id it the id of the user
      */
     void userValidate(int id) {
         try {
@@ -548,11 +607,8 @@ public class Database {
             e.printStackTrace();
         }
     }
-
     /**
-     * Invalidate a message
-     * an error.
-     * db.mValidation = db.mConnection.prepareStatement("UPDATE tblData SET invalid = ? WHERE id = ?");
+     * @param id it the id of the user
      */
     void userInvalidate(int id) {
         try {
@@ -668,9 +724,9 @@ public class Database {
         }
     }
     /**
-     * Remove likeData from the database.  If it does not exist, this will print
-     * an error.             
-     * db.lDeleteOne = db.mConnection.prepareStatement("DELETE FROM likeData WHERE mId = ? and uId = ?");
+     * 
+     * @param mid message id
+     * @param uid user id
      */
     void dropLikeTable(int mid, int uid) {
         try {

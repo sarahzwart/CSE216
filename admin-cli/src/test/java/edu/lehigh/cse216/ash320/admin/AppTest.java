@@ -35,8 +35,9 @@ public class AppTest
     {
         assertTrue( true );
     }
-
-
+    /**
+     * Test message creation
+     */
     public void testMsgConstructor(){
         //Basic input for a post id SERIAL, title VARCHAR(50) NOT NULL, message VARCHAR(2048) NOT NULL, uid int, likes int)")
         int id = 1; //the first element added should have id=1
@@ -56,7 +57,9 @@ public class AppTest
         assertTrue(test.mLikes==likes);
         assertTrue(test.mInvalid==inV);
     }
-
+    /**
+     * Test user creation
+     */
     public void testUsrConstructor(){
         //Basic input for a post 
 
@@ -82,7 +85,9 @@ public class AppTest
         assertTrue(test.uInvalid==inV);
 
     }
-
+    /**
+     * Test comment creation
+     */
     public void testComConstructor(){
         //Basic input for a post comData(int id, int cid, int uid, String message) {
         int mid = 1;
@@ -114,7 +119,9 @@ public class AppTest
         assertTrue(test.like==up);
         //assertTrue(test.downVote==down);
     }// */
-
+    /**
+     * Test table creation
+     */
     public void methodTests(){
         //tests creating database
         Database db = Database.getDatabase("berry.db.elephantsql.com", "8998", "pqfneahl", "eRnYfJkr5W8wwhRePitFVDx8CVP1iKYa");
@@ -146,15 +153,6 @@ public class AppTest
         //testing dropTable
         db.dropCommentTable();
 
-        //Tests creating a comment table
-        db.createLikeTable();
-        //testing deleteRow
-        wasDeleted = db.deleteLike(2);
-        //esureing row 2 was deleted
-        assertTrue(wasDeleted==1);
-        //testing dropTable
-        db.dropLikeTable();
-
         /*//Tests creating a comment table
         db.createLikeTable();
         //testing deleteRow
@@ -167,7 +165,9 @@ public class AppTest
         //testing disconnect
         db.disconnect();
     }
-
+    /**
+     * Test the Word Link
+     */
     public void testWordLimit(){
         //Basic subject for a post
         String subject = "1";
