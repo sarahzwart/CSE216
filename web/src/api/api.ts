@@ -91,7 +91,7 @@ export async function addComment(comment: string, mId: number): Promise<number> 
 export async function editComment(cId: number, cContent: string){
   try {
     await axios.put(
-      `https://team-margaritavillians.dokku.cse.lehigh.edu/comments/${cId}?sessionKey=${sessionKey}`,
+      `https://team-margaritavillians.dokku.cse.lehigh.edu/comments/${cId}/?sessionKey=${sessionKey}`,
       { cContent: cContent },
       { headers }
     );
