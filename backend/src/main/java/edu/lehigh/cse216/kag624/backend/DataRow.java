@@ -39,20 +39,19 @@ public class DataRow {
      */
     public final Date mCreated;
 
-    //id of user who created the message
+    //
+    /**
+     * id of user who created the message
+     */
     public final int uId;
 
     /**
-     * Create a new DataRow with the provided id and title/content, and a 
-     * creation date based on the system clock at the time the constructor was
-     * called
      * 
-     * @param id The id to associate with this row.  Assumed to be unique 
-     *           throughout the whole program.
-     * 
-     * @param title The title string for this row of data
-     * 
-     * @param message The message string for this row of data
+     * @param id
+     * @param title
+     * @param message
+     * @param userId
+     * @param likes
      */
     DataRow(int id, String title, String message, int userId, int likes) {
         mId = id;
@@ -64,7 +63,8 @@ public class DataRow {
     }
 
     /**
-     * Copy constructor to create one datarow from another
+     * 
+     * @param data
      */
     DataRow(DataRow data) {
         mId = data.mId;

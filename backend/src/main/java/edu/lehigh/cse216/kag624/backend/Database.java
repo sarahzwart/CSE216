@@ -12,6 +12,9 @@ import java.util.ArrayList;
 
 import org.postgresql.core.SqlCommand;
 
+/**
+ * 
+ */
 public class Database {
     /**
      * The connection to the database.  When there is no connection, it should
@@ -252,13 +255,13 @@ public class Database {
         return true;
     }
 
+   
     /**
-     * Insert a row into the database
      * 
-     * @param subject The subject for this new row
-     * @param message The message body for this new row
-     * 
-     * @return The number of rows that were inserted
+     * @param uId
+     * @param subject
+     * @param message
+     * @return
      */
     int insertRow(int uId, String subject, String message) {
         int newestId = -1;
@@ -396,6 +399,12 @@ public class Database {
     }
 
     //adds a dislike to the message and creates entry in like DB for that user
+    /**
+     * 
+     * @param mId
+     * @param uId
+     * @return
+     */
     int addDislike(int mId, int uId){
         int res = -1;
         try{
@@ -416,6 +425,12 @@ public class Database {
     }
 
     //used to check if a user already like or dislikes a message
+    /**
+     * 
+     * @param mId
+     * @param uId
+     * @return
+     */
     int isLiked(int mId, int uId){
         int res = 0;    //reponse is 0 by default
         try{
@@ -438,6 +453,11 @@ public class Database {
     }
 
     //returns an arraylist of mIds, mTitles, and mMessages of all messages a specific user liked
+    /**
+     * 
+     * @param uId
+     * @return
+     */
     ArrayList<LikeData> getLikedMessages(int uId){
         ArrayList<LikeData> res = new ArrayList<LikeData>();    //create arraylist to store mIds, mTitles, and mMessages
         PreparedStatement getMessages;
@@ -462,6 +482,11 @@ public class Database {
     }
 
     //Returns one comment given a comment id
+    /**
+     * 
+     * @param cId
+     * @return
+     */
     CommentData selectOneComment(int cId){
         CommentData res = null;
 
@@ -479,6 +504,11 @@ public class Database {
     }
 
     //returns all the comments on a message in an arraylist of type CommentData
+    /**
+     * 
+     * @param messageId
+     * @return
+     */
     ArrayList<CommentData> selectAllComments(int messageId){
 
         ArrayList<CommentData> res = new ArrayList<CommentData>();  //arraylist used to store comments
@@ -499,6 +529,10 @@ public class Database {
     }
 
     //returns all comments from comment DB
+    /**
+     * 
+     * @return
+     */
     ArrayList<CommentData> getAllComments(){
 
         ArrayList<CommentData> res = new ArrayList<CommentData>();  //arraylist used to store comments
@@ -519,6 +553,12 @@ public class Database {
     }
 
     //edits a comment 
+    /**
+     * 
+     * @param commentId
+     * @param newContent
+     * @return
+     */
     int updateComment(int commentId, String newContent){
         int res = -1;
         try{
@@ -533,6 +573,13 @@ public class Database {
     }
 
     //insert a new comment to the comment DB
+    /**
+     * 
+     * @param mId
+     * @param content
+     * @param uId
+     * @return
+     */
     int insertComment(int mId, String content, int uId){
         int newestId = -1;
         PreparedStatement getRecentId;
@@ -554,6 +601,15 @@ public class Database {
     }
 
     //inserts a new user into the user DB
+    /**
+     * 
+     * @param name
+     * @param email
+     * @param GI
+     * @param SO
+     * @param note
+     * @return
+     */
     int insertUser(String name, String email, String GI, String SO, String note){
         int newestId = -1;
         PreparedStatement getRecentId;
@@ -577,6 +633,11 @@ public class Database {
     }
 
     //get one user's data from the user DB
+    /**
+     * 
+     * @param id
+     * @return
+     */
     UserData selectOneUser(int id){
         UserData res = null;
         try{
@@ -593,6 +654,11 @@ public class Database {
     }
 
     //get a different user's info (only returns name, email, and note)
+    /**
+     * 
+     * @param id
+     * @return
+     */
     OtherUserData selectOneOtherUser(int id){
         OtherUserData res = null;
         try{
@@ -609,6 +675,10 @@ public class Database {
     }
 
     //get id and name of all users in user table
+    /**
+     * 
+     * @return
+     */
     ArrayList<AllUserData> selectAllUsers(){                        //we probably dont need this but sarah asked for it
         ArrayList<AllUserData> res = new ArrayList<AllUserData>();
         try{
@@ -625,6 +695,15 @@ public class Database {
     }    
 
     //updates a user's info in user table
+    /**
+     * 
+     * @param id
+     * @param name
+     * @param GI
+     * @param SO
+     * @param note
+     * @return
+     */
     int updateUser(int id, String name, String GI, String SO, String note){
         int res = -1;
         try{

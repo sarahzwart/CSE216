@@ -18,6 +18,10 @@ import java.util.*;
  * For now, our app creates an HTTP server that can only get and add data.
  */
 public class App {
+    /**
+     * 
+     * @param args
+     */
     public static void main(String[] args) {
         // gson provides us with a way to turn JSON into objects, and objects
         // into JSON.
@@ -462,15 +466,13 @@ public class App {
         return Database.getDatabase(ip, port, "", user, pass);
     } 
 
+   
     /**
-    * Get an integer environment variable if it exists, and otherwise return the
-    * default value.
-    * 
-    * @envar      The name of the environment variable to get.
-    * @defaultVal The integer value to use as the default if envar isn't found
-    * 
-    * @returns The best answer we could come up with for a value for envar
-    */
+     * 
+     * @param envar
+     * @param defaultVal
+     * @return
+     */
     static int getIntFromEnv(String envar, int defaultVal) {
         ProcessBuilder processBuilder = new ProcessBuilder();
         if (processBuilder.environment().get(envar) != null) {
