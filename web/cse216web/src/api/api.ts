@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { JwtPayload } from 'jwt-decode';
 import { User } from '../domain/entitites/User';
 
 const headers = {
@@ -111,6 +110,7 @@ export async function fetchUser(uId: number){
       `https://team-margaritavillians.dokku.cse.lehigh.edu/users/${uId}/?sessionKey=${sessionKey}`,
       {headers}
     );
+    console.log('fetchUser data:' + response.data.mData.uSO)
     return response.data.mData; // Change
   } catch (error) {
     console.error('Error fetching User Data: ', error)
@@ -136,10 +136,11 @@ export async function fetchUserName(uId: number): Promise<string> {
 export async function editUserInfo(user: User){
   try {
     await axios.put(
-      `https://team-margaritavillians.dokku.cse.lehigh.edu/users/?sessionKey=${sessionKey}`,
+      `https://team-margaritavillians.dokku.cse.lehigh.edu/users?sessionKey=${sessionKey}`,
       { user }, 
       {headers}
     );
+    console.log("worked");
   } catch (error) {
     console.error('Error editing user SO:', error);
     throw error;

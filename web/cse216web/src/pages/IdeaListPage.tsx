@@ -10,7 +10,7 @@ function IdeaListPage() {
   return (
     <div className="centered-container">
       <h1 style={{ color: "#9370db" }}>Margarita Villians</h1>
-      <Link to={`/profile/${currentUser}`}>Profile</Link>
+      <Link to={`/currentuserprofile`}>Profile</Link>
       <IdeaList />
     </div>
   );

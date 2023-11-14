@@ -1,9 +1,9 @@
 
 export interface User{
     uName: string;
-    uEmail: string;
+    uEmail?: string;
     uSO: string;
     uGI: string;
     uNote: string;
-    uId: number;
+    uId?: number;
 }

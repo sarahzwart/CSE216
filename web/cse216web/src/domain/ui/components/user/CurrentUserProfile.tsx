@@ -1,13 +1,13 @@
 import { useState, useEffect} from "react";
 import { User } from "../../../entitites/User";
-import { useParams } from "react-router-dom";
 import { fetchUser, editUserInfo } from "../../../../api/api";
 import EditProfileForm from "./EditUserInfo";
 
-function UserProfile() {
+function CurrentUserProfile() {
   // userId of profile clicked on
-  const { userId } = useParams();
-  const uId = Number(userId)
+  const uIdString = sessionStorage.getItem("userId");
+  const uId = Number(uIdString);
+  console.log(uId);
   // Need to switch to number
 
   // Current User that is logged in
@@ -25,7 +25,9 @@ function UserProfile() {
   // Put Sexual Orientation Edits
   function handleEditSO(user: User, uSO: string ) {
     const editedUserSO: User = {
+      uId: uId,
       uName: user.uName,
+      uEmail: user.uEmail,
       uGI: user.uGI,
       uSO: uSO,
       uNote: user.uNote,
@@ -38,9 +40,10 @@ function UserProfile() {
     }
   }
   function handleEditGI(user: User, uGI: string) {
-
     const editedUserGI: User = {
+      uId: uId,
       uName: user.uName,
+      uEmail: user.uEmail,
       uGI: uGI,
       uSO: user.uSO,
       uNote: user.uNote,
@@ -54,7 +57,9 @@ function UserProfile() {
   }
   function handleEditNote(user: User, uNote: string ) {
     const editedUserNote: User = {
+      uId: uId,
       uName: user.uName,
+      uEmail: user.uEmail,
       uGI: user.uGI,
       uSO: user.uSO,
       uNote: uNote,
@@ -74,14 +79,19 @@ function UserProfile() {
         const userData = await fetchUser(uId);
         console.log(userData);
         setUserInfo(userData);
+        setSexualOrientation(userData.uSO);
+        setGenderIdentity(userData.uGI);
+        setNote(userData.uNote);
       } catch (error) {
-        console.error("Error when specific user data:", error);
+        console.error("Error when fetching specific user data:", error);
       } finally {
         setIsLoading(false);
       }
     }
     fetchData();
-  }, []);
+  }, [uId]);
+
+  // ...
 
   return (
     <div>
@@ -89,38 +99,47 @@ function UserProfile() {
       {isLoading ? (
         <p>Loading...</p>
       ) : user ? (
-        <p>
-          <p>User: {user.uName}</p>
+        <div>
+          <h2>User: {user.uName}</h2>
           <p>Email: {user.uEmail}</p>
-          <p>
-            <p>
-              Sexual Orientation: {sexualOrientation}{" "}
-              <EditProfileForm
-                onEditInfo={(newSO) => handleEditSO(user, newSO)}
-                info={sexualOrientation || ""}
-              />
-            </p>
-            <p>
-              Gender Orientation: {genderIdentity}{" "}
-              <EditProfileForm
-                onEditInfo={(newGI) => handleEditGI(user, newGI)}
-                info={genderIdentity || ""}
-              />
-            </p>
-            <p>
-              Note: {note}{" "}
-              <EditProfileForm
-                onEditInfo={(newNote) => handleEditNote(user, newNote)}
-                info={note || ""}
-              />
-            </p>
-          </p>
-        </p>
+          <div>
+            <h3>
+              <div>
+                <h4>
+                  Sexual Orientation: {sexualOrientation}{" "}
+                  <EditProfileForm
+                    onEditInfo={(newSO) => handleEditSO(user, newSO)}
+                    info={sexualOrientation || ""}
+                  />
+                </h4>
+              </div>
+              <div>
+                <h4>
+                  Gender Orientation: {genderIdentity}{" "}
+                  <EditProfileForm
+                    onEditInfo={(newGI) => handleEditGI(user, newGI)}
+                    info={genderIdentity || ""}
+                  />
+                </h4>
+              </div>
+              <div>
+                <h4>
+                  Note: {note}{" "}
+                  <EditProfileForm
+                    onEditInfo={(newNote) => handleEditNote(user, newNote)}
+                    info={note || ""}
+                  />
+                </h4>
+              </div>
+            </h3>
+          </div>
+        </div>
       ) : (
         <p>No user data available</p>
       )}
     </div>
   );
 }
+  
 
-export default UserProfile;
+export default CurrentUserProfile;

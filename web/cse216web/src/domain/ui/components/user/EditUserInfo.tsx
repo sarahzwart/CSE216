@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 
 interface EditProfileProps {
   onEditInfo: (info: string) => void;
@@ -26,21 +26,16 @@ function EditProfileForm({ onEditInfo, info }: EditProfileProps) {
   };
 
   return (
+    <div>
     <form onSubmit={onSubmit}>
       {isEditing ? (
-        <textarea
-          placeholder=" "
-          value={formData.info}
-          onChange={onChange}
-        />
+        <textarea placeholder=" " value={formData.info} onChange={onChange} />
       ) : (
-        <div>{formData.info}</div>
+        <p>{formData.info}</p>
       )}
-      <div></div>
-      <button type="submit">
-        {isEditing ? "Save Comment" : "Edit"}
-      </button>
+      <button type="submit">{isEditing ? "Save Comment" : "Edit"}</button>
     </form>
+    </div>
   );
 }
 

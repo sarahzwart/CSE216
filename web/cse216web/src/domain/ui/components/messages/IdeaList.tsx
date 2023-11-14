@@ -181,7 +181,7 @@ function IdeaList() {
         {isLoading ? (
           <p>Loading...</p>
         ) : (
-          messages.map((message, index) => (
+          messages?.map((message, index) => (
             <div key={index} className="message-container">
               <p>{message.mId}</p>
               <h2><Link to={`/profile/${userId}`}>{messageUsernames[message.uId]}</Link></h2>
