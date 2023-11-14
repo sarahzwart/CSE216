@@ -22,17 +22,13 @@ public class UserData {
     //user's note
     public String uNote;
 
-    //user's id token
-    public String uIdToken;
-
-    UserData(int id, String name, String email, String GI, String SO, String note, String idToken){
+    UserData(int id, String name, String email, String GI, String SO, String note){
         uId = id;
         uName = name;
         uEmail = email;
         uGI = GI;
         uSO = SO;
         uNote = note;
-        uIdToken = idToken;
     }
 
     UserData(UserData data){
@@ -42,6 +38,5 @@ public class UserData {
         uGI = data.uGI;
         uSO = data.uSO;
         uNote = data.uNote;
-        uIdToken = data.uIdToken;
     }
 }

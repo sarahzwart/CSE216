@@ -7,15 +7,12 @@ import spark.Spark;
 // Import Google's JSON library
 import com.google.gson.*;
 
-import java.util.Map;
-
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
-import java.util.Hashtable;
-import java.util.Random;
+import java.util.*;
 
 /**
  * For now, our app creates an HTTP server that can only get and add data.
@@ -40,8 +37,8 @@ public class App {
         //final DataStore dataStore = new DataStore();
         final Database db = getDatabaseConnection();
 
-        //Hashtable<Integer, GoogleIdToken> users = new Hashtable<>();
-        //Random rand = new Random();
+        Hashtable<UUID, Integer> users = new Hashtable<>();
+        users.put(UUID.fromString("9cb1f884-8190-11ee-b962-0242ac120002"), 1);
 
         // Set the port on which to listen for requests from the environment
         Spark.port(getIntFromEnv("PORT", DEFAULT_PORT_SPARK));
@@ -77,8 +74,17 @@ public class App {
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
-            return gson.toJson(new StructuredResponse("ok", null, db.selectAll()));
-            //return gson.toJson(new StructuredResponse("ok", null, dataStore.readAll()));
+            if(request.queryParams().contains("sessionKey")){       //get sessionKey query to check if user is authorized
+                String sessionKey = request.queryParams("sessionKey");
+                if(!users.containsKey(UUID.fromString(sessionKey))){
+                    return gson.toJson(new StructuredResponse("error", "user not authorized", null));
+                }
+                return gson.toJson(new StructuredResponse("ok", null, db.selectAll()));
+                //return gson.toJson(new StructuredResponse("ok", null, dataStore.readAll()));
+            }
+            else{
+                return gson.toJson(new StructuredResponse("error", "must include sessionKey query", null));
+            }
         });
 
         // GET route that returns everything for a single row in the DataStore.
@@ -87,16 +93,26 @@ public class App {
         // ":id" isn't a number, Spark will reply with a status 500 Internal
         // Server Error.  Otherwise, we have an integer, and the only possible 
         // error is that it doesn't correspond to a row with data.
-        Spark.get("/messages/:id", (request, response) -> {
+        Spark.get("/messages/:id/", (request, response) -> {
             int idx = Integer.parseInt(request.params("id"));
             // ensure status 200 OK, with a MIME type of JSON
             response.status(200);
             response.type("application/json");
             DataRow data = db.selectOne(idx);
-            if (data == null) {
-                return gson.toJson(new StructuredResponse("error", idx + " not found", null));
-            } else {
-                return gson.toJson(new StructuredResponse("ok", null, data));
+
+            if(request.queryParams().contains("sessionKey")){
+                String sessionKey = request.queryParams("sessionKey");  //more sessionKeys
+                if(!users.containsKey(UUID.fromString(sessionKey))){
+                    return gson.toJson(new StructuredResponse("error", "user not authorized", null));
+                }
+                if (data == null) {
+                    return gson.toJson(new StructuredResponse("error", idx + " not found", null));
+                } else {
+                    return gson.toJson(new StructuredResponse("ok", null, data));
+                }
+            }
+            else{
+                return gson.toJson(new StructuredResponse("error", "must include sessionKey query", null));
             }
         });
 
@@ -114,11 +130,20 @@ public class App {
             response.status(200);
             response.type("application/json");
             // NB: createEntry checks for null title and message
-            int newId = db.insertRow(req.uId, req.mTitle, req.mMessage);
-            if (newId == -1) {
-                return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
-            } else {
-                return gson.toJson(new StructuredResponse("ok", "" + newId, null));
+            if(request.queryParams().contains("sessionKey")){
+                String sessionKey = request.queryParams("sessionKey");
+                if(!users.containsKey(UUID.fromString(sessionKey))){
+                    return gson.toJson(new StructuredResponse("error", "user not authorized", null));
+                }
+                int newId = db.insertRow(users.get(UUID.fromString(sessionKey)), req.mTitle, req.mMessage);
+                if (newId == -1) {
+                    return gson.toJson(new StructuredResponse("error", "error performing insertion", null));
+                } else {
+                    return gson.toJson(new StructuredResponse("ok", null, newId));
+                }
+            }
+            else{
+                return gson.toJson(new StructuredResponse("error", "must include sessionKey query", null));
             }
         });
 
@@ -126,7 +151,7 @@ public class App {
         //  body of the request, turn it into a SimpleRequest object, extract the id
         //  from the request and the likes and update the message with the given id
         //  to the new passed value of likes
-        Spark.put("/messages/:id", (request, response) -> {
+        Spark.put("/messages/:id/", (request, response) -> {
             // If we can't get an ID or can't parse the JSON, Spark will send
             // a status 500
             int idx = Integer.parseInt(request.params("id"));
@@ -136,40 +161,53 @@ public class App {
             response.type("application/json");
             // NB: updateLikes checks for null ids
 
-            int result = -1;
+            if(request.queryParams().contains("sessionKey")){
+                String sessionKey = request.queryParams("sessionKey");
+                if(!users.containsKey(UUID.fromString(sessionKey))){
+                    return gson.toJson(new StructuredResponse("error", "user not authorized", null));
+                }
 
-            if(req.isLike == 1){
-                if(db.isLiked(idx, req.uId) == 1){  //if message is already liked, remove the like
-                    result = db.removeLike(idx, req.uId);
+                int result = -1;
+
+                int uId = users.get(UUID.fromString(sessionKey));
+
+                if(req.isLike == 1){
+                    if(db.isLiked(idx, uId) == 1){  //if message is already liked, remove the like
+                        result = db.removeLike(idx, uId);
+                    }
+                    else if(db.isLiked(idx, uId) == 2){ //if message is disliked,
+                        db.removeDislike(idx, uId);         //remove dislike,
+                        result = db.addLike(idx, uId);  //then like the message
+                    }
+                    else if(db.isLiked(idx, uId) == 0){ //if message is not liked or disliked,
+                        result = db.addLike(idx, uId);  //add a like
+                    }
                 }
-                else if(db.isLiked(idx, req.uId) == 2){ //if message is disliked,
-                    db.removeDislike(idx, req.uId);         //remove dislike,
-                    result = db.addLike(idx, req.uId);  //then like the message
+                else if(req.isLike == 0){
+                    if(db.isLiked(idx, uId) == 1){  //if message is currently liked
+                        db.removeLike(idx, uId);        //remove the like in DB
+                        result = db.addDislike(idx, uId);   //then add the dislike to the DB
+                    }
+                    else if(db.isLiked(idx, uId) == 2){ //if message is currently disliked
+                        result = db.removeDislike(idx, uId);    //remove dislike from DB
+                    }
+                    else if(db.isLiked(idx, uId) == 0){ //if message is not liked or disliked
+                        result = db.addDislike(idx, uId);   //add dislike to DB
+                    }
                 }
-                else if(db.isLiked(idx, req.uId) == 0){ //if message is not liked or disliked,
-                    result = db.addLike(idx, req.uId);  //add a like
+
+                if (result == -1) {     //if requests worked send ok response, else send error response
+                    return gson.toJson(new StructuredResponse("error", "unable to update row " + idx, null));
+                } else {    
+                    return gson.toJson(new StructuredResponse("ok", null, result));
                 }
             }
-            else if(req.isLike == 0){
-                if(db.isLiked(idx, req.uId) == 1){  //if message is currently liked
-                    db.removeLike(idx, req.uId);        //remove the like in DB
-                    result = db.addDislike(idx, req.uId);   //then add the dislike to the DB
-                }
-                else if(db.isLiked(idx, req.uId) == 2){ //if message is currently disliked
-                    result = db.removeDislike(idx, req.uId);    //remove dislike from DB
-                }
-                else if(db.isLiked(idx, req.uId) == 0){ //if message is not liked or disliked
-                    result = db.addDislike(idx, req.uId);   //add dislike to DB
-                }
-            }
-
-            if (result == -1) {     //if requests worked send ok response, else send error response
-                return gson.toJson(new StructuredResponse("error", "unable to update row " + idx, null));
-            } else {    
-                return gson.toJson(new StructuredResponse("ok", null, result));
+            else{
+                return gson.toJson(new StructuredResponse("error", "must include sessionKey query", null));
             }
         });
 
+        /* 
         // DELETE route for removing a row from the DataStore
         Spark.delete("/messages/:id", (request, response) -> {
             // If we can't get an ID, Spark will send a status 500
@@ -187,35 +225,65 @@ public class App {
                 return gson.toJson(new StructuredResponse("ok", null, null));
             }
         });
+        */
 
         //Get route to get all comments on a message
-        Spark.get("/comments/:mId", (request, response) -> {
+        Spark.get("/comments/:mId/", (request, response) -> {
             int idx = Integer.parseInt(request.params("mId"));   //get message id from route
             response.status(200);
             response.type("application/json");
-            return gson.toJson(new StructuredResponse("ok", null, db.selectAllComments(idx)));
+            if(request.queryParams().contains("sessionKey")){
+                String sessionKey = request.queryParams("sessionKey");  //check sessionKey
+                if(!users.containsKey(UUID.fromString(sessionKey))){
+                    return gson.toJson(new StructuredResponse("error", "user not authorized", null));
+                }
+                return gson.toJson(new StructuredResponse("ok", null, db.selectAllComments(idx)));  //return all comments
+            }
+            else{
+                return gson.toJson(new StructuredResponse("error", "must include sessionKey query", null));
+            }
         });
 
         //get route for all comments currently in comment DB
         Spark.get("/comments", (request, response) -> {
             response.status(200);
             response.type("application/json");      //return the result of db.getallcomments which gets all comments
-            return gson.toJson(new StructuredResponse("ok", null, db.getAllComments()));
+            if(request.queryParams().contains("sessionKey")){
+                String sessionKey = request.queryParams("sessionKey");  //check sessionKey
+                if(!users.containsKey(UUID.fromString(sessionKey))){
+                    return gson.toJson(new StructuredResponse("error", "user not authorized", null));
+                }
+                return gson.toJson(new StructuredResponse("ok", null, db.getAllComments()));
+            }
+            else{
+                return gson.toJson(new StructuredResponse("error", "must include sessionKey query", null));
+            }
         });
 
         //Put route to edit comment
-        Spark.put("/comments/:commentId", (request, response) -> {
+        Spark.put("/comments/:commentId/", (request, response) -> {
             int idx = Integer.parseInt(request.params("commentId"));    //get comment id from route
             response.status(200);
             response.type("application/json");
             CommentRequest req = gson.fromJson(request.body(), CommentRequest.class);   //get new comment content from json
 
-            int result = db.updateComment(idx, req.cContent);   //update the comment in DB
-            if(result == -1){
-                return gson.toJson(new StructuredResponse("error", "unable to update comment " + idx, null));
-            }           //if update comment worked send ok response, else send error response
+            if(request.queryParams().contains("sessionKey")){
+                CommentData comment = db.selectOneComment(idx);
+                String sessionKey = request.queryParams("sessionKey");
+                if(!(users.get(UUID.fromString(sessionKey)) == comment.uId)){
+                    return gson.toJson(new StructuredResponse("error", "user not authorized", null));
+                }
+
+                int result = db.updateComment(idx, req.cContent);   //update the comment in DB
+                if(result == -1){
+                    return gson.toJson(new StructuredResponse("error", "unable to update comment " + idx, null));
+                }           //if update comment worked send ok response, else send error response
+                else{
+                    return gson.toJson(new StructuredResponse("ok", null, result));
+                }
+            }
             else{
-                return gson.toJson(new StructuredResponse("ok", null, result));
+                return gson.toJson(new StructuredResponse("error", "must include sessionKey query", null));
             }
         });
 
@@ -224,54 +292,150 @@ public class App {
             CommentRequest req = gson.fromJson(request.body(), CommentRequest.class);   //get request json data
             response.status(200);
             response.type("application/json");
-            int newId = db.insertComment(req.mId, req.cContent, req.uId);  //add comment in DB
-            if(newId == -1){
-                return gson.toJson(new StructuredResponse("error", "unable to add comment", null));
-            }           //if add comment worked send ok response, else send error response
+
+            if(request.queryParams().contains("sessionKey")){
+                String sessionKey = request.queryParams("sessionKey");
+                if(!users.containsKey(UUID.fromString(sessionKey))){
+                    return gson.toJson(new StructuredResponse("error", "user not authorized", null));
+                }
+
+                int newId = db.insertComment(req.mId, req.cContent, users.get(UUID.fromString(sessionKey)));  //add comment in DB
+                if(newId == -1){
+                    return gson.toJson(new StructuredResponse("error", "unable to add comment", null));
+                }           //if add comment worked send ok response, else send error response
+                else{
+                    return gson.toJson(new StructuredResponse("ok", null, newId));
+                }
+            }
             else{
-                return gson.toJson(new StructuredResponse("ok", "" + newId, null));
+                return gson.toJson(new StructuredResponse("error", "must include sessionKey query", null));
             }
         });
 
-        /* 
-        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory()).setAudience(Collections.singletonList("797357831545-l17deqglq3col68qffmofhr3kbgv09fk.apps.googleusercontent.com")).build();
+        //create verifier object to verify a google id token
+        GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory()).setAudience(Collections.singletonList("69750154488-v2ko8le0do3lcrsmr2cj6dqnl4untjls.apps.googleusercontent.com")).build();
 
         Spark.post("/users", (request, response) -> {
             UserRequest req = gson.fromJson(request.body(), UserRequest.class);
             response.status(200);
             response.type("application/json");
-            String idTokenString = request.params("idToken");
-            //String GI = request.params("uGI");
-            //String SO = request.params("uSO");
-            //String note = request.params("uNote");
+            String idTokenString = req.idToken;     //get id token and other info from body of request
+            String GI = req.uGI;
+            String SO = req.uSO;
+            String note = req.uNote;
 
-            GoogleIdToken idToken = verifier.verify(idTokenString);
+            GoogleIdToken idToken = verifier.verify(idTokenString);     //verify the id token
             if(idToken != null){
-                Payload payload = idToken.getPayload();
+                Payload payload = idToken.getPayload(); //get info from token
     
-                String userId = payload.getSubject();
-                System.out.println("User Id: " + userId);
-    
-                String email = payload.getEmail();
+                String email = payload.getEmail();                                          //get email and name from paylaod
                 //boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
                 String name = (String) payload.get("name");
                 //String pictureUrl = (String) payload.get("picture");
                 //String locale = (String) payload.get("locale");
                 //String familyName = (String) payload.get("family_name");
                 //String givenName = (String) payload.get("given_name");
-     
-                int newID = db.insertUser(name, email, GI, SO, note);
-                users.add(Integer.valueOf(rand.nextInt(128)), idToken);
-                return gson.toJson(new StructuredResponse("ok", "" + newId, null));
+
+                if(payload.getHostedDomain() == null){  //if not part of a g suite, send error
+                    return gson.toJson(new StructuredResponse("error", "only lehigh.edu domains supported", null));
+                }
+                else if(payload.getHostedDomain().equals("lehigh.edu")){    //if g suite is not lehigh.edu, send error
+                    UUID sessionKey = UUID.randomUUID();
+                    int newId = db.insertUser(name, email, GI, SO, note);   //if user is part of lehigh.edu, get random UUID for session key
+                    users.put(sessionKey, newId);                              //add session key and new user id to hash table
+                    return gson.toJson(new StructuredResponse("ok", null, sessionKey.toString(), newId));
+                }                               //send session key and user id in response
+                else{
+                    return gson.toJson(new StructuredResponse("error", "hosted domain not supported", null));
+                }
             }
             else{
-                System.out.println("Invalid ID token");
-                return gson.toJson(new StructuredResponse("error", "could not create new user", null));
+                return gson.toJson(new StructuredResponse("error", "could not create new user, id token invalid", null));
             }
         });
 
-        */
+        Spark.get("/users/:id/", (request, response) -> {
+            response.status(200);
+            response.type("application/json");
 
+            int idx = Integer.parseInt(request.params("id"));
+
+            if(request.queryParams().contains("sessionKey")){
+                String sessionKey = request.queryParams("sessionKey");  //check session key
+                if(!users.containsKey(UUID.fromString(sessionKey))){
+                    return gson.toJson(new StructuredResponse("error", "user not authorized", null));
+                }
+                else if(users.get(UUID.fromString(sessionKey)) == idx){ //if user is getting his/her own profile, give all data
+                    return gson.toJson(new StructuredResponse("ok", null, db.selectOneUser(idx)));
+                }
+                else{       //if user is getting someone else's profile, only give name, email, and note
+                    return gson.toJson(new StructuredResponse("ok", null, db.selectOneOtherUser(idx)));
+                }
+            }
+            else{
+                return gson.toJson(new StructuredResponse("error", "must include sessionKey query", null));
+            }
+        });
+
+        Spark.get("/users", (request, response) -> {        //might not need this, sarah asked to make it
+            response.status(200);
+            response.type("application/json");
+
+            if(request.queryParams().contains("sessionKey")){
+                String sessionKey = request.queryParams("sessionKey");  //check session key
+                if(!users.containsKey(UUID.fromString(sessionKey))){
+                    return gson.toJson(new StructuredResponse("error", "user not authorized", null));
+                }
+                else{           //return uId and name of all users in user table
+                    return gson.toJson(new StructuredResponse("ok", null, db.selectAllUsers()));
+                }
+            }
+            else{
+                return gson.toJson(new StructuredResponse("error", "could not get all users", null));
+            }
+        });
+
+        Spark.put("/users", (request, response) -> {
+            response.status(200);
+            response.type("application/json");
+            UserRequest req = gson.fromJson(request.body(), UserRequest.class);
+
+            if(request.queryParams().contains("sessionKey")){
+                String sessionKey = request.queryParams("sessionKey");  //check session key
+                if(!users.containsKey(UUID.fromString(sessionKey))){
+                    return gson.toJson(new StructuredResponse("error", "user note authorized", null));
+                }
+                int uId = users.get(UUID.fromString(request.queryParams("sessionKey")));    //get uId from sessionKey
+
+                int result = db.updateUser(uId, req.uName, req.uGI, req.uSO, req.uNote);    //update user in db
+                if(result == -1){
+                    return gson.toJson(new StructuredResponse("error", "could not update user " + uId, null));
+                }
+                else{
+                    return gson.toJson(new StructuredResponse("ok", null, result));
+                }
+            }
+            else{
+                return gson.toJson(new StructuredResponse("error", "must include sessionKey query", null));
+            }
+        });
+
+        Spark.get("/likes", (request, response) -> {
+            response.status(200);
+            response.type("application/json");
+
+            if(request.queryParams().contains("sessionKey")){
+                String sessionKey = request.queryParams("sessionKey");  //check session key
+                if(!users.containsKey(UUID.fromString(sessionKey))){
+                    return gson.toJson(new StructuredResponse("error", "user not authorized", null));
+                }
+                int uId = users.get(UUID.fromString(sessionKey));       //get uid from sessionkey
+                return gson.toJson(new StructuredResponse("ok", null, db.getLikedMessages(uId)));
+            }               //call getliked messages from database.java to get liked messages
+            else{
+                return gson.toJson(new StructuredResponse("error", "must include sessionKey query", null));
+            }
+        });
     }
 
     private static final String DEFAULT_PORT_DB = "5432";

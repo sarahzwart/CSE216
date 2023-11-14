@@ -56,11 +56,22 @@ public class Database {
     //Prepared Statement for getting all comments in comment DB
     private PreparedStatement cSelectEverything;
 
+    private PreparedStatement cSelectOne;
+
     //Prepared Statement for getting one user's data from the user DB
     private PreparedStatement uSelectOne;
 
     //Prepared Statement for inserting a user into the user DB
     private PreparedStatement uInsertOne;
+
+    //Prepared Statement for updating a user's info
+    private PreparedStatement uUpdateOne;
+
+    //Prepared Statement for getting the info of a different user
+    private PreparedStatement uSelectOneOther;
+
+    //Prepared Statement for getting the id and name of all users in user table
+    private PreparedStatement uSelectAll;
 
     //Prepared Statement for inserting a like/dislike into the like DB
     private PreparedStatement lInsertOne;
@@ -70,6 +81,9 @@ public class Database {
 
     //Prepared Statement for getting the data from one like from the like DB
     private PreparedStatement lSelectOne;
+
+    //Prepared Statement for getting all mIds of messages a specific user liked
+    private PreparedStatement lSelectAll;
     
     //private PreparedStatement uDeleteOne;
 
@@ -166,15 +180,20 @@ public class Database {
             db.cEdit = db.mConnection.prepareStatement("UPDATE commentData SET content = ? WHERE id = ?");
             db.cInsertOne = db.mConnection.prepareStatement("INSERT INTO commentData VALUES (default, ?, ?, ?)");
             db.cSelectEverything = db.mConnection.prepareStatement("Select * from commentData");
+            db.cSelectOne = db.mConnection.prepareStatement("SELECT * from commentData WHERE id = ?");
 
             //Prepared Statements for users
-            db.uInsertOne = db.mConnection.prepareStatement("INSERT INTO userData VALUES (default, ?, ?, ?, ?, ?, ?)");
+            db.uInsertOne = db.mConnection.prepareStatement("INSERT INTO userData VALUES (default, ?, ?, ?, ?, ?)");
             db.uSelectOne = db.mConnection.prepareStatement("SELECT * FROM userData WHERE id = ?");
+            db.uUpdateOne = db.mConnection.prepareStatement("UPDATE userData SET name = ?, GI = ?, SO = ?, note = ? WHERE id = ?");
+            db.uSelectOneOther = db.mConnection.prepareStatement("SELECT name, email, note FROM userData WHERE id = ?");
+            db.uSelectAll = db.mConnection.prepareStatement("SELECT id, name FROM userData");
 
             //Prepared Statements for likes
             db.lInsertOne = db.mConnection.prepareStatement("INSERT INTO likeData VALUES (default, ?, ?, ?)");
             db.lRemoveOne = db.mConnection.prepareStatement("DELETE FROM likeData WHERE mId = ? and uId = ?");
             db.lSelectOne = db.mConnection.prepareStatement("Select * FROM likeData WHERE mId = ? AND uId = ?");
+            db.lSelectAll = db.mConnection.prepareStatement("SELECT mId FROM likeData WHERE uId = ?");
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -248,7 +267,7 @@ public class Database {
             mInsertOne.setInt(3, uId);      //now also inserts uId into DB
             mInsertOne.setString(1, subject);
             mInsertOne.setString(2, message);
-            mInsertOne.executeQuery();
+            mInsertOne.executeUpdate();
             getRecentId = mConnection.prepareStatement("SELECT id FROM tblData ORDER BY id DESC limit 1");
             ResultSet resSet = getRecentId.executeQuery();
             while (resSet.next()) {
@@ -418,6 +437,47 @@ public class Database {
         return res;     //return response
     }
 
+    //returns an arraylist of mIds, mTitles, and mMessages of all messages a specific user liked
+    ArrayList<LikeData> getLikedMessages(int uId){
+        ArrayList<LikeData> res = new ArrayList<LikeData>();    //create arraylist to store mIds, mTitles, and mMessages
+        PreparedStatement getMessages;
+        try{
+            ArrayList<Integer> mIds = new ArrayList<Integer>();
+            lSelectAll.setInt(1, uId);
+            ResultSet rs = lSelectAll.executeQuery();       //execute query to get all mIds of liked messages from specified uId
+            while(rs.next()){
+                mIds.add(rs.getInt("mId")); //add all mIds to arrayList
+            }
+            getMessages = mConnection.prepareStatement("SELECT id, title, message FROM tblData WHERE id = ?");
+            for(int i = 0; i < mIds.size(); i++){
+                getMessages.setInt(1, mIds.get(i)); //get id, title, and message from all the mIds
+                rs = getMessages.executeQuery();
+                res.add(new LikeData(rs.getInt("id"), rs.getString("title"), rs.getString("message")));
+            }   //add all ids, titles, and messages to response arrayList
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+        return res;     //return arrayList
+    }
+
+    //Returns one comment given a comment id
+    CommentData selectOneComment(int cId){
+        CommentData res = null;
+
+        try{
+            cSelectOne.setInt(1, cId);  //set cId in prepared statement
+            ResultSet rs = cSelectOne.executeQuery();
+            if(rs.next()){
+                res = new CommentData(rs.getInt("id"), rs.getString("content"), rs.getInt("mId"), rs.getInt("uId"));
+            }       //add result to commentdata constructor
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+        return res;     //return all comment data
+    }
+
     //returns all the comments on a message in an arraylist of type CommentData
     ArrayList<CommentData> selectAllComments(int messageId){
 
@@ -480,11 +540,11 @@ public class Database {
             cInsertOne.setString(1, content);
             cInsertOne.setInt(2, mId);      //set mId and uId so you can get comments from a message and from a user
             cInsertOne.setInt(3, uId);
-            cInsertOne.executeQuery();
+            cInsertOne.executeUpdate();
             getRecentId = mConnection.prepareStatement("SELECT id from commentData ORDER BY id DESC limit 1");
             ResultSet resSet = getRecentId.executeQuery();
-            while(resSet.next()){
-                newestId = (resSet.getInt("id"));   //get the new id from this comment
+            if(resSet.next()){
+                newestId = resSet.getInt("id");   //get the new id from this comment
             }
         }
         catch(SQLException e){
@@ -494,7 +554,7 @@ public class Database {
     }
 
     //inserts a new user into the user DB
-    int insertUser(String name, String email, String GI, String SO, String note, String idToken){
+    int insertUser(String name, String email, String GI, String SO, String note){
         int newestId = -1;
         PreparedStatement getRecentId;
         try{
@@ -503,8 +563,7 @@ public class Database {
             uInsertOne.setString(3, GI);
             uInsertOne.setString(4, SO);
             uInsertOne.setString(5, note);
-            uInsertOne.setString(6, idToken);
-            uInsertOne.executeQuery();                      //execute prepared statement
+            uInsertOne.executeUpdate();                      //execute prepared statement
             getRecentId = mConnection.prepareStatement("Select id from userData ORDER BY id DESC limit 1");
             ResultSet resSet = getRecentId.executeQuery();
             while(resSet.next()){
@@ -522,9 +581,9 @@ public class Database {
         UserData res = null;
         try{
             uSelectOne.setInt(1, id);   //pass in user's id
-            ResultSet rs = mSelectOne.executeQuery();
+            ResultSet rs = uSelectOne.executeQuery();
             if(rs.next()){  //set respose equal to UserData
-                res = new UserData(rs.getInt("id"), rs.getString("name"), rs.getString("email"), rs.getString("GI"), rs.getString("SO"), rs.getString("note"), rs.getString("idToken"));
+                res = new UserData(rs.getInt("id"), rs.getString("name"), rs.getString("email"), rs.getString("GI"), rs.getString("SO"), rs.getString("note"));
             }
         }
         catch(SQLException e){
@@ -533,6 +592,54 @@ public class Database {
         return res; //return user data
     }
 
+    //get a different user's info (only returns name, email, and note)
+    OtherUserData selectOneOtherUser(int id){
+        OtherUserData res = null;
+        try{
+            uSelectOneOther.setInt(1, id);
+            ResultSet rs = uSelectOneOther.executeQuery();  //set id in query
+            if(rs.next()){
+                res = new OtherUserData(rs.getString("name"), rs.getString("email"), rs.getString("note"));
+            }       //add name, email, and note to otheruserdata constructor
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+        return res;     //return data added to otheruserdata
+    }
+
+    //get id and name of all users in user table
+    ArrayList<AllUserData> selectAllUsers(){                        //we probably dont need this but sarah asked for it
+        ArrayList<AllUserData> res = new ArrayList<AllUserData>();
+        try{
+            ResultSet rs = uSelectAll.executeQuery();   //execute the query to run the select statement in db
+            while(rs.next()){
+                res.add(new AllUserData(rs.getInt("id"), rs.getString("name")));
+            }       //add all users to response arraylist
+            rs.close();
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+        return res;     //return arraylist
+    }    
+
+    //updates a user's info in user table
+    int updateUser(int id, String name, String GI, String SO, String note){
+        int res = -1;
+        try{
+            uUpdateOne.setString(1, name);  //set all the data given by the user 
+            uUpdateOne.setString(2, GI);
+            uUpdateOne.setString(3, SO);
+            uUpdateOne.setString(4, note);
+            uUpdateOne.setInt(5, id);
+            res = uUpdateOne.executeUpdate();       //execute the query
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+        return res;
+    }
 
     /**
      * Create tblData.  If it already exists, this will print an error
