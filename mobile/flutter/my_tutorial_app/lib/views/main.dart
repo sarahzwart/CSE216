@@ -1,12 +1,13 @@
-import 'package:my_tutorial_app/views/comment.dart';
-
 import '../net/webRequests.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../models/Comment.dart';
 import '../models/Message.dart';
-import 'package:flutter/services.dart';
+import '../models/User.dart';
+import './sign_in.dart';
 import 'dart:io';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 //deleting duplicate files: find . -type f -name '* [0-9]' -exec rm {} +, find . -type f -name '* [0-9].*' -exec rm {} +
 const String backendURL = 'http://team-margaritavillians.dokku.cse.lehigh.edu';
@@ -28,6 +29,7 @@ class MyApp extends StatefulWidget {
 class MessageAppState extends State<MyApp> {
   final List<Message> messages = [];
   final List<Comment> comments = [];
+  String seshId = '';
   @override
   void initState() {
     super.initState();
@@ -36,16 +38,38 @@ class MessageAppState extends State<MyApp> {
 
   Future<void> fetchData() async {
     try {
-      final mData = await getMessageData();
-      //final cData = await getComData();
+      await startUserSesh(await signIn());
+      final mData = await getAllMessageData();
+      final cData = await getAllCommentData();
       setState(() {
         messages.addAll(mData);
-        //comments.addAll(cData);
+        comments.addAll(cData);
       });
     } catch (error) {
       // Handle errors if needed
       ('Error fetching data: $error');
     }
+  }
+
+  Future<void> startUserSesh(String? token) async {
+    User user = User(
+        uId: 0,
+        uName: 'test',
+        uEmail: 'test',
+        uGI: 'test',
+        uSO: 'test',
+        uNote: 'test');
+    //seshId = await postUser(user, token);
+  }
+
+  List<Comment> getMessageComments(Message message) {
+    List<Comment> mComments = [];
+    for (Comment c in comments) {
+      if (c.mId == message.mId) {
+        mComments.add(c);
+      }
+    }
+    return mComments;
   }
 
   Future<void> toggleLike(Message message) async {
@@ -92,11 +116,7 @@ class MessageAppState extends State<MyApp> {
                     child: MessageTile(
                       //defining what is in each message tile
                       message: messages[mId],
-                      mComments: [
-                        Comment(cContent: 'test1', mId: mId, cId: 0, uId: 0),
-                        Comment(cContent: 'test2', mId: mId, cId: 0, uId: 0),
-                        Comment(cContent: 'test3', mId: mId, cId: 0, uId: 0)
-                      ],
+                      mComments: getMessageComments(messages[mId]),
                       onLike: (message) {
                         setState(() {
                           message.mLikes++;
@@ -168,7 +188,7 @@ class MessageTile extends StatelessWidget {
               ])),
           ListView.builder(
               shrinkWrap: true,
-              itemCount: 3,
+              itemCount: mComments.length,
               itemBuilder: (BuildContext context, cId) {
                 return Card(
                   color: Color.fromARGB(255, 103, 150, 112),
@@ -231,73 +251,7 @@ class MessageInputState extends State<MessageInput> {
 
 Lets see if we can figure this new page bs
 
-
-
-class commentPage extends StatelessWidget {
-  final List<Comment> comments = [];
-  Future<void> editComment(Comment comment) async {
-    // alt to add editing comments
-  }
-  
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-            title: Text(
-              'Margarita Villians',
-              style: GoogleFonts.amaticSc(
-                fontWeight: FontWeight.w700,
-                fontSize: 40.0, // Set the font size
-                color: const Color.fromARGB(
-                    255, 219, 245, 253), // Set the text color
-              ),
-            ),
-            backgroundColor: const Color.fromARGB(255, 103, 150, 112)),
-        body: Column(
-          //allows for scrolling
-          children: [
-            Expanded(
-              child: ListView.builder(
-                shrinkWrap: true, // Important to prevent renderFlex error
-                itemCount: comments.length,
-                itemBuilder: (BuildContext context, mId) {
-                  return Card(
-                    color: const Color.fromARGB(255, 103, 150, 112),
-                    margin: const EdgeInsets.all(8),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: CommentTile(
-                      comment: comments[mId],
-                      onEditComment: (comment) {},
-                    ),
-                  );
-                },
-              ),
-            ),
-            Container(
-              alignment: Alignment.bottomCenter,
-              child: CommentInput(onCommentAdded: (cContent) {
-                // Add a new message to the list
-                final newComment = Comment(
-                  cContent: cContent,
-                  cId: 0,
-                  mId: 0,
-                  uId: 0,
-                  //needs to pass the id of the current user, dependent on Oauth
-                );
-                setState(() {
-                  comments.add(newComment);
-                });
-              }),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}*/
+*/
 
 class CommentTile extends StatelessWidget {
   final Comment comment;

@@ -1,18 +1,19 @@
 import 'package:my_tutorial_app/models/Comment.dart';
+import 'package:my_tutorial_app/models/User.dart';
 
 import '../models/Message.dart';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as developer;
 import 'dart:convert';
 
-String backendURL =
-    'https://team-margaritavillians.dokku.cse.lehigh.edu/messages';
+String backendURL = 'https://team-margaritavillians.dokku.cse.lehigh.edu/';
 //https://stackoverflow.com/questions/55331782/flutter-send-json-body-for-http-get-request
+String session_key = '9cb1f884-8190-11ee-b962-0242ac120002';
 
-Future<List<Message>> getMessageData() async {
+Future<List<Message>> getAllMessageData() async {
   developer.log("Making Web Request");
   http.Response response = await http.get(
-    Uri.parse(backendURL),
+    Uri.parse('${backendURL}messages?sessionKey=$session_key'),
     headers: {"Content-Type": "application/json"},
   );
   developer.log('HTTP Response Status Code: ${response.statusCode}');
@@ -48,11 +49,10 @@ Future<List<Message>> getMessageData() async {
 }
 
 //get list of comments on a message
-Future<List<Comment>> getMessageComment(Message message) async {
+Future<List<Comment>> getAllCommentData() async {
   developer.log("Making Web Request");
   http.Response response = await http.get(
-    Uri.parse(
-        "https://team-margaritavillians.dokku.cse.lehigh.edu/comments/:${message.mId}"),
+    Uri.parse("${backendURL}comments?sessionKey=$session_key"),
     headers: {"Content-Type": "application/json"},
   );
   developer.log('HTTP Response Status Code: ${response.statusCode}');
@@ -94,15 +94,13 @@ Future<List<Comment>> getMessageComment(Message message) async {
 // GET Request to retrieve the messages
 
 //Post a message
-
 Future<void> addMessage(String message) async {
   final Map<String, dynamic> messageData = {
     'mTitle': 'Title',
     'mMessage': message,
-    'uId': 0,
   };
   final response = await http.post(
-      Uri.parse("https://team-margaritavillians.dokku.cse.lehigh.edu/messages"),
+      Uri.parse("${backendURL}messages?sessionKey=$session_key"),
       headers: {"content-type": "application/json"},
       body: jsonEncode(messageData));
   if (response.statusCode == 200) {
@@ -117,28 +115,36 @@ Future<void> addMessage(String message) async {
   }
 }
 
+//post a user
+Future<String> postUser(User user, String? token) async {
+  final Map<String, dynamic> userData = {
+    'idToken': token,
+  };
+  final response = await http.post(
+      Uri.parse("https://team-margaritavillians.dokku.cse.lehigh.edu/users"),
+      headers: {"content-type": "application/json"},
+      body: jsonEncode(userData));
+  if (response.statusCode == 200) {
+    final responseData = jsonDecode(response.body);
+    if (responseData['mStatus'] == 'ok') {
+      session_key = responseData['sessionKey'];
+      return session_key;
+    } else {
+      throw Exception('Failed to add new message');
+    }
+  } else {
+    throw Exception('Failed to add new message');
+  }
+}
+
 //Put Like
 Future<void> addLikes(Message updatedMessage) async {
   // Make a PUT request to update the message on the server
   //if the message of the frontend matches the message of the backend, give the ID
-  final List<Message> messageList = await getMessageData();
-  /*Message matchingMessage = Message(
-    uId: 0,
-    mId: 0,
-    mTitle: " ",
-    mMessage: " ",
-    mLikes: 0,
-  ); //Initializing a message
-  for (var m in messageList) {
-    if (m.mMessage == updatedMessage.mMessage) {
-      matchingMessage = m;
-      break;
-    }
-  }*/
   final Map<String, dynamic> messageData = {
     'mLikes': updatedMessage.mLikes,
     'uId': 0,
-    'isLike': 1,
+    'isLike': 0,
   };
   final response = await http.put(
     Uri.parse(
