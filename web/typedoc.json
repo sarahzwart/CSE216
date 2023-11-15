@@ -1,0 +1,8 @@
+{
+    "out": "./docs",
+    "entryPoints": ["./src/main.tsx"],
+    "includes": "./src",
+    "exclude": ["node_modules", "build","public", "docs"],
+    "tsconfig": "./tsconfig.json"
+
+  }

@@ -2,7 +2,12 @@ import { useEffect } from "react";
 import {useNavigate} from "react-router-dom";
 import { addSessionKey } from "../api/api";
 
+declare global {
+  const google: any;
+}
+
 //https://stackoverflow.com/questions/40399873/initializing-and-using-sessionstorage-in-react
+
 function LogInPage() {
   const navigate = useNavigate();
   async function handleCallbackResponse(response: { credential: string }){
@@ -35,6 +40,7 @@ function LogInPage() {
   
   useEffect(() => {
     /* global google */ 
+    console.log(google);
     google.accounts.id.initialize({
       client_id: "69750154488-v2ko8le0do3lcrsmr2cj6dqnl4untjls.apps.googleusercontent.com",
       callback: handleCallbackResponse

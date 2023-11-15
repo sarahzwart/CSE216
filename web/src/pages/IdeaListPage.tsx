@@ -1,4 +1,3 @@
-import React from "react";
 import "./styles/IdeaListPage.css";
 import IdeaList from "../domain/ui/components/messages/IdeaList";
 import { Link } from "react-router-dom";

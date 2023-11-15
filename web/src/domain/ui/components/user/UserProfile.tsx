@@ -30,11 +30,11 @@ function UserProfile() {
       uSO: uSO,
       uNote: user.uNote,
     }
-    setSexualOrientation(uSO);
     try {
       editUserInfo(editedUserSO);
+      setSexualOrientation(uSO);
     } catch (error) {
-
+      console.error("Error when  editing SO: ",error)
     }
   }
   function handleEditGI(user: User, uGI: string) {
@@ -45,13 +45,15 @@ function UserProfile() {
       uSO: user.uSO,
       uNote: user.uNote,
     }
-    setGenderIdentity(uGI);
     try {
       editUserInfo(editedUserGI);
+      setGenderIdentity(uGI);
     } catch (error) {
-
+      console.error("Error when  editing GI: ",error)
     }
   }
+
+
   function handleEditNote(user: User, uNote: string ) {
     const editedUserNote: User = {
       uName: user.uName,
@@ -59,11 +61,11 @@ function UserProfile() {
       uSO: user.uSO,
       uNote: uNote,
     };
-    setNote(uNote);
     try {
       editUserInfo(editedUserNote);
+      setNote(uNote);
     } catch (error) {
-
+      console.error("Error when  editing Note: ",error)
     }
   }
 
@@ -96,7 +98,7 @@ function UserProfile() {
           <h3>
             <div>
               <h4>
-                Sexual Orientation: {sexualOrientation}{" "}
+                Sexual Orientation: {sexualOrientation}{user.uSO}
                 <EditProfileForm
                   onEditInfo={(newSO) => handleEditSO(user, newSO)}
                   info={sexualOrientation || ""}
@@ -105,7 +107,7 @@ function UserProfile() {
             </div>
             <div>
               <h4>
-                Gender Orientation: {genderIdentity}{" "}
+                Gender Identity: {genderIdentity}{user.uGI}
                 <EditProfileForm
                   onEditInfo={(newGI) => handleEditGI(user, newGI)}
                   info={genderIdentity || ""}
@@ -114,7 +116,7 @@ function UserProfile() {
             </div>
             <div>
               <h4>
-                Note: {note}{" "}
+                Note: {note}{user.uNote}
                 <EditProfileForm
                   onEditInfo={(newNote) => handleEditNote(user, newNote)}
                   info={note || ""}

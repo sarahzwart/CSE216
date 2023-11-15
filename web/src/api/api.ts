@@ -152,7 +152,7 @@ export async function addSessionKey(userJWT: string): Promise<{sessionKey:string
   try{
     const response = await axios.post(
       `https://team-margaritavillians.dokku.cse.lehigh.edu/users`,
-      {idToken: userJWT, uGI: '', uSO: '', uNote: ''},
+      {idToken: userJWT, uGI: 'Female', uSO: 'Heterosexual', uNote: 'I like cats'},
       {headers}
     );
     const sessionKey = response.data.sessionKey; 
