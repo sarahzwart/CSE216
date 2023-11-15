@@ -29,23 +29,22 @@
 
 * Admin
 
-    1. Remove unnecessary table funcionality
+    1. Refactor the database names
 
 * Web
 
-    1. Auto-refresh when liking and deleting posts
-    1. Unit tests need to be updated
-    1. CSS needs to be added for UI
-    1. Implement unliking messages
+    1. Editing the User Profile not working as expected
+    1. Different user profiles not being shown correctly
 
 * Mobile
 
     1. Unit tests need to be updated
-    1. Implement unliking messages
+    1. OAuth profiles not working as expected
 
 * Backend
 
-    1. Needs to connect to database
+    1. Switch to database that we all have access to
+    1. All posts that users have liked is not shown in its entirety 
 
 # System Diagram
 
