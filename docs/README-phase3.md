@@ -36,4 +36,7 @@
    1. .delete('/comments/:commentId', (request, response)) - Delete a specific comment
    1. .delete('/users/:id', (request, response)) - Delete a specific user
 
+# System Drawing with major components
+
+![System Drawing](diagrams/Phase3_System_Drawing.JPG)
 
