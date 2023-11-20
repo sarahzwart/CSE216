@@ -78,8 +78,8 @@
 ![page 3]
 
 # Mobile Mock up
-![page 1](diagrams/phase3mockMobile/1.png)
-![page 2](diagrams/phase3mockMobile/2.png)
-![page 3](diagrams/phase3mockMobile/3.png)
-![page 4](diagrams/phase3mockMobile/4.png)
-![page 5](diagrams/phase3mockMobile/5.png)
+![page 1](diagrams/phase3mockMobile/1.jpg)
+![page 2](diagrams/phase3mockMobile/2.jpg)
+![page 3](diagrams/phase3mockMobile/3.jpg)
+![page 4](diagrams/phase3mockMobile/4.jpg)
+![page 5](diagrams/phase3mockMobile/5.jpg)
