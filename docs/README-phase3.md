@@ -48,3 +48,10 @@
 # State Machine Drawing
 
 ![State Machine Drawing](diagrams/phase3Diagrams/stateMachineDrawing.png)
+
+# Web Mock-Up
+
+![page 1](diagrams/phase3Diagrams/1.png)
+![page 2](diagrams/phase3Diagrams/2.png)
+![page 2](diagrams/phase3Diagrams/3.png)
+![page 3]
