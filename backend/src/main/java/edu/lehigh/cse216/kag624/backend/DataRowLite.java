@@ -20,7 +20,8 @@ public class DataRowLite {
     public String mTitle;
 
     /**
-     * Create a DataRowLite by copying fields from a DataRow
+     * 
+     * @param data
      */
     public DataRowLite(DataRow data) {
         this.mId = data.mId;

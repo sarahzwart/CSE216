@@ -18,36 +18,33 @@
 * Put routes
 
     1. .put('/messages/:id', (request, response)) - Edit the number of likes on a message, likes passed in through body
-    1. .put('/messages/:id/comments/:commentId', (request, response)) - Edit the number of likes on a comment (?), likes passed in through body
+    1. .put('/messages/:id/comments/:commentId', (request, response)) - Edit the comment message, comment passed through body
     1. .put('/users/:id', (request, response)) - Edit the details of a user. Name, email, GI, SO, and note are passed in through the body
 
 * Delete routes
 
-    1. .delete('/messages/:id', (request, response)) - Delete a specific message
-    1. .delete('/messages/:id/comments/:commentId', (request, response)) - Delete a specific comment
-    1. .delete('/users/:id', (request, response)) - Delete a specific user
+    1. .delete('/users/:id', (request, response)) - Delete a specific user (?)
 
 # Backlog Items
 
 * Admin
 
-    1. Remove unnecessary table funcionality
+    1. Refactor the database names
 
 * Web
 
-    1. Auto-refresh when liking and deleting posts
-    1. Unit tests need to be updated
-    1. CSS needs to be added for UI
-    1. Implement unliking messages
+    1. Editing the User Profile not working as expected
+    1. Different user profiles not being shown correctly
 
 * Mobile
 
     1. Unit tests need to be updated
-    1. Implement unliking messages
+    1. OAuth profiles not working as expected
 
 * Backend
 
-    1. Needs to connect to database
+    1. Switch to database that we all have access to
+    1. All posts that users have liked is not shown in its entirety 
 
 # System Diagram
 
@@ -57,5 +54,34 @@
 
 ![User State Machine Diagram](diagrams/Phase2_User_State_Diagram.jpg)
 
+# Entity Diagram
+
+![Entity_Diagram](diagrams/Entity_Diagram.JPG)
+
 # User Stories and Tests
 https://docs.google.com/document/d/1K8kSes5hbc4sY5MNz98EBYR8Cx7yYY04osTwsXr-eZo/edit?usp=sharing 
+
+# Unit Tests
+https://docs.google.com/document/d/12otxU6lLwTojMmRcqqpRKlj5uO6V8lMntIydhbBi8WM/edit
+
+# Mock Mobile
+
+![Mock 1 Mobile](diagrams/phse2Diagrams/mockmobile/1.jpg)
+
+![Mock 2 Mobile](diagrams/phse2Diagrams/mockmobile/2.jpg)
+
+![Mock 3 Mobile](diagrams/phse2Diagrams/mockmobile/3.jpg)
+
+![Mock 4 Mobile](diagrams/phse2Diagrams/mockmobile/4.jpg)
+
+# Mock Web
+
+![Mock Web](diagrams/phse2Diagrams/mockweb/Posts Page.jpg)
+
+![Mock Web](diagrams/phse2Diagrams/mockweb/Profile Page.jpg)
+
+![Mock Web](diagrams/phse2Diagrams/mockweb/LogIN.jpg)
+
+# State Machine Diagram
+
+![State Machine Diagram](diagrams/phse2Diagrams/State Machine Drawing.jpeg)

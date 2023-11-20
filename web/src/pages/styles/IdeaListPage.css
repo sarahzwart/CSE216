@@ -1,0 +1,14 @@
+.centered-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  
+  @media (min-width: 768px) {
+    .centered-container {
+      min-height: auto; /* Remove the minimum height at larger screen sizes */
+    }
+  }
+  

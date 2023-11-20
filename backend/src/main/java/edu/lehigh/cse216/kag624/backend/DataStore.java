@@ -33,16 +33,10 @@ public class DataStore {
     }
 
     /**
-     * Add a new row to the DataStore
      * 
-     * Note: we return -1 on an error.  There are many good ways to handle an 
-     * error, to include throwing an exception.  In robust code, returning -1 
-     * may not be the most appropriate technique, but it is sufficient for this 
-     * tutorial.
-     * 
-     * @param title The title for this newly added row
-     * @param content The content for this row
-     * @return the ID of the new row, or -1 if no row was created
+     * @param title
+     * @param content
+     * @return
      */
     public synchronized int createEntry(String title, String content) {
         if (title == null || content == null)
@@ -50,16 +44,15 @@ public class DataStore {
         // NB: we can safely assume that id is greater than the largest index in 
         //     mRows, and thus we can use the index-based add() method
         int id = mCounter++;
-        DataRow data = new DataRow(id, title, content);
-        mRows.add(id, data);
+        //DataRow data = new DataRow(id, title, content);
+        //mRows.add(id, data);
         return id;
     }
 
     /**
-     * Get one complete row from the DataStore using its ID to select it
      * 
-     * @param id The id of the row to select
-     * @return A copy of the data in the row, if it exists, or null otherwise
+     * @param id
+     * @return
      */
     public synchronized DataRow readOne(int id) {
         if (id >= mRows.size())
@@ -71,8 +64,8 @@ public class DataStore {
     }
 
     /**
-     * Get all of the ids and titles that are present in the DataStore
-     * @return An ArrayList with all of the data
+     * 
+     * @return
      */
     public synchronized ArrayList<DataRow> readAll() {
         ArrayList<DataRow> data = new ArrayList<>();
@@ -85,10 +78,10 @@ public class DataStore {
     }
 
     /**
-     * Update the number of likes of a row in the DataStore
-     *
-     * @param id The Id of the row to update
-     * @return a copy of the data in the row, if it exists, or null otherwise
+     * 
+     * @param id
+     * @param likes
+     * @return
      */
     public synchronized DataRow updateLikes(int id, int likes) {
         // Only update if the current entry is valid (not null)

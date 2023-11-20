@@ -22,4 +22,10 @@ public class SimpleRequest {
      * The number of likes on a message provided by the client
      */
     public int mLikes;
+
+    //
+    /**
+     * user id of user posting the message
+     */
+    public int uId;
 }
