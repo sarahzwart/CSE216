@@ -40,10 +40,11 @@
 # Backlog
 
 * Admin
-   1. OAuth
+
+   1. N/A
 
 * Web
-   1. OAuth
+   1. Profile Editing
 
 * Mobile
 
@@ -53,7 +54,8 @@
    4. Profiles
 
 * Backend
-   1. OAuth
+
+   1. N/A
 
 # User stories and Tests
 [User stories](https://docs.google.com/document/d/1bjwfbYccF6UMZZQXPeWqkMymxNFkaRpO4HkUfeKqiH4/edit?usp=sharing)
