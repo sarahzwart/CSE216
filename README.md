@@ -16,6 +16,13 @@
 * Nick Madaio (nmm224) - Admin
 * Sarah Zwart (scz225) - Web
 
+* Phase 3: 
+* Aidan Astle (apa225) - Web
+* Kamil Gjondla (kag624) - Mobile
+* Ashley Hirst (ash320) - Backend
+* Nick Madaio (nmm224) - Project Manager
+* Sarah Zwart (scz225) - Admin
+
 # URLs
 
 * [Git Repo](https://bitbucket.org/cse216-fa23-kag624/cse216-2023fa-team-6/src/master/)
