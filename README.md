@@ -26,7 +26,7 @@
 # URLs
 
 * [Git Repo](https://bitbucket.org/cse216-fa23-kag624/cse216-2023fa-team-6/src/master/)
-* [Trello Board](https://trello.com/b/TdzCpzDz/phase-1)
+* [Trello Board](https://trello.com/b/BoSzjoaH/phase-3)
 * [Backend Link](team-margaritavillians.dokku.cse.lehigh.edu)
 
 # Google Account
@@ -34,7 +34,7 @@
 
 # Description of Functionality
 
-The app will allow an admin to create and delete tables and delete other's posts and comments. Admin also has access to all of the user's information that is collected when an account is created. Anonymous users (all marked with the same user ID for tracking purposes) will then be able to comment on them. Along with this, a mobile app will allow for the same functionalities, but on the emulator used in the tutorials. Likes are also set up and works in the backend and tables, but only shows the change in votes on the frontend upon reloading screen
+The app will allow an admin to create and delete tables and delete other's posts and comments. Admin also can remove files and images and generate a list of documents their original owners. Anonymous users (all marked with the same user ID for tracking purposes) will then be able to comment on ideas. Along with this, a mobile app will allow for the same functionalities, but on the emulator used in the tutorials. Likes are also set up and works in the backend and tables, but only shows the change in votes on the frontend upon reloading screen
 
 # Missing Functionality
 
