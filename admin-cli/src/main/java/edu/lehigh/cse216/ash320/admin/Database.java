@@ -468,7 +468,7 @@ public class Database {
             db.dInsertOne = db.mConnection.prepareStatement(
                 "INSERT INTO documentData VALUES (default, ?, ?, ?)"
             );
-            
+
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
@@ -806,4 +806,62 @@ public class Database {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Create documentData.  If it already exists, this will print an error
+     */
+    void createDocumentTable() {
+        try {
+            dCreateTable.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Remove documentData from the database.  If it does not exist, this will print
+     * an error.
+     */
+    void dropDocumentTable() {
+        try {
+            dDropTable.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // DocumentData(int documentId, String documentName, String documentOwner, String documentAccessed)
+    int insertDocument(String documentName, String documentOwner, String documentAccessed){
+        int count = 0;        
+        try{
+            dInsertOne.setString(1, documentName);
+            dInsertOne.setInt(2, documentOwner);     //set all the user's info into prepared statement
+            dInsertOne.setInt(3, documentAccessed);
+            count += dInsertOne.executeUpdate();    
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+        return count;   
+    }
+
+    /**
+     * Delete a row by ID
+     * 
+     * @param documentId The id of the row to delete
+     * 
+     * @return The number of rows that were deleted.  -1 indicates an error.
+     */
+    int deleteDocument(int documentId){
+        int res = -1;
+        try {
+            dDeleteOne.setInt(1, documentId);
+            res = dDeleteOne.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+
 }

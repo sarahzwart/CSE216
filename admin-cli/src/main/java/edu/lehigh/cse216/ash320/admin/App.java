@@ -157,7 +157,7 @@ public class App {
             } else if (action == 'q') {
                 break;
             } else if (action == 'T') {
-                char option = getChar(in, "Create which table (M, U, C, L, )");
+                char option = getChar(in, "Create which table (M, U, C, L, D)");
                 if (option == 'M'){
                     db.createTable();
                 } else if (option == 'U'){
@@ -166,10 +166,12 @@ public class App {
                     db.createCommentTable();
                 } else if (option == 'L'){
                     db.createLikeTable();
+                } else if (option == 'D'){
+                    db.createDocumentTable();
                 }
             } else if (action == 'D') {
                 System.out.println(action);
-                char option = getChar(in, "Drop which table (M, U, C, L)");
+                char option = getChar(in, "Drop which table (M, U, C, L, D)");
                 if (option == 'M'){
                     db.dropTable();
                 } else if (option == 'U'){
@@ -178,9 +180,11 @@ public class App {
                     db.dropCommentTable();
                 }  else if (option == 'L'){
                     db.dropLikeTable();
+                }  else if(option == 'D'){
+                    db.dropDocumentTable();
                 }
             } else if (action == '+') {
-                char option = (getChar(in, "Add which table (M, U, C, L)"));
+                char option = (getChar(in, "Add to which table (M, U, C, L, D)"));
                 if (option == 'M'){
                     int use = getInt(in, "Enter the User Id");
                     String subject = getString(in, "Enter the title");
@@ -209,7 +213,15 @@ public class App {
                         continue;
                     int res = db.insertComment(content, mId, uId);
                     System.out.println(res + " rows added");
-                }  
+                } else if (option == 'D'){
+                    Sting documentName = getString(in, "Enter document name ");
+                    String documentOwner = getString(in, "Enter document owner ");
+                    String documentAccessed = getString(in, "Enter when document was accessed ");
+                    if (documentName("") || documentOwner("") || documentAccessed(""))
+                        continue;
+                    int res = db.insertDocument(documentName, documentOwner, documentAccessed);
+                    System.out.println(res + " rows added");
+                }
             } else if (action == '-') {
                 int res = 0;
                 char option = (getChar(in, "Remove which row type (M, U, C)"));
@@ -261,7 +273,8 @@ public class App {
                     }
                     System.out.println("Row " + id + " invalidated");
                 }
-            }          
+            } 
+
         }
         // Always remember to disconnect from the database when the program 
         // exits
