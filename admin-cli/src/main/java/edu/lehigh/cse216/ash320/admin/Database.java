@@ -94,6 +94,23 @@ public class Database {
     private PreparedStatement lDeleteOne;
 
     /**
+     * Prepared statement for creating the document table
+     */
+    private PreparedStatement dCreateTable;
+    /**
+     * Prepared statement for deleting the document table
+     */
+    private PreparedStatement dDeleteTable;
+    /**
+     * Prepared statement for inserting into document table
+     */
+     private PreparedStatement dInsertOne;
+    /**
+     * Prepared statement for deleting in the document table
+     */
+    private PreparedStatement dDeleteOne;
+
+    /**
      * RowData is like a struct in C: we use it to hold data, and we allow 
      * direct access to its fields.  In the context of this Database, RowData 
      * represents the data we'd see in a row.
@@ -318,6 +335,14 @@ public class Database {
             isLike = islike;
         }
     }
+    /***
+     * Document Data Table
+     */
+    public static class DocumentData{
+        public String dName;
+        public String dOwner;
+        public String dAccessed;
+    }
 
     /**
      * The Database constructor is private: we only create Database objects 
@@ -399,7 +424,8 @@ public class Database {
             db.lInsertOne = db.mConnection.prepareStatement("INSERT INTO likeData VALUES (default, ?, ?, ?)");
             db.lDropTable = db.mConnection.prepareStatement("DROP TABLE likeData");
             db.lDeleteOne = db.mConnection.prepareStatement("DELETE FROM likeData WHERE mId = ? and uId = ?");
-
+            
+            // 
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();

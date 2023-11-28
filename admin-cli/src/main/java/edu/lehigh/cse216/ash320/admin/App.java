@@ -157,7 +157,7 @@ public class App {
             } else if (action == 'q') {
                 break;
             } else if (action == 'T') {
-                char option = getChar(in, "Create which table (M, U, C, L)");
+                char option = getChar(in, "Create which table (M, U, C, L, )");
                 if (option == 'M'){
                     db.createTable();
                 } else if (option == 'U'){
