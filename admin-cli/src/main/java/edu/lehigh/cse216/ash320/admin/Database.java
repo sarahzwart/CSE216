@@ -100,7 +100,7 @@ public class Database {
     /**
      * Prepared statement for deleting the document table
      */
-    private PreparedStatement dDeleteTable;
+    private PreparedStatement dDropTable;
     /**
      * Prepared statement for inserting into document table
      */
@@ -339,15 +339,44 @@ public class Database {
      * Document Data Table
      */
     public static class DocumentData{
+
+        /**
+         * Name of document
+         */
         public String dName;
+
+        /**
+         * Name of Owner
+         */
         public String dOwner;
+
+        /**
+         * When document was last accessed
+         */
         public String dAccessed;
+
+        public int dId;
+
+        /**
+         * @param documentName 
+         * @param documentOwner 
+         * @param documentAccessed 
+         */
+        public DocumentData(int documentId, String documentName, String documentOwner, String documentAccessed){
+            dId = documentId;
+            dName = documentName;
+            dOwner = documentOwner;
+            dAccessed = documentAccessed;
+        }
+
+
     }
 
     /**
      * The Database constructor is private: we only create Database objects 
      * through the getDatabase() method.
      */
+
     private Database() {
     }
 
@@ -425,7 +454,21 @@ public class Database {
             db.lDropTable = db.mConnection.prepareStatement("DROP TABLE likeData");
             db.lDeleteOne = db.mConnection.prepareStatement("DELETE FROM likeData WHERE mId = ? and uId = ?");
             
-            // 
+            // creation/deletion, so multiple executions will cause an exception
+            // DocumentData(int documentId, String documentName, String documentOwner, String documentAccessed)
+            db.dCreateTable = db.mConnection.prepareStatement(
+                "CREATE TABLE documentData (documentId SERIAL, documentName VARCHAR(50) NOT NULL, documentOwner VARCHAR(50) NOT NULL, documentAccessed VARCHAR(50) NOT NULL )"
+            );
+            db.dDropTable = db.mConnection.prepareStatement(
+                "DROP TABLE documentData"
+            );
+            db.dDeleteOne = db.mConnection.prepareStatement(
+                "DELETE FROM documentData WHERE documentId = ? "
+            );
+            db.dInsertOne = db.mConnection.prepareStatement(
+                "INSERT INTO documentData VALUES (default, ?, ?, ?)"
+            );
+            
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
             e.printStackTrace();
