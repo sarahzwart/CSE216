@@ -708,30 +708,5 @@ public class Database {
         return res;
     }
 
-
     
-    
-
-    /**
-     * Create tblData.  If it already exists, this will print an error
-    
-    void createTable() {
-        try {
-            mCreateTable.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-     * Remove tblData from the database.  If it does not exist, this will print
-     * an error.
-    
-    void dropTable() {
-        try {
-            mDropTable.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    } 
-    */
 }

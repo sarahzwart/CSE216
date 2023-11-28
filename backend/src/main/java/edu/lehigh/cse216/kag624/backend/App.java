@@ -14,6 +14,16 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import java.util.*;
 
+//import memcachier
+import net.rubyeye.xmemcached.MemcachedClient;
+import net.rubyeye.xmemcached.MemcachedClientBuilder;
+import net.rubyeye.xmemcached.XMemcachedClientBuilder;
+import net.rubyeye.xmemcached.auth.AuthInfo;
+import net.rubyeye.xmemcached.command.BinaryCommandFactory;
+import net.rubyeye.xmemcached.exception.MemcachedException;
+import net.rubyeye.xmemcached.utils.AddrUtil;
+
+
 /**
  * For now, our app creates an HTTP server that can only get and add data.
  */
@@ -133,6 +143,7 @@ public class App {
             // describes the error.
             response.status(200);
             response.type("application/json");
+            
             // NB: createEntry checks for null title and message
             if(request.queryParams().contains("sessionKey")){
                 String sessionKey = request.queryParams("sessionKey");
@@ -514,3 +525,4 @@ public class App {
         });
     }
 }
+
