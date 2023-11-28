@@ -224,7 +224,7 @@ public class App {
                 }
             } else if (action == '-') {
                 int res = 0;
-                char option = (getChar(in, "Remove which row type (M, U, C)"));
+                char option = (getChar(in, "Remove which row type (M, U, C, D)"));
                 if (option == 'M'){
                     int id = getInt(in, "Enter the row ID");
                     if (id == -1)
@@ -246,7 +246,9 @@ public class App {
                     res = db.deleteComment(id);
                     if (res == -1)
                         continue;
-                } 
+                } else if (option == 'D'){
+                    // Delete the last accessed 
+                }
                 System.out.println("  " + res + " rows deleted");
             } else if (action == 'V') {
                 action = getChar(in, "Validate or Invalidate (V, I)");
