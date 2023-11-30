@@ -2,6 +2,8 @@ package edu.lehigh.cse216.ash320.admin;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.security.Timestamp;
+import java.text.SimpleDateFormat;
 import java.io.IOException;
 
 import java.util.ArrayList;
@@ -214,11 +216,13 @@ public class App {
                     int res = db.insertComment(content, mId, uId);
                     System.out.println(res + " rows added");
                 } else if (option == 'D'){
-                    Sting documentName = getString(in, "Enter document name ");
+                    String documentName = getString(in, "Enter document name ");
                     String documentOwner = getString(in, "Enter document owner ");
-                    String documentAccessed = getString(in, "Enter when document was accessed ");
-                    if (documentName("") || documentOwner("") || documentAccessed(""))
+                    java.sql.Timestamp documentAccessed = getTimeStamp();
+                    if (documentName.equals("") || documentOwner.equals("") || documentAccessed==null) {
+                        System.out.println("Error: All fields must be filled. Please try again.");
                         continue;
+                    }
                     int res = db.insertDocument(documentName, documentOwner, documentAccessed);
                     System.out.println(res + " rows added");
                 }
@@ -247,7 +251,9 @@ public class App {
                     if (res == -1)
                         continue;
                 } else if (option == 'D'){
-                    deleteDocument();
+                    res = db.deleteDocument();
+                    if (res == -1)
+                        continue;
                 }
                 System.out.println("  " + res + " rows deleted");
             } else if (action == 'V') {
@@ -281,5 +287,12 @@ public class App {
         // Always remember to disconnect from the database when the program 
         // exits
         db.disconnect();
+    }
+    public static java.sql.Timestamp getTimeStamp() {
+        // Get the current time in milliseconds
+        long timeMillis = System.currentTimeMillis();
+
+        // Create a Timestamp object with the current time
+        return new java.sql.Timestamp(timeMillis);
     }
 }

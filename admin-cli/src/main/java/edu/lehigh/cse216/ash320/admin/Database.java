@@ -354,7 +354,7 @@ public class Database {
         /**
          * When document was last accessed
          */
-        public Timestamp dLastAccessed;
+        public java.sql.Timestamp dLastAccessed;
 
         public int dId;
 
@@ -363,14 +363,14 @@ public class Database {
          * @param documentOwner 
          * @param documentAccessed 
          */
-        public DocumentData(int documentId, String documentName, String documentOwner, String documentLastAccessed){
+        public DocumentData(int documentId, String documentName, String documentOwner,java.sql.Timestamp documentLastAccessed){
             dId = documentId;
             dName = documentName;
             dOwner = documentOwner;
             dLastAccessed = documentLastAccessed;
         }
 
-        public void updateLastAccessed(Timestamp lastAccessed) {
+        public void updateLastAccessed(java.sql.Timestamp lastAccessed) {
             dLastAccessed = lastAccessed;
         }
     }
@@ -834,11 +834,11 @@ public class Database {
     }
 
     // DocumentData(int documentId, String documentName, String documentOwner, String documentAccessed)
-    int insertDocument(String documentName, String documentOwner, String documentAccessed){
+    int insertDocument(String documentName, String documentOwner, java.sql.Timestamp documentAccessed){
         int count = 0;        
         try{
             dInsertOne.setString(1, documentName);
-            dInsertOne.setInt(2, documentOwner);     //set all the user's info into prepared statement
+            dInsertOne.setString(2, documentOwner);     //set all the user's info into prepared statement
             dInsertOne.setTimestamp(3, documentAccessed);
             count += dInsertOne.executeUpdate();    
         }
