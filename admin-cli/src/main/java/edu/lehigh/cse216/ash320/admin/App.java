@@ -247,7 +247,7 @@ public class App {
                     if (res == -1)
                         continue;
                 } else if (option == 'D'){
-                    // Delete the last accessed 
+                    deleteDocument();
                 }
                 System.out.println("  " + res + " rows deleted");
             } else if (action == 'V') {

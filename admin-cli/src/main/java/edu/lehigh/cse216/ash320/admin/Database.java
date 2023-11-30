@@ -1,5 +1,6 @@
 package edu.lehigh.cse216.ash320.admin;
 
+import java.security.Timestamp;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -353,7 +354,7 @@ public class Database {
         /**
          * When document was last accessed
          */
-        public String dAccessed;
+        public Timestamp dLastAccessed;
 
         public int dId;
 
@@ -362,14 +363,16 @@ public class Database {
          * @param documentOwner 
          * @param documentAccessed 
          */
-        public DocumentData(int documentId, String documentName, String documentOwner, String documentAccessed){
+        public DocumentData(int documentId, String documentName, String documentOwner, String documentLastAccessed){
             dId = documentId;
             dName = documentName;
             dOwner = documentOwner;
-            dAccessed = documentAccessed;
+            dLastAccessed = documentLastAccessed;
         }
 
-
+        public void updateLastAccessed(Timestamp lastAccessed) {
+            dLastAccessed = lastAccessed;
+        }
     }
 
     /**
@@ -457,13 +460,13 @@ public class Database {
             // creation/deletion, so multiple executions will cause an exception
             // DocumentData(int documentId, String documentName, String documentOwner, String documentAccessed)
             db.dCreateTable = db.mConnection.prepareStatement(
-                "CREATE TABLE documentData (documentId SERIAL, documentName VARCHAR(50) NOT NULL, documentOwner VARCHAR(50) NOT NULL, documentAccessed VARCHAR(50) NOT NULL )"
+                "CREATE TABLE documentData (documentId SERIAL, documentName VARCHAR(50) NOT NULL, documentOwner VARCHAR(50) NOT NULL, documentLastAccessed TIMESTAMP NOT NULL )"
             );
             db.dDropTable = db.mConnection.prepareStatement(
                 "DROP TABLE documentData"
             );
             db.dDeleteOne = db.mConnection.prepareStatement(
-                "DELETE FROM documentData WHERE documentId = ? "
+                "DELETE FROM documentData WHERE documentId = (SELECT documentId FROM documentData ORDER BY documentLastAccessed ASC LIMIT 1)"
             );
             db.dInsertOne = db.mConnection.prepareStatement(
                 "INSERT INTO documentData VALUES (default, ?, ?, ?)"
@@ -836,7 +839,7 @@ public class Database {
         try{
             dInsertOne.setString(1, documentName);
             dInsertOne.setInt(2, documentOwner);     //set all the user's info into prepared statement
-            dInsertOne.setInt(3, documentAccessed);
+            dInsertOne.setTimestamp(3, documentAccessed);
             count += dInsertOne.executeUpdate();    
         }
         catch(SQLException e){
@@ -848,20 +851,18 @@ public class Database {
     /**
      * Delete a row by ID
      * 
-     * @param documentId The id of the row to delete
-     * 
      * @return The number of rows that were deleted.  -1 indicates an error.
      */
-    int deleteDocument(int documentId){
+    int deleteDocument() {
         int res = -1;
         try {
-            dDeleteOne.setInt(1, documentId);
             res = dDeleteOne.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return res;
     }
+
 
 
 }
