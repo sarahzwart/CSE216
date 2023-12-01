@@ -38,6 +38,9 @@ dependencies:
   http: ^1.1.0
   google_fonts: ^6.1.0
   google_sign_in: ^6.1.6
+  shared_preferences: ^2.2.2
+  camera: ^0.10.5+5
+  photo_gallery: ^2.1.1
 
 dev_dependencies:
   flutter_test:
