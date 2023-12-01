@@ -1,5 +1,6 @@
 package edu.lehigh.cse216.ash320.admin;
 
+import java.security.Timestamp;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -92,6 +93,35 @@ public class Database {
      * A prepared statement for deleting the table in our database
      */
     private PreparedStatement lDeleteOne;
+
+    /**
+     * Prepared statement for creating the document table
+     */
+    private PreparedStatement dCreateTable;
+    /**
+     * Prepared statement for deleting the document table
+     */
+    private PreparedStatement dDropTable;
+    /**
+     * Prepared statement for inserting into document table
+     */
+     private PreparedStatement dInsertOne;
+    /**
+     * Prepared statement for deleting in the document table
+     */
+    private PreparedStatement dDeleteOne;
+
+    private PreparedStatement linkCreateTable;
+
+    private PreparedStatement linkDropTable;
+
+    private PreparedStatement linkDeleteOne;
+
+    private PreparedStatement linkInsertOne;
+
+    private PreparedStatement linkValidate;
+
+
 
     /**
      * RowData is like a struct in C: we use it to hold data, and we allow 
@@ -318,11 +348,83 @@ public class Database {
             isLike = islike;
         }
     }
+    /***
+     * Document Data Table
+     */
+    public static class DocumentData{
+
+        /**
+         * Name of document
+         */
+        public String dName;
+
+        /**
+         * Name of Owner
+         */
+        public String uName;
+
+        /**
+         * When document was last accessed
+         */
+
+        public java.sql.Timestamp dLastAccessed;
+
+        public int dId;
+
+        /**
+         * @param documentId
+         * @param documentName 
+         * @param documentOwner 
+         * @param documentAccessed 
+         */
+        public DocumentData(int documentId, String documentName, String documentOwner,java.sql.Timestamp documentLastAccessed){
+            dId = documentId;
+            dName = documentName;
+            uName = documentOwner;
+            dLastAccessed = documentLastAccessed;
+        }
+
+        public void updateLastAccessed(java.sql.Timestamp lastAccessed) {
+            dLastAccessed = lastAccessed;
+        }
+    }
+
+    public static class LinkData{
+
+        /*
+         * Link Id 
+         */
+        public int linkId;
+
+        /*
+         * link
+         */
+        public String link;
+
+        /*
+         * declare whether link is invalid or valid
+         */
+        public Boolean lInvalid;
+
+        /**
+         * 
+         * @param linkedId
+         * @param linkLink
+         * @param linkInvalid
+         */
+        public LinkData(int linkedId, String linkLink, Boolean linkInvalid){
+            linkId = linkedId;
+            link = linkLink;
+            lInvalid = linkInvalid;
+        }
+
+    }
 
     /**
      * The Database constructor is private: we only create Database objects 
      * through the getDatabase() method.
      */
+
     private Database() {
     }
 
@@ -399,6 +501,49 @@ public class Database {
             db.lInsertOne = db.mConnection.prepareStatement("INSERT INTO likeData VALUES (default, ?, ?, ?)");
             db.lDropTable = db.mConnection.prepareStatement("DROP TABLE likeData");
             db.lDeleteOne = db.mConnection.prepareStatement("DELETE FROM likeData WHERE mId = ? and uId = ?");
+            
+            // creation/deletion, so multiple executions will cause an exception
+            // DocumentData(int documentId, String documentName, String documentOwner, String documentAccessed)
+            db.dCreateTable = db.mConnection.prepareStatement(
+                "CREATE TABLE documentData (documentId SERIAL, documentName VARCHAR(50) NOT NULL, uName VARCHAR(50) NOT NULL, documentLastAccessed TIMESTAMP NOT NULL )"
+            );
+            db.dDropTable = db.mConnection.prepareStatement(
+                "DROP TABLE documentData"
+            );
+            db.dDeleteOne = db.mConnection.prepareStatement(
+                "DELETE FROM documentData WHERE documentId = (SELECT documentId FROM documentData ORDER BY documentLastAccessed ASC LIMIT 1)"
+            );
+            db.dInsertOne = db.mConnection.prepareStatement(
+                "INSERT INTO documentData VALUES (default, ?, ?, ?)"
+            );
+
+            //LinkData(int linkedId, String linkLink, Boolean linkInvalid)
+            db.linkCreateTable = db.mConnection.prepareStatement(
+                "CREATE TABLE linkData (linkId SERIAL, link VARCHAR(50) NOT NULL, lInvalid Boolean)"
+            );
+            db.linkDropTable = db.mConnection.prepareStatement(
+                "DROP TABLE linkData"
+            );
+            db.linkDeleteOne = db.mConnection.prepareStatement(
+                "DELETE FROM linkData WHERE linkId = ?"
+            );
+            db.linkInsertOne = db.mConnection.prepareStatement(
+                "INSERT INTO linkData VALUES (default, ?, false)"
+            );
+            db.linkValidate = db.mConnection.prepareStatement(
+                "UPDATE linkData SET lInvalid = ? WHERE linkId = ?"
+            );
+
+
+
+        /**
+         * 
+         * @param linkedId
+         * @param linkLink
+         * @param linkInvalid
+         */
+            
+
 
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
@@ -737,4 +882,144 @@ public class Database {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Create documentData.  If it already exists, this will print an error
+     */
+    void createDocumentTable() {
+        try {
+            dCreateTable.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Remove documentData from the database.  If it does not exist, this will print
+     * an error.
+     */
+    void dropDocumentTable() {
+        try {
+            dDropTable.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // DocumentData(int documentId, String documentName, String documentOwner, String documentAccessed)
+    int insertDocument(String documentName, String documentOwner, java.sql.Timestamp documentAccessed){
+        int count = 0;        
+        try{
+            dInsertOne.setString(1, documentName);
+            dInsertOne.setString(2, documentOwner);     //set all the user's info into prepared statement
+            dInsertOne.setTimestamp(3, documentAccessed);
+            count += dInsertOne.executeUpdate();    
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+        return count;   
+    }
+
+    /**
+     * Delete a row by ID
+     * 
+     * @return The number of rows that were deleted.  -1 indicates an error.
+     */
+    int deleteDocument() {
+        int res = -1;
+        try {
+            res = dDeleteOne.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    //LinkData(int linkedId, String linkLink, Boolean linkInvalid)
+
+    /**
+     * Creates the link table
+     * @return void
+     */
+    void createLinkTable() {
+        try {
+            linkCreateTable.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Gets rid of link table
+     * @return void
+     */
+    void dropLinkTable() {
+        try {
+            linkDropTable.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+   
+    /**
+     * Adds a link to linkData
+     * @return int of count
+     */
+    int insertLink(String linkLink){
+        int count = 0;
+        try{
+            linkInsertOne.setString(1, linkLink);
+            count += linkInsertOne.executeUpdate();
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+        return count;
+    }
+    /**
+     * Deletes a link in the linkData
+     * @return int of res
+     */
+    int deleteLink(int linkedId){
+        int res = -1;
+        try {
+            linkDeleteOne.setInt(1, linkedId);
+            res = linkDeleteOne.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return res;
+    }
+    
+    /***
+     * Invalidates a link
+     * @param linkId
+     */
+    void linkInvalidate(int linkId) {
+        try {
+            linkValidate.setBoolean(1, true);
+            linkValidate.setInt(2, linkId);
+            linkValidate.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /***
+     * Validates a link
+     * @param id
+     */
+    void linkValidate(int id) {
+        try {
+            linkValidate.setBoolean(1, false);
+            linkValidate.setInt(2, id);
+            linkValidate.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+
+
 }

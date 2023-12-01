@@ -153,6 +153,28 @@ public class AppTest
         //testing dropTable
         db.dropCommentTable();
 
+        // Testing to see if document was deleted
+        db.createDocumentTable();
+        db.insertDocument("Document 1", "Sarah Zwart 1", java.sql.Timestamp.valueOf("2023-11-30 10:10:10.0"));
+        db.insertDocument("Document 2", "Sarah Zwart 2", java.sql.Timestamp.valueOf("2023-12-1 10:10:10.0"));
+        int deletedDoc = db.deleteDocument();
+        assertTrue(deletedDoc==1);
+
+        //Testing valid/invalid of links
+        db.createLinkTable();
+        db.insertLink("www.google.com");
+        db.insertLink("www.webkinz.com");
+        db.linkInvalidate(1);
+        db.linkValidate(2);
+
+
+        db.createLinkTable();
+
+
+
+     
+
+
         /*//Tests creating a comment table
         db.createLikeTable();
         //testing deleteRow

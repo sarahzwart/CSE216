@@ -2,6 +2,8 @@ package edu.lehigh.cse216.ash320.admin;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.security.Timestamp;
+import java.text.SimpleDateFormat;
 import java.io.IOException;
 
 import java.util.ArrayList;
@@ -157,7 +159,7 @@ public class App {
             } else if (action == 'q') {
                 break;
             } else if (action == 'T') {
-                char option = getChar(in, "Create which table (M, U, C, L)");
+                char option = getChar(in, "Create which table (M, U, C, L, D, I)");
                 if (option == 'M'){
                     db.createTable();
                 } else if (option == 'U'){
@@ -166,10 +168,14 @@ public class App {
                     db.createCommentTable();
                 } else if (option == 'L'){
                     db.createLikeTable();
+                } else if (option == 'D'){
+                    db.createDocumentTable();
+                } else if (option == 'I'){
+                    db.createLinkTable();
                 }
             } else if (action == 'D') {
                 System.out.println(action);
-                char option = getChar(in, "Drop which table (M, U, C, L)");
+                char option = getChar(in, "Drop which table (M, U, C, L, D, I)");
                 if (option == 'M'){
                     db.dropTable();
                 } else if (option == 'U'){
@@ -178,9 +184,13 @@ public class App {
                     db.dropCommentTable();
                 }  else if (option == 'L'){
                     db.dropLikeTable();
+                }  else if(option == 'D'){
+                    db.dropDocumentTable();
+                }  else if(option == 'I'){
+                    db.dropLinkTable();
                 }
             } else if (action == '+') {
-                char option = (getChar(in, "Add which table (M, U, C, L)"));
+                char option = (getChar(in, "Add to which table (M, U, C, L, D, I)"));
                 if (option == 'M'){
                     int use = getInt(in, "Enter the User Id");
                     String subject = getString(in, "Enter the title");
@@ -209,10 +219,29 @@ public class App {
                         continue;
                     int res = db.insertComment(content, mId, uId);
                     System.out.println(res + " rows added");
-                }  
+                } else if (option == 'D'){
+                    String documentName = getString(in, "Enter document name ");
+                    String documentOwner = getString(in, "Enter document owner ");
+                    java.sql.Timestamp documentAccessed = getTimeStamp();
+                    if (documentName.equals("") || documentOwner.equals("") || documentAccessed==null) {
+                        System.out.println("Error: All fields must be filled. Please try again.");
+                        continue;
+                    }
+                    int res = db.insertDocument(documentName, documentOwner, documentAccessed);
+                    System.out.println(res + " rows added");
+                } else if (option == 'I'){
+                    String link = getString(in, "Enter link ");
+                    if(link.equals("")){
+                        System.out.println("Error: All fields must be filled. Please try again.");
+                        continue;
+                    };
+                    int res = db.insertLink(link);
+                    System.out.println(res + " rows added");
+                }
+
             } else if (action == '-') {
                 int res = 0;
-                char option = (getChar(in, "Remove which row type (M, U, C)"));
+                char option = (getChar(in, "Remove which row type (M, U, C, D, I)"));
                 if (option == 'M'){
                     int id = getInt(in, "Enter the row ID");
                     if (id == -1)
@@ -234,12 +263,25 @@ public class App {
                     res = db.deleteComment(id);
                     if (res == -1)
                         continue;
-                } 
+                } else if (option == 'D'){
+                    res = db.deleteDocument();
+                    if (res == -1)
+                        continue;
+                } else if (option == 'I'){
+                    int id = getInt(in, "Enter link id");
+                    if (id == -1){
+                        continue;
+                    }
+                    res = db.deleteLink(id);
+                    if (res == -1){
+                        continue;
+                    }
+                }
                 System.out.println("  " + res + " rows deleted");
             } else if (action == 'V') {
                 action = getChar(in, "Validate or Invalidate (V, I)");
                 if (action == 'V'){
-                    action = (getChar(in, "Which Table (M, U)"));
+                    action = (getChar(in, "Which Table (M, U, I)"));
                     int id = 0;
                     if (action == 'M'){
                         id = getInt(in, "Enter the User Id");
@@ -247,10 +289,13 @@ public class App {
                     } else if (action == 'U'){
                         id = getInt(in, "Enter the User Id");
                         db.userValidate(id);
+                    } else if (action == 'I'){
+                        id = getInt(in, "Enter Link Id");
+                        db.linkValidate(id);
                     }
                     System.out.println("Updated " + id + " validated");
                 } else if (action == 'I'){
-                    action = (getChar(in, "Which Table (M, U)"));
+                    action = (getChar(in, "Which Table (M, U, I)"));
                     int id = 0;
                     if (action == 'M'){
                         id = getInt(in, "Enter the User Id");
@@ -258,13 +303,24 @@ public class App {
                     } else if (action == 'U'){
                         id = getInt(in, "Enter the User Id");
                         db.userInvalidate(id);
+                    } else if (action == 'I'){
+                        id = getInt(in, "Enter Link Id");
+                        db.linkInvalidate(id);
                     }
                     System.out.println("Row " + id + " invalidated");
                 }
-            }          
+            } 
+
         }
         // Always remember to disconnect from the database when the program 
         // exits
         db.disconnect();
+    }
+    public static java.sql.Timestamp getTimeStamp() {
+        // Get the current time in milliseconds
+        long timeMillis = System.currentTimeMillis();
+
+        // Create a Timestamp object with the current time
+        return new java.sql.Timestamp(timeMillis);
     }
 }
