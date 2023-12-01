@@ -159,7 +159,7 @@ public class App {
             } else if (action == 'q') {
                 break;
             } else if (action == 'T') {
-                char option = getChar(in, "Create which table (M, U, C, L, D)");
+                char option = getChar(in, "Create which table (M, U, C, L, D, I)");
                 if (option == 'M'){
                     db.createTable();
                 } else if (option == 'U'){
@@ -170,10 +170,12 @@ public class App {
                     db.createLikeTable();
                 } else if (option == 'D'){
                     db.createDocumentTable();
+                } else if (option == 'I'){
+                    db.createLinkTable();
                 }
             } else if (action == 'D') {
                 System.out.println(action);
-                char option = getChar(in, "Drop which table (M, U, C, L, D)");
+                char option = getChar(in, "Drop which table (M, U, C, L, D, I)");
                 if (option == 'M'){
                     db.dropTable();
                 } else if (option == 'U'){
@@ -184,9 +186,11 @@ public class App {
                     db.dropLikeTable();
                 }  else if(option == 'D'){
                     db.dropDocumentTable();
+                }  else if(option == 'I'){
+                    db.dropLinkTable();
                 }
             } else if (action == '+') {
-                char option = (getChar(in, "Add to which table (M, U, C, L, D)"));
+                char option = (getChar(in, "Add to which table (M, U, C, L, D, I)"));
                 if (option == 'M'){
                     int use = getInt(in, "Enter the User Id");
                     String subject = getString(in, "Enter the title");
@@ -225,10 +229,19 @@ public class App {
                     }
                     int res = db.insertDocument(documentName, documentOwner, documentAccessed);
                     System.out.println(res + " rows added");
+                } else if (option == 'I'){
+                    String link = getString(in, "Enter link ");
+                    if(link.equals("")){
+                        ystem.out.println("Error: All fields must be filled. Please try again.");
+                        continue;
+                    };
+                    int res = db.insertLink(link);
+                    System.out.println(res + " rows added");
                 }
+
             } else if (action == '-') {
                 int res = 0;
-                char option = (getChar(in, "Remove which row type (M, U, C, D)"));
+                char option = (getChar(in, "Remove which row type (M, U, C, D, I)"));
                 if (option == 'M'){
                     int id = getInt(in, "Enter the row ID");
                     if (id == -1)
@@ -254,12 +267,21 @@ public class App {
                     res = db.deleteDocument();
                     if (res == -1)
                         continue;
+                } else if (option == 'I'){
+                    int id = getInt(in, "Enter link id");
+                    if (id == -1){
+                        continue;
+                    }
+                    res = db.deleteLink(id);
+                    if (res == -1){
+                        continue;
+                    }
                 }
                 System.out.println("  " + res + " rows deleted");
             } else if (action == 'V') {
                 action = getChar(in, "Validate or Invalidate (V, I)");
                 if (action == 'V'){
-                    action = (getChar(in, "Which Table (M, U)"));
+                    action = (getChar(in, "Which Table (M, U, I)"));
                     int id = 0;
                     if (action == 'M'){
                         id = getInt(in, "Enter the User Id");
@@ -267,10 +289,13 @@ public class App {
                     } else if (action == 'U'){
                         id = getInt(in, "Enter the User Id");
                         db.userValidate(id);
+                    } else if (action == 'I'){
+                        id = getInt(in, "Enter Link Id");
+                        db.linkValidate(id);
                     }
                     System.out.println("Updated " + id + " validated");
                 } else if (action == 'I'){
-                    action = (getChar(in, "Which Table (M, U)"));
+                    action = (getChar(in, "Which Table (M, U, I)"));
                     int id = 0;
                     if (action == 'M'){
                         id = getInt(in, "Enter the User Id");
@@ -278,6 +303,9 @@ public class App {
                     } else if (action == 'U'){
                         id = getInt(in, "Enter the User Id");
                         db.userInvalidate(id);
+                    } else if (action == 'I'){
+                        id = getInt(in, "Enter Link Id");
+                        db.linkInvalidate(id);
                     }
                     System.out.println("Row " + id + " invalidated");
                 }

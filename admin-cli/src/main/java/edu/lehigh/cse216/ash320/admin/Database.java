@@ -111,6 +111,18 @@ public class Database {
      */
     private PreparedStatement dDeleteOne;
 
+    private PreparedStatement linkCreateTable;
+
+    private PreparedStatement linkDropTable;
+
+    private PreparedStatement linkDeleteOne;
+
+    private PreparedStatement linkInsertOne;
+
+    private PreparedStatement linkValidate;
+
+
+
     /**
      * RowData is like a struct in C: we use it to hold data, and we allow 
      * direct access to its fields.  In the context of this Database, RowData 
@@ -354,11 +366,13 @@ public class Database {
         /**
          * When document was last accessed
          */
+
         public java.sql.Timestamp dLastAccessed;
 
         public int dId;
 
         /**
+         * @param documentId
          * @param documentName 
          * @param documentOwner 
          * @param documentAccessed 
@@ -373,6 +387,37 @@ public class Database {
         public void updateLastAccessed(java.sql.Timestamp lastAccessed) {
             dLastAccessed = lastAccessed;
         }
+    }
+
+    public static class LinkData{
+
+        /*
+         * Link Id 
+         */
+        public int linkId;
+
+        /*
+         * link
+         */
+        public String link;
+
+        /*
+         * declare whether link is invalid or valid
+         */
+        public Boolean lInvalid;
+
+        /**
+         * 
+         * @param linkedId
+         * @param linkLink
+         * @param linkInvalid
+         */
+        public LinkData(int linkedId, String linkLink, Boolean linkInvalid){
+            linkId = linkedId;
+            link = linkLink;
+            lInvalid = linkInvalid;
+        }
+
     }
 
     /**
@@ -471,6 +516,34 @@ public class Database {
             db.dInsertOne = db.mConnection.prepareStatement(
                 "INSERT INTO documentData VALUES (default, ?, ?, ?)"
             );
+
+            //LinkData(int linkedId, String linkLink, Boolean linkInvalid)
+            db.linkCreateTable = db.mConnection.preparedStatement(
+                "CREATE TABLE linkData (linkId SERIAL, link VARCHAR(50) NOT NULL, lInvalid Boolean)"
+            );
+            db.linkDropTable = db.mConnection.prepareStatement(
+                "DROP TABLE linkData"
+            );
+            db.linkDeleteOne = db.mConnection.preparedStatement(
+                "DELETE FROM linkData WHERE linkId = ?"
+            );
+            db.linkInsertOne = db.mConnection.preparedStatement(
+                "INSERT INTO linkData VALUES (default, ?, false)"
+            );
+            db.linkValidate = db.mConnection.prepareStatement(
+                "UPDATE linkData SET lInvalid = ? WHERE linkId = ?"
+            );
+
+
+
+        /**
+         * 
+         * @param linkedId
+         * @param linkLink
+         * @param linkInvalid
+         */
+            
+
 
         } catch (SQLException e) {
             System.err.println("Error creating prepared statement");
@@ -863,6 +936,81 @@ public class Database {
         return res;
     }
 
+    //LinkData(int linkedId, String linkLink, Boolean linkInvalid)
+
+    /**
+     * Creates the link table
+     * @return void
+     */
+    void createLinkTable() {
+        try {
+            linkCreateTable.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Gets rid of link table
+     * @return void
+     */
+    void dropLinkTable() {
+        try {
+            linkDropTable.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+   
+    /**
+     * Adds a link to linkData
+     * @return int of count
+     */
+    int insertLink(String linkLink, Boolean linkInvalid){
+        int count = 0;
+        try{
+            linkInsertOne.setString(1, linkLink);
+            count += linkInsertOne.executeUpdate();
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+        return count;
+    }
+    /**
+     * Deletes a link in the linkData
+     * @return int of res
+     */
+    int deleteLink(int linkedId){
+        int res = -1;
+        try {
+            linkDeleteOne.setInt(1, linkedId);
+            res = linkDeleteOne.executeUpdate();
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    void linkInvalidate(int linkId) {
+        try {
+            linkValidate.setBoolean(1, true);
+            linkValidateValidate.setInt(2, linkId);
+            linkValidate.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    void linkValidate(int id) {
+        try {
+            linkValidate.setBoolean(1, false);
+            linkValidate.setInt(2, id);
+            linkValidate.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
 
 
 }
