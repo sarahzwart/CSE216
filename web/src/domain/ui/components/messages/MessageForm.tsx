@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import { Component } from "react";
+import axios from "axios";
 
 type MessageFormProps = {
   onAddMessage: (message: string) => void; 
+  selectedFile: null; //initially no file selected
 };
 
 function MessageForm ({ onAddMessage }: MessageFormProps){
