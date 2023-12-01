@@ -361,7 +361,7 @@ public class Database {
         /**
          * Name of Owner
          */
-        public String dOwner;
+        public String uName;
 
         /**
          * When document was last accessed
@@ -380,7 +380,7 @@ public class Database {
         public DocumentData(int documentId, String documentName, String documentOwner,java.sql.Timestamp documentLastAccessed){
             dId = documentId;
             dName = documentName;
-            dOwner = documentOwner;
+            uName = documentOwner;
             dLastAccessed = documentLastAccessed;
         }
 
@@ -505,7 +505,7 @@ public class Database {
             // creation/deletion, so multiple executions will cause an exception
             // DocumentData(int documentId, String documentName, String documentOwner, String documentAccessed)
             db.dCreateTable = db.mConnection.prepareStatement(
-                "CREATE TABLE documentData (documentId SERIAL, documentName VARCHAR(50) NOT NULL, documentOwner VARCHAR(50) NOT NULL, documentLastAccessed TIMESTAMP NOT NULL )"
+                "CREATE TABLE documentData (documentId SERIAL, documentName VARCHAR(50) NOT NULL, uName VARCHAR(50) NOT NULL, documentLastAccessed TIMESTAMP NOT NULL )"
             );
             db.dDropTable = db.mConnection.prepareStatement(
                 "DROP TABLE documentData"
@@ -991,7 +991,11 @@ public class Database {
         }
         return res;
     }
-
+    
+    /***
+     * Invalidates a link
+     * @param linkId
+     */
     void linkInvalidate(int linkId) {
         try {
             linkValidate.setBoolean(1, true);
@@ -1001,6 +1005,11 @@ public class Database {
             e.printStackTrace();
         }
     }
+
+    /***
+     * Validates a link
+     * @param id
+     */
     void linkValidate(int id) {
         try {
             linkValidate.setBoolean(1, false);
