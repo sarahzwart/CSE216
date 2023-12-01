@@ -10,11 +10,12 @@ import './sign_in.dart';
 import 'dart:io';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:photo_gallery/photo_gallery.dart';
 
 //deleting duplicate files: find . -type f -name '* [0-9]' -exec rm {} +, find . -type f -name '* [0-9].*' -exec rm {} +
 const String backendURL = 'http://team-margaritavillians.dokku.cse.lehigh.edu';
 final Future<SharedPreferences> prefs = SharedPreferences.getInstance();
-
+late CameraDescription firstCamera;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final cameras = await availableCameras();
@@ -149,6 +150,10 @@ class MessageAppState extends State<MyApp> {
                   messages.add(newMessage);
                 });
               }),
+            ),
+            Container(
+              alignment: Alignment.bottomRight,
+              child: TakePictureScreen(camera: firstCamera)
             ),
           ],
         ),
