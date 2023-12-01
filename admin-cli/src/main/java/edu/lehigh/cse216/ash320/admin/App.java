@@ -281,7 +281,7 @@ public class App {
             } else if (action == 'V') {
                 action = getChar(in, "Validate or Invalidate (V, I)");
                 if (action == 'V'){
-                    action = (getChar(in, "Which Table (M, U, I)"));
+                    action = (getChar(in, "Which Table (M, U, D, I)"));
                     int id = 0;
                     if (action == 'M'){
                         id = getInt(in, "Enter the User Id");
@@ -292,10 +292,13 @@ public class App {
                     } else if (action == 'I'){
                         id = getInt(in, "Enter Link Id");
                         db.linkValidate(id);
+                    } else if (action == 'D'){
+                        id = getInt(in, "Insert Document Id");
+                        db.documentValidate(id);
                     }
                     System.out.println("Updated " + id + " validated");
                 } else if (action == 'I'){
-                    action = (getChar(in, "Which Table (M, U, I)"));
+                    action = (getChar(in, "Which Table (M, U, D, I)"));
                     int id = 0;
                     if (action == 'M'){
                         id = getInt(in, "Enter the User Id");
@@ -306,6 +309,9 @@ public class App {
                     } else if (action == 'I'){
                         id = getInt(in, "Enter Link Id");
                         db.linkInvalidate(id);
+                    } else if (action == 'D'){
+                        id = getInt(in, "Insert Document Id");
+                        db.documentInvalidate(id);
                     }
                     System.out.println("Row " + id + " invalidated");
                 }

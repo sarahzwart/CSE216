@@ -121,7 +121,7 @@ public class Database {
 
     private PreparedStatement linkValidate;
 
-
+    private PreparedStatement documentValidate;
 
     /**
      * RowData is like a struct in C: we use it to hold data, and we allow 
@@ -377,11 +377,16 @@ public class Database {
          * @param documentOwner 
          * @param documentAccessed 
          */
-        public DocumentData(int documentId, String documentName, String documentOwner,java.sql.Timestamp documentLastAccessed){
+
+        public Boolean dInvalid;
+
+
+        public DocumentData(int documentId, String documentName, String documentOwner,java.sql.Timestamp documentLastAccessed, Boolean docInvalid){
             dId = documentId;
             dName = documentName;
             uName = documentOwner;
             dLastAccessed = documentLastAccessed;
+            dInvalid = docInvalid;
         }
 
         public void updateLastAccessed(java.sql.Timestamp lastAccessed) {
@@ -505,7 +510,7 @@ public class Database {
             // creation/deletion, so multiple executions will cause an exception
             // DocumentData(int documentId, String documentName, String documentOwner, String documentAccessed)
             db.dCreateTable = db.mConnection.prepareStatement(
-                "CREATE TABLE documentData (documentId SERIAL, documentName VARCHAR(50) NOT NULL, uName VARCHAR(50) NOT NULL, documentLastAccessed TIMESTAMP NOT NULL )"
+                "CREATE TABLE documentData (documentId SERIAL, documentName VARCHAR(50) NOT NULL, uName VARCHAR(50) NOT NULL, documentLastAccessed TIMESTAMP NOT NULL, dInvalid Boolean )"
             );
             db.dDropTable = db.mConnection.prepareStatement(
                 "DROP TABLE documentData"
@@ -514,7 +519,10 @@ public class Database {
                 "DELETE FROM documentData WHERE documentId = (SELECT documentId FROM documentData ORDER BY documentLastAccessed ASC LIMIT 1)"
             );
             db.dInsertOne = db.mConnection.prepareStatement(
-                "INSERT INTO documentData VALUES (default, ?, ?, ?)"
+                "INSERT INTO documentData VALUES (default, ?, ?, ?, false)"
+            );
+            db.documentValidate = db.mConnection.prepareStatement(
+                "UPDATE documentData SET dInvalid = ? WHERE documentId = ?"
             );
 
             //LinkData(int linkedId, String linkLink, Boolean linkInvalid)
@@ -533,6 +541,8 @@ public class Database {
             db.linkValidate = db.mConnection.prepareStatement(
                 "UPDATE linkData SET lInvalid = ? WHERE linkId = ?"
             );
+
+
 
 
 
@@ -934,6 +944,34 @@ public class Database {
             e.printStackTrace();
         }
         return res;
+    }
+
+    /***
+     * Invalidates a document
+     * @param id
+     */
+    void documentInvalidate(int id) {
+        try {
+            documentValidate.setBoolean(1, true);
+            documentValidate.setInt(2, id);
+            documentValidate.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /***
+     * Validates a document
+     * @param id
+     */
+    void documentValidate(int id) {
+        try {
+            documentValidate.setBoolean(1, false);
+            documentValidate.setInt(2, id);
+            documentValidate.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     //LinkData(int linkedId, String linkLink, Boolean linkInvalid)
