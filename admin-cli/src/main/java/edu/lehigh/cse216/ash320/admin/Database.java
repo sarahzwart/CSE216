@@ -518,16 +518,16 @@ public class Database {
             );
 
             //LinkData(int linkedId, String linkLink, Boolean linkInvalid)
-            db.linkCreateTable = db.mConnection.preparedStatement(
+            db.linkCreateTable = db.mConnection.prepareStatement(
                 "CREATE TABLE linkData (linkId SERIAL, link VARCHAR(50) NOT NULL, lInvalid Boolean)"
             );
             db.linkDropTable = db.mConnection.prepareStatement(
                 "DROP TABLE linkData"
             );
-            db.linkDeleteOne = db.mConnection.preparedStatement(
+            db.linkDeleteOne = db.mConnection.prepareStatement(
                 "DELETE FROM linkData WHERE linkId = ?"
             );
-            db.linkInsertOne = db.mConnection.preparedStatement(
+            db.linkInsertOne = db.mConnection.prepareStatement(
                 "INSERT INTO linkData VALUES (default, ?, false)"
             );
             db.linkValidate = db.mConnection.prepareStatement(
@@ -966,7 +966,7 @@ public class Database {
      * Adds a link to linkData
      * @return int of count
      */
-    int insertLink(String linkLink, Boolean linkInvalid){
+    int insertLink(String linkLink){
         int count = 0;
         try{
             linkInsertOne.setString(1, linkLink);
@@ -995,7 +995,7 @@ public class Database {
     void linkInvalidate(int linkId) {
         try {
             linkValidate.setBoolean(1, true);
-            linkValidateValidate.setInt(2, linkId);
+            linkValidate.setInt(2, linkId);
             linkValidate.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

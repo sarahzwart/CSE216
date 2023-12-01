@@ -232,7 +232,7 @@ public class App {
                 } else if (option == 'I'){
                     String link = getString(in, "Enter link ");
                     if(link.equals("")){
-                        ystem.out.println("Error: All fields must be filled. Please try again.");
+                        System.out.println("Error: All fields must be filled. Please try again.");
                         continue;
                     };
                     int res = db.insertLink(link);
