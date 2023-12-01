@@ -156,19 +156,7 @@ public class Database {
         // Attempt to create all of our prepared statements.  If any of these 
         // fail, the whole getDatabase() call should fail
         try {
-            // NB: we can easily get ourselves in trouble here by typing the
-            //     SQL incorrectly.  We really should have things like "tblData"
-            //     as constants, and then build the strings for the statements
-            //     from those constants.
 
-            // Note: no "IF NOT EXISTS" or "IF EXISTS" checks on table 
-            // creation/deletion, so multiple executions will cause an exception
-            /* CREATE and DROP table have been moved to admin, backend can only edit the tables
-            db.mCreateTable = db.mConnection.prepareStatement(
-                    "CREATE TABLE tblData (id SERIAL PRIMARY KEY, subject VARCHAR(50) "
-                    + "NOT NULL, message VARCHAR(500) NOT NULL), likes INTEGER NOT NULL");
-            db.mDropTable = db.mConnection.prepareStatement("DROP TABLE tblData");
-            */
 
             // Standard CRUD operations
             //Prepared Statements for messages
@@ -720,26 +708,5 @@ public class Database {
         return res;
     }
 
-    /**
-     * Create tblData.  If it already exists, this will print an error
     
-    void createTable() {
-        try {
-            mCreateTable.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-     * Remove tblData from the database.  If it does not exist, this will print
-     * an error.
-    
-    void dropTable() {
-        try {
-            mDropTable.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    } 
-    */
 }
