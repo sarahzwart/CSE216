@@ -36,10 +36,6 @@
 
 The app will allow an admin to create and delete tables and delete other's posts and comments. Admin also can remove files and images and generate a list of documents their original owners. Anonymous users (all marked with the same user ID for tracking purposes) will then be able to comment on ideas. Along with this, a mobile app will allow for the same functionalities, but on the emulator used in the tutorials. Likes are also set up and works in the backend and tables, but only shows the change in votes on the frontend upon reloading screen
 
-# Missing Functionality
-
-OAuth account creation and access isn't functional, so as of now only anonymous users are able to post, vote, and comment (But fake accounts created for functionality in web). Upvotes, downvotes, and comments are not functional in the mobile branch
-
 # Instructions on Running Locally
 
 Start dokku server using instructions in dokku.md in backend folder. To start web, run the deploy.sh file in the web folder. For mobile, launch mobile emulator in VS Code and then start debugging on main.dart in VS Code.
